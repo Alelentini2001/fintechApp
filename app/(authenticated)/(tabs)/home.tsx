@@ -12,12 +12,33 @@ import {
   StyleSheet,
   Button,
   Image,
+  FlatList,
+  Dimensions,
+  ViewabilityConfig,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useRef, useState } from "react";
+
+interface CarouselIndicatorProps {
+  data: number[];
+  selectedIndex: number;
+}
 
 const Home = () => {
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      setSelectedIndex(viewableItems[0].index || 0);
+    }
+  }).current;
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 80,
+  };
 
   const headerHeight = useHeaderHeight();
   const onAddMoney = () => {
@@ -29,6 +50,283 @@ const Home = () => {
     });
   };
 
+  const CarouselIndicator: React.FC<CarouselIndicatorProps> = ({
+    data,
+    selectedIndex,
+  }) => {
+    console.log(selectedIndex);
+    return (
+      <View style={styles.container3}>
+        {data.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.indicator,
+              index === selectedIndex ? styles.selectedIndicator : null,
+            ]}
+          />
+        ))}
+      </View>
+    );
+  };
+
+  const renderContent = (selectedIndex: number) => {
+    switch (selectedIndex) {
+      case 0:
+        return (
+          <>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                marginTop: 30,
+                left: 20,
+              }}
+            >
+              Balance
+            </Text>
+            <View
+              style={[
+                styles.account,
+                {
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                },
+              ]}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 66,
+                  height: 30,
+                  top: 20,
+                  left: 10,
+                  borderRadius: 20,
+                  backgroundColor: "rgba(0,0,0,0.04)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Image
+                  source={{
+                    uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EUFOR_Roundel.svg/1024px-EUFOR_Roundel.svg.png",
+                  }}
+                  style={{ width: 26, height: 26 }}
+                />
+                <Text style={{ fontSize: 14 }}>EUR</Text>
+              </View>
+              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
+              <View style={styles.row}>
+                <Text style={styles.balance}>€ {balance()}</Text>
+                {/* <Text style={styles.balance}>{balance()}</Text> */}
+              </View>
+              <View
+                style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
+              >
+                <Text style={{ fontWeight: "400", fontSize: 10 }}>
+                  Overall Spending is:
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: 45,
+                    height: 17,
+                    top: -2,
+                    borderRadius: 20,
+                    backgroundColor: "rgba(82,220,79,0.2)",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
+                    {balance() > 0
+                      ? Math.floor(Math.random() * 100)
+                      : Math.floor(Math.random() * -100)}
+                    %
+                  </Text>
+                  <Ionicons
+                    name="arrow-up"
+                    size={12}
+                    color={"rgba(82,220,79,1)"}
+                  />
+                </View>
+              </View>
+            </View>
+          </>
+        );
+      case 1:
+        const cashback = balance() * 0.001;
+        return (
+          <>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                marginTop: 30,
+                left: 20,
+              }}
+            >
+              Cashback
+            </Text>
+            <View
+              style={[
+                styles.account,
+                { flexDirection: "column", alignItems: "flex-start" },
+              ]}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 66,
+                  height: 30,
+                  top: 20,
+                  left: 10,
+                  borderRadius: 20,
+                  backgroundColor: "rgba(0,0,0,0.04)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Image
+                  source={{
+                    uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EUFOR_Roundel.svg/1024px-EUFOR_Roundel.svg.png",
+                  }}
+                  style={{ width: 26, height: 26 }}
+                />
+                <Text style={{ fontSize: 14 }}>EUR</Text>
+              </View>
+              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Cashback</Text>
+              <View style={styles.row}>
+                <Text style={styles.balance}>€ {cashback}</Text>
+                {/* <Text style={styles.balance}>{balance()}</Text> */}
+              </View>
+              <View
+                style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
+              >
+                <Text style={{ fontWeight: "400", fontSize: 10 }}>
+                  Overall Spending is:
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: 45,
+                    height: 17,
+                    top: -2,
+                    borderRadius: 20,
+                    backgroundColor: "rgba(82,220,79,0.2)",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
+                    {balance() > 0
+                      ? Math.floor(Math.random() * 100)
+                      : Math.floor(Math.random() * -100)}
+                    %
+                  </Text>
+                  <Ionicons
+                    name="arrow-up"
+                    size={12}
+                    color={"rgba(82,220,79,1)"}
+                  />
+                </View>
+              </View>
+            </View>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                marginTop: 30,
+                left: 20,
+              }}
+            >
+              Referral
+            </Text>
+            <View
+              style={[
+                styles.account,
+                {
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                },
+              ]}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 66,
+                  height: 30,
+                  top: 20,
+                  left: 10,
+                  borderRadius: 20,
+                  backgroundColor: "rgba(0,0,0,0.04)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Image
+                  source={{
+                    uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EUFOR_Roundel.svg/1024px-EUFOR_Roundel.svg.png",
+                  }}
+                  style={{ width: 26, height: 26 }}
+                />
+                <Text style={{ fontSize: 14 }}>EUR</Text>
+              </View>
+              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
+              <View style={styles.row}>
+                <Text style={styles.balance}>€ {balance()}</Text>
+                {/* <Text style={styles.balance}>{balance()}</Text> */}
+              </View>
+              <View
+                style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
+              >
+                <Text style={{ fontWeight: "400", fontSize: 10 }}>
+                  Overall Spending is:
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: 45,
+                    height: 17,
+                    top: -2,
+                    borderRadius: 20,
+                    backgroundColor: "rgba(82,220,79,0.2)",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
+                    {balance() > 0
+                      ? Math.floor(Math.random() * 100)
+                      : Math.floor(Math.random() * -100)}
+                    %
+                  </Text>
+                  <Ionicons
+                    name="arrow-up"
+                    size={12}
+                    color={"rgba(82,220,79,1)"}
+                  />
+                </View>
+              </View>
+            </View>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <ScrollView
       style={{ backgroundColor: Colors.background }}
@@ -36,7 +334,7 @@ const Home = () => {
         paddingTop: headerHeight,
       }}
     >
-      <View
+      {/* <View
         style={[
           styles.account,
           { flexDirection: "column", alignItems: "flex-start" },
@@ -67,7 +365,6 @@ const Home = () => {
         <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
         <View style={styles.row}>
           <Text style={styles.balance}>€ {balance()}</Text>
-          {/* <Text style={styles.balance}>{balance()}</Text> */}
         </View>
         <View style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}>
           <Text style={{ fontWeight: "400", fontSize: 10 }}>
@@ -95,7 +392,25 @@ const Home = () => {
             <Ionicons name="arrow-up" size={12} color={"rgba(82,220,79,1)"} />
           </View>
         </View>
-      </View>
+      </View> */}
+      <FlatList
+        data={[0, 1, 2]}
+        renderItem={({ index }) => (
+          <View style={{ width: Dimensions.get("window").width - 120 }}>
+            {renderContent(index)}
+          </View>
+        )}
+        snapToInterval={250}
+        decelerationRate="fast"
+        keyExtractor={(item) => item.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+      />
+      <CarouselIndicator data={[0, 1, 2]} selectedIndex={selectedIndex} />
+
       <View style={styles.actionRow}>
         <RoundBtn icon={"add"} text={"Add money"} onPress={onAddMoney} />
         <RoundBtn
@@ -151,7 +466,7 @@ const styles = StyleSheet.create({
     height: 160,
     width: 275,
     borderRadius: 15,
-    margin: 80,
+    margin: 20,
     alignItems: "center",
   },
   row: {
@@ -190,6 +505,27 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGray,
     justifyContent: "center",
     alignItems: "center",
+  },
+  container3: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 0,
+    marginBottom: 20,
+  },
+  indicatorContainer: {
+    alignItems: "center",
+  },
+  indicator: {
+    width: 8,
+    height: 3,
+    borderRadius: 4,
+    backgroundColor: "gray",
+    marginHorizontal: 4,
+  },
+  selectedIndicator: {
+    width: 20,
+    backgroundColor: "black",
   },
 });
 export default Home;
