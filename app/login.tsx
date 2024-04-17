@@ -25,6 +25,8 @@ enum SignInType {
 const Login = () => {
   const [countryCode, setCountryCode] = useState("+39");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailSignIn, setEmailSignIn] = useState(false);
   const keyboardVerticalOffset = Platform.OS === "ios" ? 90 : 0;
   const router = useRouter();
   const { signIn } = useSignIn();
@@ -53,7 +55,38 @@ const Login = () => {
 
         router.push({
           pathname: "/verify/[phone]",
-          params: { phone: fullPhoneNumber, signin: "true" },
+          params: { phone: fullPhoneNumber, signin: "true", email: "" },
+        });
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          if (err.errors[0].code === "form_identifier_not_found") {
+            Alert.alert("Error", err.errors[0].message);
+          }
+        }
+      }
+    } else if (type === SignInType.Email) {
+      try {
+        const { supportedFirstFactors } = await signIn!.create({
+          identifier: email,
+        });
+
+        const firstEmailFactor: any = supportedFirstFactors.find(
+          (factor: any) => {
+            return factor.strategy == "email_code";
+          }
+        );
+
+        const { emailId } = firstEmailFactor;
+
+        await signIn!.prepareFirstFactor({
+          strategy: "email_code",
+          emailAddressId: emailId,
+        });
+
+        router.push({
+          pathname: "/verify/[phone]",
+          params: { signin: "true", email: email },
         });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
@@ -75,33 +108,48 @@ const Login = () => {
       <View style={defaultStyles.container}>
         <Text style={defaultStyles.header}>Welcome back!</Text>
         <Text style={defaultStyles.descriptionText}>
-          Enter the phone number associated with your account
+          Enter the {emailSignIn ? "email" : "phone number"} associated with
+          your account
         </Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Country code"
-            placeholderTextColor={Colors.gray}
-            value={countryCode}
-          />
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            placeholder="Mobile number"
-            placeholderTextColor={Colors.gray}
-            keyboardType="numeric"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-          />
-        </View>
-
+        {!emailSignIn ? (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Country code"
+              placeholderTextColor={Colors.gray}
+              value={countryCode}
+            />
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder="Mobile number"
+              placeholderTextColor={Colors.gray}
+              keyboardType="numeric"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+          </View>
+        ) : (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder="Email"
+              placeholderTextColor={Colors.gray}
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+        )}
         <TouchableOpacity
           style={[
             defaultStyles.pillButton,
-            phoneNumber !== "" ? styles.enabled : styles.disabled,
+            phoneNumber !== "" || email !== ""
+              ? styles.enabled
+              : styles.disabled,
             { marginBottom: 20 },
           ]}
           onPress={() => {
-            onSignIn(SignInType.Phone);
+            onSignIn(emailSignIn ? SignInType.Email : SignInType.Phone);
           }}
         >
           <Text style={defaultStyles.buttonText}>Continue</Text>
@@ -134,12 +182,17 @@ const Login = () => {
             },
           ]}
           onPress={() => {
-            onSignIn(SignInType.Email);
+            //onSignIn(SignInType.Email);
+            setEmailSignIn(!emailSignIn);
           }}
         >
-          <Ionicons name="mail" size={24} color={"#000"} />
+          <Ionicons
+            name={emailSignIn ? "call" : "mail"}
+            size={24}
+            color={"#000"}
+          />
           <Text style={[defaultStyles.buttonText, { color: "#000" }]}>
-            Continue with email
+            Continue with {emailSignIn ? "phone number" : "email"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

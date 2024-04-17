@@ -17,9 +17,10 @@ import {
 const CELL_COUNT = 6;
 
 const PhoneVerify = () => {
-  const { phone, signin } = useLocalSearchParams<{
+  const { phone, signin, email } = useLocalSearchParams<{
     phone: string;
     signin: string;
+    email: string;
   }>();
   const [code, setCode] = useState("");
   const { signIn } = useSignIn();
@@ -32,35 +33,66 @@ const PhoneVerify = () => {
   });
 
   useEffect(() => {
+    console.log("signin === true", signin === "true");
     if (code.length === 6) {
+      console.log("code.length === 6", code.length === 6);
       if (signin === "true") {
         verifySignIn();
       } else {
+        console.log("verify");
         verifyCode();
       }
     }
   }, [code]);
 
   const verifyCode = async () => {
-    try {
-      await signUp!.attemptPhoneNumberVerification({ code });
-      await setActive!({ session: signUp!.createdSessionId });
-    } catch (err) {
-      console.log("error", JSON.stringify(err, null, 2));
-      if (isClerkAPIResponseError(err)) {
-        Alert.alert("Error", err.errors[0].message);
+    if (phone !== "" && phone !== "[phone]") {
+      try {
+        await signUp!.attemptPhoneNumberVerification({ code });
+        await setActive!({ session: signUp!.createdSessionId });
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          Alert.alert("Error", err.errors[0].message);
+        }
+      }
+    } else if (email) {
+      try {
+        console.log("START");
+        await signUp!.attemptEmailAddressVerification({ code });
+        console.log(signUp);
+        await setActive!({ session: signUp!.createdSessionId });
+
+        console.log("DONE", signUp!.createdSessionId);
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          Alert.alert("Error", err.errors[0].message);
+        }
       }
     }
   };
 
   const verifySignIn = async () => {
-    try {
-      await signIn!.attemptFirstFactor({ strategy: "phone_code", code });
-      await setActive!({ session: signIn!.createdSessionId });
-    } catch (err) {
-      console.log("error", JSON.stringify(err, null, 2));
-      if (isClerkAPIResponseError(err)) {
-        Alert.alert("Error", err.errors[0].message);
+    if (phone !== "" && phone !== "[phone]") {
+      try {
+        await signIn!.attemptFirstFactor({ strategy: "phone_code", code });
+        await setActive!({ session: signIn!.createdSessionId });
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          Alert.alert("Error", err.errors[0].message);
+        }
+      }
+    } else if (email) {
+      try {
+        await signIn!.attemptFirstFactor({ strategy: "email_code", code });
+        await setActive!({ session: signIn!.createdSessionId });
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          Alert.alert("Error", err.errors[0].message);
+        }
       }
     }
   };
@@ -69,7 +101,8 @@ const PhoneVerify = () => {
     <View style={defaultStyles.container}>
       <Text style={defaultStyles.header}>6-digit code</Text>
       <Text style={defaultStyles.descriptionText}>
-        Code sent to {phone} unless you already have an account
+        Code sent to {phone !== "" && phone !== "[phone]" ? phone : email}{" "}
+        unless you already have an account
       </Text>
       <CodeField
         ref={ref}
