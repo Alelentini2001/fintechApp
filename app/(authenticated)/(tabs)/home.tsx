@@ -5,7 +5,14 @@ import Colors from "@/constants/Colors";
 import { defaultStyles } from "@/constants/Styles";
 import { useBalanceStore } from "@/store/balanceStore";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Button,
+  Image,
+} from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 const Home = () => {
@@ -29,10 +36,64 @@ const Home = () => {
         paddingTop: headerHeight,
       }}
     >
-      <View style={styles.account}>
+      <View
+        style={[
+          styles.account,
+          { flexDirection: "column", alignItems: "flex-start" },
+        ]}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            width: 66,
+            height: 30,
+            top: 20,
+            left: 10,
+            borderRadius: 20,
+            backgroundColor: "rgba(0,0,0,0.04)",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 5,
+          }}
+        >
+          <Image
+            source={{
+              uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EUFOR_Roundel.svg/1024px-EUFOR_Roundel.svg.png",
+            }}
+            style={{ width: 26, height: 26 }}
+          />
+          <Text style={{ fontSize: 14 }}>EUR</Text>
+        </View>
+        <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
         <View style={styles.row}>
-          <Text style={styles.balance}>{balance()}</Text>
-          <Text style={styles.currency}>€</Text>
+          <Text style={styles.balance}>€ {balance()}</Text>
+          {/* <Text style={styles.balance}>{balance()}</Text> */}
+        </View>
+        <View style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}>
+          <Text style={{ fontWeight: "400", fontSize: 10 }}>
+            Overall Spending is:
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              width: 45,
+              height: 17,
+              top: -2,
+              borderRadius: 20,
+              backgroundColor: "rgba(82,220,79,0.2)",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
+              {balance() > 0
+                ? Math.floor(Math.random() * 100)
+                : Math.floor(Math.random() * -100)}
+              %
+            </Text>
+            <Ionicons name="arrow-up" size={12} color={"rgba(82,220,79,1)"} />
+          </View>
         </View>
       </View>
       <View style={styles.actionRow}>
@@ -86,6 +147,10 @@ const Home = () => {
 
 const styles = StyleSheet.create({
   account: {
+    backgroundColor: "white",
+    height: 160,
+    width: 275,
+    borderRadius: 15,
     margin: 80,
     alignItems: "center",
   },
@@ -96,10 +161,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   balance: {
-    fontSize: 50,
+    left: 15,
+    top: 40,
+    fontSize: 22,
     fontWeight: "bold",
   },
   currency: {
+    left: 30,
     fontSize: 30,
     fontWeight: "500",
   },
