@@ -1,83 +1,161 @@
-import Colors from "@/constants/Colors";
+import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { BlurView } from "expo-blur";
 import CustomHeader from "@/components/CustomHeader";
+import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
+import HomeMainScreen from "./home";
+import InvestScreen from "./invest";
+import TransfersScreen from "./transfers";
+import CryptoScreen from "./crypto";
+import LifestyleScreen from "./lifestyle";
+import Colors from "@/constants/Colors";
+import Animated from "react-native-reanimated";
+import ActionButton from "react-native-action-button";
+import { NavigationContainerRef } from "@react-navigation/native";
 
-const Layout = () => {
+const Slider = () => {
+  //   const onPressStakeholder = () => {
+  //     // Navigate to 'StakeholderScreen'
+  //     navigationRef.current?.navigate("StakeholderView");
+  //   };
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
-        tabBarBackground: () => (
-          <BlurView
-            intensity={100}
-            tint={"extraLight"}
-            style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.05)" }}
-          />
-        ),
-        tabBarStyle: {
-          backgroundColor: "transparent",
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          elevation: 0,
-          borderTopWidth: 0,
-        },
+    <View
+      style={{
+        marginRight: 15,
       }}
     >
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="registered" size={size} color={color} />
-          ),
-          header: () => <CustomHeader />,
-          headerTransparent: true,
-        }}
-      />
-      <Tabs.Screen
-        name="invest"
-        options={{
-          title: "Invest",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="line-chart" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="transfers"
-        options={{
-          title: "Transfers",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="exchange" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="crypto"
-        options={{
-          title: "Crypto",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="bitcoin" size={size} color={color} />
-          ),
-          header: () => <CustomHeader />,
-          headerTransparent: true,
-        }}
-      />
-      <Tabs.Screen
-        name="lifestyle"
-        options={{
-          title: "Lifestyle",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="th" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      <ActionButton
+        buttonColor="white"
+        renderIcon={() => (
+          <Image
+            source={require("@/assets/images/bpay_logo.png")}
+            style={{
+              tintColor: "black",
+              width: 30,
+              height: 30,
+              marginRight: 2,
+            }}
+          />
+        )}
+        degrees={0}
+      ></ActionButton>
+    </View>
   );
 };
+
+const Layout = () => {
+  const renderTabBar = ({ routeName, selectedTab, navigate }) => {
+    const isSelected = routeName === selectedTab;
+    const color = isSelected ? "white" : "gray";
+    const iconSize = 24; // Adjust size if needed
+
+    const getIcon = (name) => {
+      switch (name) {
+        case "home":
+          return require("@/assets/images/homeIcon.png");
+        case "invest":
+          return require("@/assets/images/walletIcon.png");
+        case "transfers":
+          return require("@/assets/images/transactionsIcon.png");
+        case "crypto":
+          return require("@/assets/images/otherMenu.png");
+        case "lifestyle":
+          return require("@/assets/images/settingsIcon.png");
+        default:
+          return require("@/assets/images/homeIcon.png");
+      }
+    };
+
+    return (
+      <TouchableOpacity
+        onPress={() => navigate(routeName)}
+        style={[
+          styles.tabItem,
+          routeName === "transfers" ? { right: 20 } : {},
+          routeName === "crypto" ? { left: 20 } : {},
+        ]}
+      >
+        <Image
+          source={getIcon(routeName)}
+          style={{ height: iconSize, width: iconSize, tintColor: color }}
+        />
+        <Text style={{ color }}>
+          {routeName.charAt(0).toUpperCase() + routeName.slice(1)}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <CurvedBottomBarExpo.Navigator
+      style={styles.navigator}
+      bgColor={"black"}
+      type="UP"
+      screenOptions={{
+        headerShown: true,
+        headerTransparent: true,
+        header: CustomHeader,
+      }}
+      renderCircle={({ selectedTab, navigate }) => (
+        <Animated.View style={{ bottom: 50, left: 10 }}>
+          <Slider />
+          {/* <TouchableOpacity>
+            <Image source={require("@/assets/images/bpay_logo.png")} />
+          </TouchableOpacity> */}
+        </Animated.View>
+      )}
+      initialRouteName="home"
+      tabBar={renderTabBar}
+    >
+      <CurvedBottomBarExpo.Screen
+        name="home"
+        component={HomeMainScreen}
+        position="LEFT"
+      />
+      {/* <CurvedBottomBarExpo.Screen
+        name="invest"
+        component={InvestScreen}
+        position="LEFT"
+      /> */}
+      <CurvedBottomBarExpo.Screen
+        name="transfers"
+        component={TransfersScreen}
+        position="LEFT"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="invest"
+        component={InvestScreen}
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="crypto"
+        component={CryptoScreen}
+        position="RIGHT"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="lifestyle"
+        component={LifestyleScreen}
+        position="RIGHT"
+      />
+    </CurvedBottomBarExpo.Navigator>
+  );
+};
+
+const styles = StyleSheet.create({
+  navigator: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  tabItem: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+  },
+});
+
 export default Layout;
