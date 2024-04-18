@@ -54,7 +54,6 @@ const Home = () => {
     data,
     selectedIndex,
   }) => {
-    console.log(selectedIndex);
     return (
       <View style={styles.container3}>
         {data.map((_, index) => (
@@ -454,8 +453,38 @@ const Home = () => {
           </View>
         ))}
       </View>
-      <Text style={defaultStyles.sectionHeader}>Widgets</Text>
-      <WidgetList />
+      <View
+        style={{
+          backgroundColor: "white",
+          marginTop: 15,
+        }}
+      >
+        <View
+          style={{
+            borderColor: "#F1F1F1",
+            borderWidth: 2,
+            width: 30,
+            borderRadius: 40,
+            marginLeft: "45%",
+            marginTop: 20,
+          }}
+        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={defaultStyles.sectionHeader}>Recent Users</Text>
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: "400",
+              color: "#0085FF",
+              margin: 20,
+              marginBottom: 0,
+            }}
+          >
+            See all
+          </Text>
+        </View>
+        <WidgetList />
+      </View>
     </ScrollView>
   );
 };

@@ -24,7 +24,7 @@ const WidgetList = () => {
   return (
     <View
       style={{
-        paddingHorizontal: MARGIN,
+        paddingHorizontal: 30,
         marginBottom: 80,
       }}
     >
@@ -34,12 +34,8 @@ const WidgetList = () => {
           console.log(JSON.stringify(positions, null, 2))
         }
       >
-        {[...tiles].map((tile, index) => (
-          <Tile
-            onLongPress={() => true}
-            key={tile.id + "-" + index}
-            id={tile.id}
-          />
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((tile, index) => (
+          <Tile onLongPress={() => true} key={index + "-" + index} id={index} />
         ))}
       </SortableList>
     </View>
