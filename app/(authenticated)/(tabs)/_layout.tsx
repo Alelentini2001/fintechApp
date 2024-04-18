@@ -114,11 +114,6 @@ const Layout = () => {
         component={HomeMainScreen}
         position="LEFT"
       />
-      {/* <CurvedBottomBarExpo.Screen
-        name="invest"
-        component={InvestScreen}
-        position="LEFT"
-      /> */}
       <CurvedBottomBarExpo.Screen
         name="transfers"
         component={TransfersScreen}

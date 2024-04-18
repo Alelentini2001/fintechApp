@@ -5,24 +5,35 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Image,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
+  const { user } = useUser();
+
   return (
     <BlurView intensity={80} tint={"extraLight"} style={{ paddingTop: top }}>
       <View style={styles.container}>
         <Link href={"/(authenticated)/(modals)/account"} asChild>
-          <TouchableOpacity style={styles.roundBtn}>
-            <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
-              AL
-            </Text>
-          </TouchableOpacity>
+          {user?.imageUrl ? (
+            <TouchableOpacity style={styles.roundBtn}>
+              <Image style={styles.roundBtn} source={{ uri: user?.imageUrl }} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.roundBtn}>
+              <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
+                {user?.firstName?.charAt(0)}
+                {user?.lastName?.charAt(0)}
+              </Text>
+            </TouchableOpacity>
+          )}
         </Link>
         <View style={styles.searchSelection}>
           <Ionicons
