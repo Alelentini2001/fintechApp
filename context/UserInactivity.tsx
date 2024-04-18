@@ -1,4 +1,4 @@
-import { useAuth } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
@@ -12,6 +12,7 @@ export const UserInactivityProvider = ({ children }: any) => {
   const appState = useRef(AppState.currentState);
   const router = useRouter();
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -34,9 +35,13 @@ export const UserInactivityProvider = ({ children }: any) => {
       appState.current.match(/background/)
     ) {
       const elapsed = Date.now() - (storage.getNumber("startTime") || 0);
-      console.log("🚀 ~ handleAppStateChange ~ elapsed:", elapsed, isSignedIn);
+      console.log(
+        "🚀 ~ handleAppStateChange ~ elapsed:",
+        elapsed,
+        user?.fullName
+      );
 
-      if (elapsed > 3000 && isSignedIn) {
+      if (elapsed > 3000 && user) {
         router.replace("/(authenticated)/(modals)/lock");
       }
     }

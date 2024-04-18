@@ -156,7 +156,7 @@ const Home = () => {
           </>
         );
       case 1:
-        const cashback = balance() * 0.001;
+        const cashback = balance() > 0 ? balance() * 0.001 : 0;
 
         return (
           <>

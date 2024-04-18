@@ -19,6 +19,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.aleprophet.fintech"
     },
+    "notifications": false,
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
