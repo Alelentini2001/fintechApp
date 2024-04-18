@@ -157,6 +157,7 @@ const Home = () => {
         );
       case 1:
         const cashback = balance() * 0.001;
+
         return (
           <>
             <Text
@@ -199,14 +200,14 @@ const Home = () => {
               </View>
               <Text style={{ fontSize: 12, left: 15, top: 40 }}>Cashback</Text>
               <View style={styles.row}>
-                <Text style={styles.balance}>€ {cashback}</Text>
+                <Text style={styles.balance}>€ {cashback.toFixed(3)}</Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
               </View>
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
                 <Text style={{ fontWeight: "400", fontSize: 10 }}>
-                  Overall Spending is:
+                  Overall Earnings are:
                 </Text>
                 <View
                   style={{
@@ -281,9 +282,11 @@ const Home = () => {
                 />
                 <Text style={{ fontSize: 14 }}>EUR</Text>
               </View>
-              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
+              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Referral</Text>
               <View style={styles.row}>
-                <Text style={styles.balance}>€ {balance()}</Text>
+                <Text style={styles.balance}>
+                  € {Math.floor(Math.random() * 100)}
+                </Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
               </View>
               <View
