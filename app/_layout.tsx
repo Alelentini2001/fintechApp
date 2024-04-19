@@ -12,6 +12,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SecureStore from "expo-secure-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserInactivityProvider } from "@/context/UserInactivity";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); // Ignore log notification by message
 
 const queryClient = new QueryClient();
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;

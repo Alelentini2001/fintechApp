@@ -6,19 +6,22 @@ import CustomHeader from "@/components/CustomHeader";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import HomeMainScreen from "./home";
 import InvestScreen from "./invest";
-import TransfersScreen from "./transfers";
+import TransactionScreen from "./transactions";
 import CryptoScreen from "./crypto";
 import LifestyleScreen from "./lifestyle";
 import Colors from "@/constants/Colors";
 import Animated from "react-native-reanimated";
 import ActionButton from "react-native-action-button";
 import { NavigationContainerRef } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import Scan from "./scan";
 
 const Slider = () => {
   //   const onPressStakeholder = () => {
   //     // Navigate to 'StakeholderScreen'
   //     navigationRef.current?.navigate("StakeholderView");
   //   };
+  const router = useRouter();
 
   return (
     <View
@@ -28,6 +31,10 @@ const Slider = () => {
     >
       <ActionButton
         buttonColor="white"
+        onPress={() => {
+          console.log("Press");
+          router.replace("/(authenticated)/(tabs)/scan");
+        }}
         renderIcon={() => (
           <Image
             source={require("@/assets/images/bpay_logo.png")}
@@ -51,13 +58,13 @@ const Layout = () => {
     const color = isSelected ? "white" : "gray";
     const iconSize = 24; // Adjust size if needed
 
-    const getIcon = (name) => {
+    const getIcon = (name: string) => {
       switch (name) {
         case "home":
           return require("@/assets/images/homeIcon.png");
         case "invest":
           return require("@/assets/images/walletIcon.png");
-        case "transfers":
+        case "transactions":
           return require("@/assets/images/transactionsIcon.png");
         case "crypto":
           return require("@/assets/images/otherMenu.png");
@@ -73,7 +80,7 @@ const Layout = () => {
         onPress={() => navigate(routeName)}
         style={[
           styles.tabItem,
-          routeName === "transfers" ? { right: 20 } : {},
+          routeName === "transactions" ? { right: 20 } : {},
           routeName === "crypto" ? { left: 20 } : {},
         ]}
       >
@@ -115,9 +122,14 @@ const Layout = () => {
         position="LEFT"
       />
       <CurvedBottomBarExpo.Screen
-        name="transfers"
-        component={TransfersScreen}
+        name="transactions"
+        component={TransactionScreen}
         position="LEFT"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="scan"
+        component={Scan}
+        position="CENTER"
       />
       <CurvedBottomBarExpo.Screen
         name="invest"

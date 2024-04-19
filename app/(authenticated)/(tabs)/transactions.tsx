@@ -1,0 +1,189 @@
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Image,
+  ScrollView,
+} from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { defaultStyles } from "@/constants/Styles";
+import Colors from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
+import { faker } from "@faker-js/faker";
+import { useEffect, useState } from "react";
+
+const Page = () => {
+  const headerHeight = useHeaderHeight();
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const generateTransactions = () => {
+      const unsortedTransactions = Array.from({ length: 8 }, () => ({
+        id: faker.datatype.uuid(),
+        avatar: faker.image.avatar(),
+        name: faker.person.fullName(),
+        date: new Date(faker.date.recent().toISOString()), // Change to Date object for easier comparison
+        price: parseFloat((Math.random() * 100).toFixed(2)), // Generate random prices
+      }));
+
+      // Sorting the transactions by date
+      return unsortedTransactions.sort((a, b) => b.date - a.date); // Descending order
+    };
+    setTransactions(generateTransactions());
+  }, []);
+
+  return (
+    <ScrollView style={{ marginTop: headerHeight, marginLeft: 20 }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Transactions</Text>
+      </View>
+      <View style={{ flexDirection: "row", padding: 5 }}>
+        <View style={styles.searchSelection}>
+          <Ionicons
+            name="search"
+            size={20}
+            color={Colors.dark}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Search"
+            placeholderTextColor={Colors.dark}
+          />
+        </View>
+        <View style={styles.circle}>
+          <Ionicons name="filter-outline" size={24} color={"white"} />
+        </View>
+      </View>
+      <View
+        style={{
+          flexDirection: "column",
+          marginTop: 10,
+        }}
+      >
+        <View
+          key={"test"}
+          style={{
+            flexDirection: "row",
+            marginTop: 20,
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={[styles.circle, { overflow: "hidden", marginRight: 10 }]}
+          >
+            <Image
+              source={{ uri: "" }}
+              style={{ width: "100%", height: "100%", borderRadius: 30 }}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "column",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Text style={[styles.name, { color: Colors.dark }]}>
+              Alessandro Lentini
+            </Text>
+            <Text style={[styles.date, { color: Colors.dark }]}>
+              Fri, 19 Apr 2024 14:58:21 GMT
+            </Text>
+          </View>
+          <View style={{ flex: 1 }} />
+          <Text
+            style={[styles.price, { color: "#FF6868" }]}
+          >{`${"-"}€${3.98}`}</Text>
+        </View>
+        <View style={{ flexDirection: "column", marginTop: 10 }}>
+          {transactions.map((transaction) => (
+            <View
+              key={transaction.id}
+              style={{
+                flexDirection: "row",
+                marginTop: 20,
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={[styles.circle, { overflow: "hidden", marginRight: 10 }]}
+              >
+                <Image
+                  source={{ uri: transaction.avatar }}
+                  style={{ width: "100%", height: "100%", borderRadius: 30 }}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <Text style={[styles.name, { color: Colors.dark }]}>
+                  {transaction.name}
+                </Text>
+                <Text style={[styles.date, { color: Colors.dark }]}>
+                  {transaction.date.toUTCString()}
+                </Text>
+              </View>
+              <View style={{ flex: 1 }} />
+              <Text
+                style={[
+                  styles.price,
+                  { color: transaction.price > 0 ? "#0ABF8A" : "#FF6868" },
+                ]}
+              >{`${
+                transaction.price > 0 ? "+" : "-"
+              }€${transaction.price.toFixed(2)}`}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { marginTop: 20 },
+  title: {
+    fontSize: 24,
+    fontWeight: "400",
+    marginBottom: 20,
+    color: Colors.dark,
+  },
+  searchSelection: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: Colors.lightGray,
+    borderRadius: 30,
+    alignItems: "center",
+    marginRight: 20,
+    justifyContent: "center",
+  },
+  searchIcon: {
+    padding: 10,
+  },
+  input: {
+    flex: 1,
+    paddingTop: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    paddingLeft: 0,
+    color: Colors.dark,
+  },
+  circle: {
+    width: 44,
+    height: 44,
+    borderRadius: 70,
+    marginRight: 10,
+    backgroundColor: Colors.dark,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  name: { fontSize: 14, fontWeight: "400" },
+  date: { fontSize: 10, fontWeight: "400" },
+  price: { marginRight: 20, fontSize: 16, fontWeight: "600" },
+});
+
+export default Page;

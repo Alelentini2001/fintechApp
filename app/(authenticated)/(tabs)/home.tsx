@@ -15,9 +15,12 @@ import {
   FlatList,
   Dimensions,
   ViewabilityConfig,
+  TouchableOpacity,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRef, useState } from "react";
+import Animated from "react-native-reanimated";
+import { useRouter } from "expo-router";
 
 interface CarouselIndicatorProps {
   data: number[];
@@ -27,6 +30,7 @@ interface CarouselIndicatorProps {
 const Home = () => {
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
+  const router = useRouter();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -414,14 +418,72 @@ const Home = () => {
       <CarouselIndicator data={[0, 1, 2]} selectedIndex={selectedIndex} />
 
       <View style={styles.actionRow}>
-        <RoundBtn icon={"add"} text={"Add money"} onPress={onAddMoney} />
+        {/* <RoundBtn icon={"add"} text={"Add money"} onPress={onAddMoney} />
         <RoundBtn
           icon={"refresh"}
           text={"Exchange"}
           onPress={clearTransactions}
         />
         <RoundBtn icon={"list"} text={"Details"} />
-        <Dropdown />
+        <Dropdown /> */}
+        <View
+          style={{ flexDirection: "row", flex: 1, justifyContent: "center" }}
+        >
+          {/* <Text style={{color: 'white'}}>Hello</Text> */}
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.requestPayButton,
+              {
+                backgroundColor: "#FF5A5A",
+                width: 165,
+                alignItems: "center",
+                borderRadius: 20,
+              },
+            ]}
+            onPress={() => {
+              router.navigate("/(authenticated)/(tabs)/scan");
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Animated.Image
+                source={require("@/assets/images/send.png")}
+                style={{
+                  tintColor: "white",
+                  width: 25,
+                  height: 25,
+                  marginRight: 5,
+                }}
+              />
+              <Text style={styles.buttonText}>Send</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.requestPayButton,
+              {
+                backgroundColor: "#43A047",
+                width: 165,
+                alignItems: "center",
+                borderRadius: 20,
+              },
+            ]}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Animated.Image
+                source={require("@/assets/images/request.png")}
+                style={{
+                  tintColor: "white",
+                  width: 25,
+                  height: 25,
+                  marginRight: 5,
+                }}
+              />
+              <Text style={styles.buttonText}>Request</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
       <Text style={defaultStyles.sectionHeader}>Transactions</Text>
       <View style={styles.transactions}>
@@ -521,7 +583,8 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 20,
+    padding: 0,
+    //padding: 20
   },
   transactions: {
     marginHorizontal: 20,
@@ -558,6 +621,20 @@ const styles = StyleSheet.create({
   selectedIndicator: {
     width: 20,
     backgroundColor: "black",
+  },
+  buttonContainer: {
+    marginLeft: 10,
+    height: 60,
+    alignContent: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: "white",
+  },
+  requestPayButton: {
+    backgroundColor: "blue",
   },
 });
 export default Home;
