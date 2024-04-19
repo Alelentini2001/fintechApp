@@ -15,6 +15,7 @@ import ActionButton from "react-native-action-button";
 import { NavigationContainerRef } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import Scan from "./scan";
+import Wallet from "./wallet";
 
 const Slider = () => {
   //   const onPressStakeholder = () => {
@@ -134,6 +135,11 @@ const Layout = () => {
       <CurvedBottomBarExpo.Screen
         name="invest"
         component={InvestScreen}
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="wallet"
+        component={Wallet}
         position="CIRCLE"
       />
       <CurvedBottomBarExpo.Screen

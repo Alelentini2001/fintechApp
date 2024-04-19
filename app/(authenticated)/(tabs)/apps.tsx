@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Currency } from "@/interfaces/crypto";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Colors from "@/constants/Colors";
 import { defaultStyles } from "@/constants/Styles";
@@ -19,7 +19,7 @@ import { SIZE } from "@/components/SortableList/Config";
 
 const Crypto = () => {
   const headerHeight = useHeaderHeight();
-
+  const router = useRouter();
   const currencies = useQuery({
     queryKey: ["currencies"],
     queryFn: () => fetch("/api/listings").then((res) => res.json()),
@@ -110,6 +110,7 @@ const Crypto = () => {
         <TouchableOpacity
           onPress={() => {
             console.log("Pressed Wallet");
+            router.navigate("/(authenticated)/(tabs)/wallet");
           }}
         >
           <View

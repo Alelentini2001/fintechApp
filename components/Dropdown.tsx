@@ -1,12 +1,17 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import RoundBtn from "./RoundBtn";
+import { Ionicons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 const Dropdown = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <RoundBtn icon={"ellipsis-horizontal"} text={"More"} />
+        {/* <RoundBtn icon={"filter-outline"} text={"More"} /> */}
+        <View style={styles.circle}>
+          <Ionicons name="filter-outline" size={24} color={"white"} />
+        </View>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item key="statement">
@@ -35,5 +40,17 @@ const Dropdown = () => {
     </DropdownMenu.Root>
   );
 };
+
+const styles = StyleSheet.create({
+  circle: {
+    width: 44,
+    height: 44,
+    borderRadius: 70,
+    marginRight: 10,
+    backgroundColor: Colors.dark,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default Dropdown;

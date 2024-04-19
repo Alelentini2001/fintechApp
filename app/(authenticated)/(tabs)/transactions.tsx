@@ -12,11 +12,13 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
+import * as DropdownMenu from "zeego/dropdown-menu";
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [sortKey, setSortKey] = useState<string>("date"); // Default sort by date
 
   useEffect(() => {
     const generateTransactions = () => {
@@ -44,6 +46,24 @@ const Page = () => {
     transaction.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleSort = (key: string) => {
+    setSortKey(key);
+  };
+
+  const sortedTransactions = transactions
+    .sort((a, b) => {
+      if (sortKey === "date") {
+        return b.date - a.date;
+      } else if (sortKey === "price") {
+        return b.price - a.price;
+      } else if (sortKey === "name") {
+        return a.name.localeCompare(b.name);
+      }
+    })
+    .filter((transaction) =>
+      transaction.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+
   return (
     <ScrollView style={{ marginTop: headerHeight, marginLeft: 20 }}>
       <View style={styles.container}>
@@ -65,9 +85,38 @@ const Page = () => {
             value={searchText}
           />
         </View>
-        <View style={styles.circle}>
+
+        {/* <View style={styles.circle}>
           <Ionicons name="filter-outline" size={24} color={"white"} />
-        </View>
+          
+        </View> */}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <View style={styles.circle}>
+              <Ionicons name="filter-outline" size={24} color="white" />
+            </View>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item key="date" onSelect={() => handleSort("date")}>
+              <DropdownMenu.ItemTitle>Date</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemIcon
+                ios={{ name: "calendar", pointSize: 24 }}
+              />
+            </DropdownMenu.Item>
+            <DropdownMenu.Item key="price" onSelect={() => handleSort("price")}>
+              <DropdownMenu.ItemTitle>Price</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemIcon
+                ios={{ name: "eurosign.circle", pointSize: 24 }}
+              />
+            </DropdownMenu.Item>
+            <DropdownMenu.Item key="name" onSelect={() => handleSort("name")}>
+              <DropdownMenu.ItemTitle>Name</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemIcon
+                ios={{ name: "person.circle", pointSize: 24 }}
+              />
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </View>
       <View
         style={{
@@ -112,7 +161,7 @@ const Page = () => {
         <View
           style={{ flexDirection: "column", marginTop: 10, marginBottom: 100 }}
         >
-          {filteredTransactions.map((transaction) => (
+          {sortedTransactions.map((transaction) => (
             <View
               key={transaction.id}
               style={{
