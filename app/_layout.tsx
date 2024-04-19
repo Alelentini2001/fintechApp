@@ -69,19 +69,37 @@ const InitialLayout = () => {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+  const [fontsLoaded] = useFonts({
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    ...Ionicons.font,
+  });
+  // useEffect(() => {
+  //   if (!isLoaded) return;
 
+  //   const inAuthGroup = segments[0] === "(authenticated)";
+
+  //   if (isSignedIn && !inAuthGroup) {
+  //     //router.replace("/(authenticated)/(tabs)/crypto");
+  //     router.replace("/(authenticated)/(modals)/lock");
+  //   } else if (!isSignedIn) {
+  //     router.replace("/");
+  //   }
+  // }, [isSignedIn]);
   useEffect(() => {
-    if (!isLoaded) return;
-
-    const inAuthGroup = segments[0] === "(authenticated)";
-
-    if (isSignedIn && !inAuthGroup) {
-      //router.replace("/(authenticated)/(tabs)/crypto");
-      router.replace("/(authenticated)/(modals)/lock");
-    } else if (!isSignedIn) {
-      router.replace("/");
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+      if (fontsLoaded && isLoaded) {
+        SplashScreen.hideAsync();
+        if (isSignedIn && segments[0] !== "(authenticated)") {
+          router.replace("/(authenticated)/(modals)/lock");
+        } else if (!isSignedIn) {
+          router.replace("/");
+        }
+      }
     }
-  }, [isSignedIn]);
+
+    prepare();
+  }, [fontsLoaded, isLoaded, isSignedIn, segments]);
 
   if (!loaded || !isLoaded) {
     return (
@@ -213,7 +231,7 @@ const RootLayoutNav = () => {
       <QueryClientProvider client={queryClient}>
         <UserInactivityProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <StatusBar style="light" />
+            <StatusBar style="dark" />
             <InitialLayout />
           </GestureHandlerRootView>
         </UserInactivityProvider>

@@ -20,8 +20,8 @@ const Page = () => {
 
   useEffect(() => {
     const generateTransactions = () => {
-      const unsortedTransactions = Array.from({ length: 8 }, () => ({
-        id: faker.datatype.uuid(),
+      const unsortedTransactions = Array.from({ length: 18 }, () => ({
+        id: faker.number.int(),
         avatar: faker.image.avatar(),
         name: faker.person.fullName(),
         date: new Date(faker.date.recent().toISOString()), // Change to Date object for easier comparison
@@ -109,7 +109,9 @@ const Page = () => {
             style={[styles.price, { color: "#FF6868" }]}
           >{`${"-"}€${3.98}`}</Text>
         </View> */}
-        <View style={{ flexDirection: "column", marginTop: 10 }}>
+        <View
+          style={{ flexDirection: "column", marginTop: 10, marginBottom: 100 }}
+        >
           {filteredTransactions.map((transaction) => (
             <View
               key={transaction.id}
