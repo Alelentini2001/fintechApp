@@ -218,6 +218,10 @@ const InitialLayout = () => {
         name="help"
         options={{ title: "help", presentation: "modal" }}
       />
+      <Stack.Screen
+        name="friends"
+        options={{ title: "Your Friends", presentation: "modal" }}
+      />
     </Stack>
   );
 };

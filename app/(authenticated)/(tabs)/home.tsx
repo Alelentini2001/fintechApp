@@ -20,7 +20,7 @@ import {
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRef, useState } from "react";
 import Animated from "react-native-reanimated";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
 interface CarouselIndicatorProps {
   data: number[];
@@ -535,18 +535,20 @@ const Home = () => {
           }}
         />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={defaultStyles.sectionHeader}>Recent Users</Text>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: "400",
-              color: "#0085FF",
-              margin: 20,
-              marginBottom: 0,
-            }}
-          >
-            See all
-          </Text>
+          <Text style={defaultStyles.sectionHeader}>Recent Friends</Text>
+          <Link href={"/friends"} asChild>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "400",
+                color: "#0085FF",
+                margin: 20,
+                marginBottom: 0,
+              }}
+            >
+              See all
+            </Text>
+          </Link>
         </View>
         <WidgetList />
       </View>
