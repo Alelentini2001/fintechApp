@@ -7,7 +7,7 @@ import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import HomeMainScreen from "./home";
 import InvestScreen from "./invest";
 import TransactionScreen from "./transactions";
-import CryptoScreen from "./crypto";
+import Apps from "./apps";
 import LifestyleScreen from "./lifestyle";
 import Colors from "@/constants/Colors";
 import Animated from "react-native-reanimated";
@@ -66,7 +66,7 @@ const Layout = () => {
           return require("@/assets/images/walletIcon.png");
         case "transactions":
           return require("@/assets/images/transactionsIcon.png");
-        case "crypto":
+        case "Apps":
           return require("@/assets/images/otherMenu.png");
         case "lifestyle":
           return require("@/assets/images/settingsIcon.png");
@@ -81,7 +81,7 @@ const Layout = () => {
         style={[
           styles.tabItem,
           routeName === "transactions" ? { right: 20 } : {},
-          routeName === "crypto" ? { left: 20 } : {},
+          routeName === "Apps" ? { left: 20 } : {},
         ]}
       >
         <Image
@@ -137,8 +137,8 @@ const Layout = () => {
         position="CIRCLE"
       />
       <CurvedBottomBarExpo.Screen
-        name="crypto"
-        component={CryptoScreen}
+        name="Apps"
+        component={Apps}
         position="RIGHT"
       />
       <CurvedBottomBarExpo.Screen

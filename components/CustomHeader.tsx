@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
@@ -35,7 +36,7 @@ const CustomHeader = () => {
             </TouchableOpacity>
           )}
         </Link>
-        <View style={styles.searchSelection}>
+        {/* <View style={styles.searchSelection}>
           <Ionicons
             name="search"
             size={20}
@@ -47,13 +48,39 @@ const CustomHeader = () => {
             placeholder="Search"
             placeholderTextColor={Colors.dark}
           />
+        </View> */}
+        <View style={{ flexDirection: "column", marginLeft: 10, flex: 1 }}>
+          <View>
+            <Text style={styles.greetingText}>
+              {new Date().getHours() >= 12 && new Date().getHours() < 24
+                ? "Good Afternoon"
+                : "Good Morning"}
+            </Text>
+          </View>
+          <View>
+            {user?.fullName ? (
+              <Text
+                style={styles.userName}
+                numberOfLines={1} // Restrict to one line
+                ellipsizeMode="tail" // Show ellipsis (...) at the end if the text is too long
+              >
+                {user?.fullName}
+              </Text>
+            ) : (
+              <ActivityIndicator size="small" />
+            )}
+          </View>
         </View>
         <View style={styles.circle}>
-          <Ionicons name="stats-chart" size={20} color={Colors.dark} />
+          <Ionicons
+            name="notifications-outline"
+            size={20}
+            color={Colors.dark}
+          />
         </View>
-        <View style={styles.circle}>
+        {/* <View style={styles.circle}>
           <Ionicons name="card" size={20} color={Colors.dark} />
-        </View>
+        </View> */}
       </View>
     </BlurView>
   );
@@ -103,6 +130,21 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGray,
     justifyContent: "center",
     alignItems: "center",
+  },
+  greeting: {
+    marginRight: 0,
+  },
+  greetingText: {
+    fontSize: 12,
+    color: "black",
+  },
+  userNameContainer: {
+    marginLeft: 0,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
   },
 });
 export default CustomHeader;
