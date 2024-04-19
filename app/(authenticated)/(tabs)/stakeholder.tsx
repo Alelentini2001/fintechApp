@@ -121,7 +121,7 @@ const Stakeholder = () => {
           alignItems: "center",
         }}
       >
-        <TouchableOpacity
+        <View
           style={{
             backgroundColor: Colors.dark,
             width: "96%",
@@ -134,7 +134,7 @@ const Stakeholder = () => {
           <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
             Daily Earnings: {Math.floor(Math.random() * 100).toFixed(2)}
           </Text>
-        </TouchableOpacity>
+        </View>
         <View style={{ flexDirection: "row", marginTop: 5, gap: 2 }}>
           <TouchableOpacity
             style={{
