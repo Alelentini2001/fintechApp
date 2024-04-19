@@ -121,7 +121,7 @@ const Home = () => {
               </View>
               <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
               <View style={styles.row}>
-                <Text style={styles.balance}>€ {balance()}</Text>
+                <Text style={styles.balance}>€ {balance().toFixed(2)}</Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
               </View>
               <View
@@ -514,7 +514,7 @@ const Home = () => {
                 {transaction.date.toLocaleString()}
               </Text>
             </View>
-            <Text>{transaction.amount}€</Text>
+            <Text>{transaction.amount.toFixed(2)}€</Text>
           </View>
         ))}
       </View>

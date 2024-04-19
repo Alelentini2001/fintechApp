@@ -146,6 +146,7 @@ const Crypto = () => {
         <TouchableOpacity
           onPress={() => {
             console.log("Pressed Stakeholder");
+            router.navigate("/(authenticated)/(tabs)/stakeholder");
           }}
         >
           <View
@@ -259,6 +260,7 @@ const Crypto = () => {
         <TouchableOpacity
           onPress={() => {
             console.log("Pressed Crypto");
+            router.navigate("/(authenticated)/(tabs)/crypto");
           }}
         >
           <View

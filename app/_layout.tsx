@@ -73,33 +73,33 @@ const InitialLayout = () => {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...Ionicons.font,
   });
-  // useEffect(() => {
-  //   if (!isLoaded) return;
-
-  //   const inAuthGroup = segments[0] === "(authenticated)";
-
-  //   if (isSignedIn && !inAuthGroup) {
-  //     //router.replace("/(authenticated)/(tabs)/crypto");
-  //     router.replace("/(authenticated)/(modals)/lock");
-  //   } else if (!isSignedIn) {
-  //     router.replace("/");
-  //   }
-  // }, [isSignedIn]);
   useEffect(() => {
-    async function prepare() {
-      await SplashScreen.preventAutoHideAsync();
-      if (fontsLoaded && isLoaded) {
-        SplashScreen.hideAsync();
-        if (isSignedIn && segments[0] !== "(authenticated)") {
-          router.replace("/(authenticated)/(modals)/lock");
-        } else if (!isSignedIn) {
-          router.replace("/");
-        }
-      }
-    }
+    if (!isLoaded) return;
 
-    prepare();
-  }, [fontsLoaded, isLoaded, isSignedIn, segments]);
+    const inAuthGroup = segments[0] === "(authenticated)";
+
+    if (isSignedIn && !inAuthGroup) {
+      //router.replace("/(authenticated)/(tabs)/crypto");
+      router.replace("/(authenticated)/(modals)/lock");
+    } else if (!isSignedIn) {
+      router.replace("/");
+    }
+  }, [isSignedIn]);
+  // useEffect(() => {
+  //   async function prepare() {
+  //     await SplashScreen.preventAutoHideAsync();
+  //     if (fontsLoaded && isLoaded) {
+  //       SplashScreen.hideAsync();
+  //       if (isSignedIn && segments[0] !== "(authenticated)") {
+  //         router.replace("/(authenticated)/(modals)/lock");
+  //       } else if (!isSignedIn) {
+  //         router.replace("/");
+  //       }
+  //     }
+  //   }
+
+  //   prepare();
+  // }, [fontsLoaded, isLoaded, isSignedIn, segments]);
 
   if (!loaded || !isLoaded) {
     return (

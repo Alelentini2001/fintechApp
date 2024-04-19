@@ -16,6 +16,8 @@ import { NavigationContainerRef } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import Scan from "./scan";
 import Wallet from "./wallet";
+import Stakeholder from "./stakeholder";
+import Crypto from "./crypto";
 
 const Slider = () => {
   //   const onPressStakeholder = () => {
@@ -140,6 +142,16 @@ const Layout = () => {
       <CurvedBottomBarExpo.Screen
         name="wallet"
         component={Wallet}
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="stakeholder"
+        component={Stakeholder}
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="crypto"
+        component={Crypto}
         position="CIRCLE"
       />
       <CurvedBottomBarExpo.Screen
