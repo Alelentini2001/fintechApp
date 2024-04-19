@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 const Page = () => {
   const headerHeight = useHeaderHeight();
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
 
   useEffect(() => {
     const generateTransactions = () => {
@@ -26,12 +27,22 @@ const Page = () => {
         date: new Date(faker.date.recent().toISOString()), // Change to Date object for easier comparison
         price: parseFloat((Math.random() * 100).toFixed(2)), // Generate random prices
       }));
-
+      unsortedTransactions.push({
+        id: "ale",
+        avatar: faker.image.avatar(),
+        name: "Alessandro Lentini",
+        date: new Date(),
+        price: -3.25,
+      });
       // Sorting the transactions by date
       return unsortedTransactions.sort((a, b) => b.date - a.date); // Descending order
     };
     setTransactions(generateTransactions());
   }, []);
+
+  const filteredTransactions = transactions.filter((transaction) =>
+    transaction.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <ScrollView style={{ marginTop: headerHeight, marginLeft: 20 }}>
@@ -50,6 +61,8 @@ const Page = () => {
             style={styles.input}
             placeholder="Search"
             placeholderTextColor={Colors.dark}
+            onChangeText={setSearchText}
+            value={searchText}
           />
         </View>
         <View style={styles.circle}>
@@ -62,7 +75,7 @@ const Page = () => {
           marginTop: 10,
         }}
       >
-        <View
+        {/* <View
           key={"test"}
           style={{
             flexDirection: "row",
@@ -95,9 +108,9 @@ const Page = () => {
           <Text
             style={[styles.price, { color: "#FF6868" }]}
           >{`${"-"}€${3.98}`}</Text>
-        </View>
+        </View> */}
         <View style={{ flexDirection: "column", marginTop: 10 }}>
-          {transactions.map((transaction) => (
+          {filteredTransactions.map((transaction) => (
             <View
               key={transaction.id}
               style={{
