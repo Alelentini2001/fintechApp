@@ -22,20 +22,20 @@ const CustomHeader = () => {
   return (
     <BlurView intensity={80} tint={"extraLight"} style={{ paddingTop: top }}>
       <View style={styles.container}>
-        <Link href={"/(authenticated)/(modals)/account"} asChild>
-          {user?.imageUrl ? (
-            <TouchableOpacity style={styles.roundBtn}>
-              <Image style={styles.roundBtn} source={{ uri: user?.imageUrl }} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.roundBtn}>
-              <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
-                {user?.firstName?.charAt(0)}
-                {user?.lastName?.charAt(0)}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </Link>
+        {/* <Link href={"/(authenticated)/(modals)/account"} asChild> */}
+        {user?.imageUrl ? (
+          <View style={styles.roundBtn}>
+            <Image style={styles.roundBtn} source={{ uri: user?.imageUrl }} />
+          </View>
+        ) : (
+          <View style={styles.roundBtn}>
+            <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
+              {user?.firstName?.charAt(0)}
+              {user?.lastName?.charAt(0)}
+            </Text>
+          </View>
+        )}
+        {/* </Link> */}
         {/* <View style={styles.searchSelection}>
           <Ionicons
             name="search"
@@ -49,7 +49,7 @@ const CustomHeader = () => {
             placeholderTextColor={Colors.dark}
           />
         </View> */}
-        <View style={{ flexDirection: "column", marginLeft: 10, flex: 1 }}>
+        <View style={{ flexDirection: "column", flex: 1 }}>
           <View>
             <Text style={styles.greetingText}>
               {new Date().getHours() >= 12 && new Date().getHours() < 24

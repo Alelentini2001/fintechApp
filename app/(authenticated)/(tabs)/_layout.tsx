@@ -8,7 +8,7 @@ import HomeMainScreen from "./home";
 import InvestScreen from "./invest";
 import TransactionScreen from "./transactions";
 import Apps from "./apps";
-import LifestyleScreen from "./lifestyle";
+import Settings from "./settings";
 import Colors from "@/constants/Colors";
 import Animated from "react-native-reanimated";
 import ActionButton from "react-native-action-button";
@@ -18,6 +18,7 @@ import Scan from "./scan";
 import Wallet from "./wallet";
 import Stakeholder from "./stakeholder";
 import Crypto from "./crypto";
+import { useRouteInfo } from "expo-router/build/hooks";
 
 const Slider = () => {
   //   const onPressStakeholder = () => {
@@ -71,7 +72,7 @@ const Layout = () => {
           return require("@/assets/images/transactionsIcon.png");
         case "Apps":
           return require("@/assets/images/otherMenu.png");
-        case "lifestyle":
+        case "settings":
           return require("@/assets/images/settingsIcon.png");
         default:
           return require("@/assets/images/homeIcon.png");
@@ -98,13 +99,15 @@ const Layout = () => {
     );
   };
 
+  const route = useRouteInfo();
+
   return (
     <CurvedBottomBarExpo.Navigator
       style={styles.navigator}
       bgColor={"black"}
       type="UP"
       screenOptions={{
-        headerShown: true,
+        headerShown: route.pathname === "/settings" ? false : true,
         headerTransparent: true,
         header: CustomHeader,
       }}
@@ -160,8 +163,8 @@ const Layout = () => {
         position="RIGHT"
       />
       <CurvedBottomBarExpo.Screen
-        name="lifestyle"
-        component={LifestyleScreen}
+        name="settings"
+        component={Settings}
         position="RIGHT"
       />
     </CurvedBottomBarExpo.Navigator>
