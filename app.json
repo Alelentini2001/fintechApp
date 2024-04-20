@@ -17,7 +17,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aleprophet.fintech"
+      "bundleIdentifier": "com.aleprophet.fintech",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID."
+      }
     },
     "notifications": false,
     "android": {
@@ -25,7 +28,13 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.aleprophet.fintech"
+      "package": "com.aleprophet.fintech",
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -75,6 +84,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": "https://galaxies.dev"
+      },
+      "eas": {
+        "projectId": "e6e15b96-1910-425-9d59-267e11a897d3"
+      }
+    },
+    "owner": "alelentini"
   }
 }
