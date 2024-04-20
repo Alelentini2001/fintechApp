@@ -115,7 +115,10 @@ const Layout = () => {
       bgColor={"black"}
       type="UP"
       screenOptions={{
-        headerShown: route.pathname === "/settings" ? false : true,
+        headerShown:
+          route.pathname === "/settings" || route.pathname === "/scan"
+            ? false
+            : true,
         headerTransparent: true,
         header: CustomHeader,
       }}
