@@ -275,7 +275,14 @@ const Settings = () => {
                     setShowLanguages(!showLanguages);
                   }}
                 >
-                  <Ionicons name="arrow-forward-outline" size={22} />
+                  <Ionicons
+                    name={
+                      showLanguages
+                        ? "arrow-down-outline"
+                        : "arrow-forward-outline"
+                    }
+                    size={22}
+                  />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -303,6 +310,13 @@ const Settings = () => {
                       <Text style={{ color: Colors.dark, fontSize: 18 }}>
                         {Object.keys(language)[0]}
                       </Text>
+                      {i18n.locale === Object.values(language)[0] && (
+                        <Ionicons
+                          name="checkmark"
+                          size={24}
+                          color={Colors.dark}
+                        />
+                      )}
                     </TouchableOpacity>
                   )
                 )}
