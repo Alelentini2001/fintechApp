@@ -1,4 +1,4 @@
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { useAuth, useSignUp, useUser } from "@clerk/clerk-expo";
 import { useEffect, useState } from "react";
 import {
   View,
@@ -13,6 +13,7 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { getAppIcon, setAppIcon } from "expo-dynamic-app-icon";
+import { useRouter } from "expo-router";
 
 const ICONS = [
   {
@@ -35,8 +36,10 @@ const Page = () => {
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
   const [edit, setEdit] = useState(false);
-
+  const [editEmail, setEditEmail] = useState(false);
+  const [email, setEmail] = useState(user?.primaryEmailAddress?.toString());
   const [activeIcon, setActiveIcon] = useState("Default");
+  const { signUp } = useSignUp();
 
   useEffect(() => {
     const loadCurrentIconPref = async () => {
@@ -55,6 +58,37 @@ const Page = () => {
       console.error(error);
     } finally {
       setEdit(false);
+    }
+  };
+  const router = useRouter();
+
+  const onSaveEmail = async () => {
+    if (email) {
+      try {
+        // Assuming `user` is available via useUser() hook from Clerk.
+        // First, add the email address to the user account.
+        console.log("START");
+        const emailAddress = await user?.createEmailAddress({ email: email! });
+        console.log("Email address added:", emailAddress?.id);
+        await emailAddress?.prepareVerification({ strategy: "email_code" });
+        router.dismiss();
+        router.navigate({
+          pathname: "/verify/[phone]",
+          params: { email: email, edit: true },
+        });
+
+        setEditEmail(false); // UI state updated to reflect the end of the editing process.
+      } catch (error) {
+        console.error("Failed to save email:", error);
+        if (error.errors) {
+          error.errors.forEach((err) => {
+            console.error(err.code, err.message);
+          });
+        }
+        setEditEmail(false); // Ensure UI state is reset even on error.
+      }
+    } else {
+      console.error("No email set");
     }
   };
 
@@ -129,9 +163,67 @@ const Page = () => {
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.btn} onPress={() => signOut()}>
-          <Ionicons name="log-out" size={24} color={"#fff"} />
-          <Text style={{ color: "#fff", fontSize: 18 }}>Log out</Text>
+        <TouchableOpacity
+          style={[styles.btn, { alignItems: "center" }]}
+          onPress={() => setEditEmail(!editEmail)}
+        >
+          <Ionicons name="mail" size={24} color={"#fff"} />
+          {editEmail ? (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
+              <TextInput
+                placeholder="Email"
+                value={email || ""}
+                onChangeText={setEmail}
+                style={[styles.inputField, { width: "70%" }]}
+              />
+              <TouchableOpacity
+                onPress={onSaveEmail}
+                style={{
+                  marginLeft: "auto",
+                  marginRight: 10,
+                }}
+              >
+                <Ionicons name="checkmark-outline" size={24} color={"#fff"} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ marginRight: 10 }}
+                onPress={() => {
+                  setEditEmail(false);
+                }}
+              >
+                <Ionicons name="close-outline" size={24} color={"#fff"} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 18 }}>Email</Text>
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: 18,
+                  marginLeft: "auto",
+                  marginRight: 10,
+                }}
+              >
+                {user?.primaryEmailAddress
+                  ? user?.primaryEmailAddress.toString()
+                  : "No email yet"}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
         <TouchableOpacity style={styles.btn}>
           <Ionicons name="person" size={24} color={"#fff"} />

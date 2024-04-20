@@ -67,26 +67,36 @@ const Login = () => {
       }
     } else if (type === SignInType.Email) {
       try {
-        const { supportedFirstFactors } = await signIn!.create({
+        const signed = await signIn;
+
+        const { supportedFirstFactors } = await signIn.create({
           identifier: email,
         });
-
-        const firstEmailFactor: any = supportedFirstFactors.find(
-          (factor: any) => {
-            return factor.strategy == "email_code";
-          }
+        const firstEmailFactor = supportedFirstFactors.find(
+          (factor) => factor.strategy === "email_code"
         );
 
-        const { emailId } = firstEmailFactor;
+        // Ensure that we have a valid email factor object
+        if (!firstEmailFactor || !firstEmailFactor.emailAddressId) {
+          console.error(
+            "Email code sign-in strategy not found or missing email address ID."
+          );
+          return; // Exit function or handle error appropriately
+        }
 
-        await signIn!.prepareFirstFactor({
+        const { emailAddressId } = firstEmailFactor;
+
+        await signIn.prepareFirstFactor({
           strategy: "email_code",
-          emailAddressId: emailId,
+          emailAddressId: emailAddressId, // Corrected the property name
         });
+
+        // Using router to navigate to the verification page
+        // Make sure to use `query` instead of `params` if you're using next/router or a similar routing system
 
         router.push({
           pathname: "/verify/[phone]",
-          params: { signin: "true", email: email },
+          params: { email: email, signin: "true" },
         });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));

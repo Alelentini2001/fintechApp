@@ -43,7 +43,7 @@ const Signup = () => {
         await signUp!.create({
           emailAddress: email,
         });
-        signUp!.prepareEmailAddressVerification({ strategy: "email_code" });
+        signUp!.prepareEmailAddressVerification();
         router.push({
           pathname: "/verify/[phone]",
           params: { email: email },

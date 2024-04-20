@@ -4,8 +4,9 @@ import {
   isClerkAPIResponseError,
   useSignIn,
   useSignUp,
+  useUser,
 } from "@clerk/clerk-expo";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { Fragment, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import {
@@ -17,7 +18,7 @@ import {
 const CELL_COUNT = 6;
 
 const PhoneVerify = () => {
-  const { phone, signin, email } = useLocalSearchParams<{
+  const { phone, signin, email, edit } = useLocalSearchParams<{
     phone: string;
     signin: string;
     email: string;
@@ -25,7 +26,7 @@ const PhoneVerify = () => {
   const [code, setCode] = useState("");
   const { signIn } = useSignIn();
   const { signUp, setActive } = useSignUp();
-
+  console.log(email, signin);
   const ref = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
@@ -44,11 +45,14 @@ const PhoneVerify = () => {
       }
     }
   }, [code]);
+  const { user } = useUser();
 
   const verifyCode = async () => {
+    console.log(email, phone);
     if (phone !== "" && phone !== "[phone]") {
       try {
         await signUp!.attemptPhoneNumberVerification({ code });
+
         await setActive!({ session: signUp!.createdSessionId });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
@@ -59,11 +63,40 @@ const PhoneVerify = () => {
     } else if (email) {
       try {
         console.log("START");
-        await signUp!.attemptEmailAddressVerification({ code });
-        console.log(signUp);
-        await setActive!({ session: signUp!.createdSessionId });
+        if (!edit) {
+          const completeSignUp = await signUp!.attemptEmailAddressVerification({
+            code,
+          });
 
-        console.log("DONE", signUp!.createdSessionId);
+          // This mainly for debuggin while developing.
+          // Once your Instance is setup this should not be required.
+          if (completeSignUp.status !== "complete") {
+            console.error(JSON.stringify(completeSignUp, null, 2));
+          }
+
+          // If verification was completed, create a session for the user
+          if (completeSignUp.status === "complete") {
+            await setActive({ session: completeSignUp.createdSessionId });
+          }
+        } else {
+          // Normalize the email search to be case-insensitive and trim whitespace
+          const normalizedEmail = email.trim().toLowerCase();
+          const emailAddressObj = user?.emailAddresses.find(
+            (ea) => ea.emailAddress.trim().toLowerCase() === normalizedEmail
+          );
+
+          if (!emailAddressObj) {
+            Alert.alert("Error", "Email address not found on user profile.");
+            return;
+          }
+
+          // Attempt to verify the email using the provided code
+          const verificationResult = await emailAddressObj.attemptVerification({
+            code,
+          });
+          console.log(verificationResult);
+          router.back();
+        }
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {
@@ -130,13 +163,15 @@ const PhoneVerify = () => {
           </Fragment>
         )}
       />
-      <Link href={"/login"} replace asChild>
-        <TouchableOpacity>
-          <Text style={defaultStyles.textLink}>
-            Already have an account? Log In
-          </Text>
-        </TouchableOpacity>
-      </Link>
+      {!edit && (
+        <Link href={"/login"} replace asChild>
+          <TouchableOpacity>
+            <Text style={defaultStyles.textLink}>
+              Already have an account? Log In
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      )}
     </View>
   );
 };

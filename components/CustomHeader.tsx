@@ -68,7 +68,13 @@ const CustomHeader = () => {
                 {user?.fullName}
               </Text>
             ) : (
-              <ActivityIndicator size="small" />
+              <Text
+                style={styles.userName}
+                numberOfLines={1} // Restrict to one line
+                ellipsizeMode="tail" // Show ellipsis (...) at the end if the text is too long
+              >
+                {user?.id}
+              </Text>
             )}
           </View>
         </View>

@@ -28,7 +28,6 @@ const Settings = () => {
   // Update i18n.locale whenever the locale state changes
   useEffect(() => {
     i18n.locale = currentLocale;
-    console.log(currentLocale);
   }, [currentLocale]);
 
   // State to manage the switch position
