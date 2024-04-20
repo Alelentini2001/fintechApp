@@ -12,43 +12,15 @@ import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { getAppIcon, setAppIcon } from "expo-dynamic-app-icon";
 import { useRouter } from "expo-router";
-
-const ICONS = [
-  {
-    name: "Default",
-    icon: require("@/assets/images/icon.png"),
-  },
-  {
-    name: "Dark",
-    icon: require("@/assets/images/icon-dark.png"),
-  },
-  {
-    name: "Vivid",
-    icon: require("@/assets/images/icon-vivid.png"),
-  },
-];
 
 const Page = () => {
   const { user } = useUser();
-  const { signOut } = useAuth();
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
   const [edit, setEdit] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [email, setEmail] = useState(user?.primaryEmailAddress?.toString());
-  const [activeIcon, setActiveIcon] = useState("Default");
-  const { signUp } = useSignUp();
-
-  useEffect(() => {
-    const loadCurrentIconPref = async () => {
-      const icon = await getAppIcon();
-      console.log("🚀 ~ loadCurrentIconPref ~ icon:", icon);
-      setActiveIcon(icon);
-    };
-    loadCurrentIconPref();
-  }, []);
 
   const onSaveUser = async () => {
     try {
@@ -61,6 +33,19 @@ const Page = () => {
     }
   };
   const router = useRouter();
+  const [newEmail, setNewEmail] = useState("");
+
+  const handleSetPrimary = async (emailId) => {
+    if (user) {
+      try {
+        await user?.update({ primaryEmailAddressId: emailId });
+        alert("Primary email updated.");
+      } catch (error) {
+        console.error("Failed to set primary email:", error);
+        alert("Failed to update primary email.");
+      }
+    }
+  };
 
   const onSaveEmail = async () => {
     if (email) {
@@ -111,16 +96,15 @@ const Page = () => {
     }
   };
 
-  const onChangeAppIcon = async (icon: string) => {
-    await setAppIcon(icon.toLowerCase());
-    setActiveIcon(icon);
-  };
-
   return (
     <BlurView
       intensity={80}
       tint={"dark"}
-      style={{ flex: 1, paddingTop: 100, backgroundColor: "rgba(0,0,0,0.5)" }}
+      style={{
+        flex: 1,
+        paddingTop: 100,
+        backgroundColor: "rgba(0,0,0,0.5)",
+      }}
     >
       <View style={{ alignItems: "center" }}>
         <TouchableOpacity onPress={onCaptureImage} style={styles.captureBtn}>
@@ -163,106 +147,59 @@ const Page = () => {
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.btn, { alignItems: "center" }]}
-          onPress={() => setEditEmail(!editEmail)}
-        >
-          <Ionicons name="mail" size={24} color={"#fff"} />
-          {editEmail ? (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
+        {user?.emailAddresses.map((email) => (
+          <View key={email.id} style={styles.emailRow}>
+            <Ionicons name="mail" size={24} color={"#fff"} />
+
+            <Text style={styles.emailText}>
+              {email.emailAddress}{" "}
+              {email.id === user.primaryEmailAddressId && (
+                <Ionicons name="checkmark-circle" size={18} color="green" />
+              )}
+            </Text>
+            <TouchableOpacity
+              onPress={() => handleSetPrimary(email.id)}
+              style={styles.primaryButton}
             >
-              <TextInput
-                placeholder="Email"
-                value={email || ""}
-                onChangeText={setEmail}
-                style={[styles.inputField, { width: "70%" }]}
-              />
-              <TouchableOpacity
-                onPress={onSaveEmail}
-                style={{
-                  marginLeft: "auto",
-                  marginRight: 10,
-                }}
-              >
-                <Ionicons name="checkmark-outline" size={24} color={"#fff"} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ marginRight: 10 }}
-                onPress={() => {
-                  setEditEmail(false);
-                }}
-              >
-                <Ionicons name="close-outline" size={24} color={"#fff"} />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "flex-start",
-              }}
+              <Text>Set as Primary</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
+      <View style={{ flex: 1, alignItems: "center", alignContent: "center" }}>
+        {editEmail ? (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.inputField, { width: "50%" }]}
+              onChangeText={setNewEmail}
+              value={newEmail}
+              placeholder="Enter new email"
+            />
+            <TouchableOpacity onPress={onSaveEmail} style={{ marginTop: 10 }}>
+              <Ionicons name="checkmark-outline" size={24} color={"#fff"} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setEditEmail(false)}
+              style={{ marginTop: 10 }}
             >
-              <Text style={{ color: "#fff", fontSize: 18 }}>Email</Text>
-              <Text
-                style={{
-                  color: "#fff",
-                  fontSize: 18,
-                  marginLeft: "auto",
-                  marginRight: 10,
-                }}
-              >
-                {user?.primaryEmailAddress
-                  ? user?.primaryEmailAddress.toString()
-                  : "No email yet"}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
-          <Ionicons name="person" size={24} color={"#fff"} />
-          <Text style={{ color: "#fff", fontSize: 18 }}>Account</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
-          <Ionicons name="bulb" size={24} color={"#fff"} />
-          <Text style={{ color: "#fff", fontSize: 18 }}>Learn</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
-          <Ionicons name="megaphone" size={24} color={"#fff"} />
-          <Text style={{ color: "#fff", fontSize: 18, flex: 1 }}>Inbox</Text>
-          <View
+              <Ionicons name="close-outline" size={24} color={"#fff"} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
+            onPress={() => setEditEmail(true)}
             style={{
-              backgroundColor: Colors.primary,
-              paddingHorizontal: 10,
-              borderRadius: 10,
+              height: 50,
+              width: 230,
+              backgroundColor: "white",
               justifyContent: "center",
+              borderRadius: 30,
+              alignItems: "center",
             }}
           >
-            <Text style={{ color: "#fff", fontSize: 12 }}>14</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.actions}>
-        {ICONS.map((icon) => (
-          <TouchableOpacity
-            key={icon.name}
-            style={styles.btn}
-            onPress={() => onChangeAppIcon(icon.name)}
-          >
-            <Image source={icon.icon} style={{ width: 24, height: 24 }} />
-            <Text style={{ color: "#fff", fontSize: 18 }}>{icon.name}</Text>
-            {activeIcon.toLowerCase() === icon.name.toLowerCase() && (
-              <Ionicons name="checkmark" size={24} color={"#fff"} />
-            )}
+            <Text>Add New Email</Text>
           </TouchableOpacity>
-        ))}
+        )}
       </View>
     </BlurView>
   );
@@ -310,6 +247,47 @@ const styles = StyleSheet.create({
     padding: 14,
     flexDirection: "row",
     gap: 20,
+  },
+  emailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  emailText: {
+    fontSize: 16,
+    color: "white",
+  },
+  primaryButton: {
+    padding: 8,
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  addButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: Colors.primary,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    marginTop: 10,
+    gap: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+  },
+  saveButton: {
+    padding: 10,
+    backgroundColor: Colors.primary,
+  },
+  cancelButton: {
+    padding: 10,
+    backgroundColor: Colors.background,
   },
 });
 export default Page;

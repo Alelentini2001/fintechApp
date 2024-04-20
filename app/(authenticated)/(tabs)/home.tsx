@@ -55,6 +55,11 @@ const Home = ({ t }) => {
     });
   };
 
+  useEffect(() => {
+    if (transactions.length <= 4) {
+      onAddMoney();
+    }
+  }, [transactions]);
   const CarouselIndicator: React.FC<CarouselIndicatorProps> = ({
     data,
     selectedIndex,

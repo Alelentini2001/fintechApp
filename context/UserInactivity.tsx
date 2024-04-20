@@ -35,7 +35,11 @@ export const UserInactivityProvider = ({ children }: any) => {
       appState.current.match(/background/)
     ) {
       const elapsed = Date.now() - (storage.getNumber("startTime") || 0);
-      console.log("🚀 ~ handleAppStateChange ~ elapsed:", elapsed);
+      console.log(
+        "🚀 ~ handleAppStateChange ~ elapsed:",
+        elapsed,
+        user?.fullName
+      );
 
       if (elapsed > 3000 && user) {
         router.replace("/(authenticated)/(modals)/lock");

@@ -38,7 +38,7 @@ const Lock = () => {
   const OFFSET = 20;
   const TIME = 80;
 
-  const storedPasscode = storage.getString("passcode");
+  let storedPasscode = storage.getString("passcode");
 
   const checkPasscode = () => {
     const storedPasscode = storage.getString("passcode");
@@ -100,9 +100,23 @@ const Lock = () => {
   };
 
   const onBiometricAuthPress = async () => {
+    if (storedPasscode) {
+      const { success } = await LocalAuthentication.authenticateAsync();
+      if (success) {
+        router.replace("/(authenticated)/(tabs)/home");
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    } else {
+      triggerError();
+    }
+  };
+
+  const onBiometricAuthPressForgot = async () => {
     const { success } = await LocalAuthentication.authenticateAsync();
     if (success) {
-      router.replace("/(authenticated)/(tabs)/home");
+      storage.set("passcode", "");
+      storedPasscode = "";
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
@@ -202,16 +216,22 @@ const Lock = () => {
             )}
           </View>
         </View>
-        <Text
-          style={{
-            alignSelf: "center",
-            color: Colors.primary,
-            fontWeight: "500",
-            fontSize: 18,
+        <TouchableOpacity
+          onPress={() => {
+            onBiometricAuthPressForgot();
           }}
         >
-          Forgot your passcode?
-        </Text>
+          <Text
+            style={{
+              alignSelf: "center",
+              color: Colors.primary,
+              fontWeight: "500",
+              fontSize: 18,
+            }}
+          >
+            Forgot your passcode?
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
