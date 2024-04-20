@@ -10,14 +10,26 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import Colors from "@/constants/Colors";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import { setAppIcon } from "expo-dynamic-app-icon";
+import * as Localization from "expo-localization";
+import i18n from "./translate";
 
 const Settings = () => {
   const { user } = useUser();
   const router = useRouter();
   const { signOut } = useAuth();
+
+  const [currentLocale, setCurrentLocale] = useState(
+    Localization.getLocales()[0].languageCode || "en"
+  );
+
+  // Update i18n.locale whenever the locale state changes
+  useEffect(() => {
+    i18n.locale = currentLocale;
+    console.log(currentLocale);
+  }, [currentLocale]);
 
   // State to manage the switch position
   const [isNotificationsEnabled, setIsNotificationsEnabled] =
@@ -28,6 +40,8 @@ const Settings = () => {
     setIsNotificationsEnabled((previousState) => !previousState);
 
   const [showIcons, setShowIcons] = useState<boolean>(false);
+  const [showLanguages, setShowLanguages] = useState<boolean>(false);
+
   const [activeIcon, setActiveIcon] = useState("Default");
 
   const ICONS = [
@@ -61,7 +75,7 @@ const Settings = () => {
             fontWeight: "bold",
           }}
         >
-          Profile
+          {i18n.t("Profile")}
         </Text>
         <View
           style={{
@@ -130,7 +144,7 @@ const Settings = () => {
             >
               <Link href={"/(authenticated)/(modals)/account"} asChild>
                 <Text style={{ color: "white", fontSize: 10 }}>
-                  Edit Profile
+                  {i18n.t("Edit Profile")}
                 </Text>
               </Link>
             </TouchableOpacity>
@@ -145,7 +159,7 @@ const Settings = () => {
             fontWeight: "bold",
           }}
         >
-          Settings
+          {i18n.t("Settings")}
         </Text>
         <View
           style={{
@@ -204,7 +218,7 @@ const Settings = () => {
                 <Text
                   style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
                 >
-                  Notifications
+                  {i18n.t("Notifications")}
                 </Text>
                 <View style={{ flex: 1 }} />
                 <Switch
@@ -219,6 +233,9 @@ const Settings = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "row",
+              }}
+              onPress={() => {
+                setShowLanguages(!showLanguages);
               }}
             >
               <View
@@ -249,14 +266,48 @@ const Settings = () => {
                 <Text
                   style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
                 >
-                  Languages
+                  {i18n.t("Languages")}
                 </Text>
                 <View style={{ flex: 1 }} />
-                <TouchableOpacity style={{ marginRight: 10 }}>
+                <TouchableOpacity
+                  style={{ marginRight: 10 }}
+                  onPress={() => {
+                    setShowLanguages(!showLanguages);
+                  }}
+                >
                   <Ionicons name="arrow-forward-outline" size={22} />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
+            {showLanguages && (
+              <View
+                style={{
+                  width: "80%",
+                  backgroundColor: "white",
+                  borderColor: Colors.lightGray,
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  height: "auto",
+                }}
+              >
+                {[{ English: "en" }, { Italiano: "it" }, { Español: "es" }].map(
+                  (language) => (
+                    <TouchableOpacity
+                      key={Object.values(language)[0]}
+                      style={{ padding: 14, flexDirection: "row", gap: 20 }}
+                      onPress={() => {
+                        i18n.locale = Object.values(language)[0];
+                        setShowLanguages(!showLanguages);
+                      }}
+                    >
+                      <Text style={{ color: Colors.dark, fontSize: 18 }}>
+                        {Object.keys(language)[0]}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                )}
+              </View>
+            )}
             <TouchableOpacity
               onPress={() => {
                 setShowIcons(!showIcons);
@@ -294,7 +345,7 @@ const Settings = () => {
                 <Text
                   style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
                 >
-                  App Icon
+                  {i18n.t("App Icon")}
                 </Text>
                 <View style={{ flex: 1 }} />
                 <TouchableOpacity
@@ -334,7 +385,7 @@ const Settings = () => {
                       style={{ width: 24, height: 24 }}
                     />
                     <Text style={{ color: Colors.dark, fontSize: 18 }}>
-                      {icon.name}
+                      {i18n.t(icon.name)}
                     </Text>
                     {activeIcon.toLowerCase() === icon.name.toLowerCase() && (
                       <Ionicons
@@ -382,7 +433,7 @@ const Settings = () => {
                 <Text
                   style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
                 >
-                  Security and Password
+                  {i18n.t("Security and Password")}
                 </Text>
                 <View style={{ flex: 1 }} />
                 <TouchableOpacity style={{ marginRight: 10 }}>
@@ -428,7 +479,7 @@ const Settings = () => {
                 <Text
                   style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
                 >
-                  Logout
+                  {i18n.t("Logout")}
                 </Text>
                 <View style={{ flex: 1 }} />
                 <TouchableOpacity

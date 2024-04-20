@@ -13,8 +13,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
 import * as DropdownMenu from "zeego/dropdown-menu";
+import i18n from "./translate";
 
-const Page = () => {
+const Page = ({ t }) => {
   const headerHeight = useHeaderHeight();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [searchText, setSearchText] = useState<string>("");
@@ -67,7 +68,7 @@ const Page = () => {
   return (
     <ScrollView style={{ marginTop: headerHeight, marginLeft: 20 }}>
       <View style={styles.container}>
-        <Text style={styles.title}>Transactions</Text>
+        <Text style={styles.title}>{i18n.t("Transactions")}</Text>
       </View>
       <View style={{ flexDirection: "row", padding: 5 }}>
         <View style={styles.searchSelection}>
@@ -79,7 +80,7 @@ const Page = () => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Search"
+            placeholder={i18n.t("Search")}
             placeholderTextColor={Colors.dark}
             onChangeText={setSearchText}
             value={searchText}
@@ -98,19 +99,19 @@ const Page = () => {
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
             <DropdownMenu.Item key="date" onSelect={() => handleSort("date")}>
-              <DropdownMenu.ItemTitle>Date</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemTitle>{i18n.t("Date")}</DropdownMenu.ItemTitle>
               <DropdownMenu.ItemIcon
                 ios={{ name: "calendar", pointSize: 24 }}
               />
             </DropdownMenu.Item>
             <DropdownMenu.Item key="price" onSelect={() => handleSort("price")}>
-              <DropdownMenu.ItemTitle>Price</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemTitle>{i18n.t("Price")}</DropdownMenu.ItemTitle>
               <DropdownMenu.ItemIcon
                 ios={{ name: "eurosign.circle", pointSize: 24 }}
               />
             </DropdownMenu.Item>
             <DropdownMenu.Item key="name" onSelect={() => handleSort("name")}>
-              <DropdownMenu.ItemTitle>Name</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemTitle>{i18n.t("Name")}</DropdownMenu.ItemTitle>
               <DropdownMenu.ItemIcon
                 ios={{ name: "person.circle", pointSize: 24 }}
               />
@@ -188,7 +189,7 @@ const Page = () => {
                   {transaction.name}
                 </Text>
                 <Text style={[styles.date, { color: Colors.dark }]}>
-                  {transaction.date.toUTCString()}
+                  {transaction.date.toLocaleString()}
                 </Text>
               </View>
               <View style={{ flex: 1 }} />

@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
+import i18n from "@/app/(authenticated)/(tabs)/translate";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
@@ -53,8 +54,8 @@ const CustomHeader = () => {
           <View>
             <Text style={styles.greetingText}>
               {new Date().getHours() >= 12 && new Date().getHours() < 24
-                ? "Good Afternoon"
-                : "Good Morning"}
+                ? i18n.t("Good Afternoon")
+                : i18n.t("Good Morning")}
             </Text>
           </View>
           <View>

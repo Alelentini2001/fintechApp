@@ -18,16 +18,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Animated from "react-native-reanimated";
 import { Link, useRouter } from "expo-router";
+import i18n from "./translate";
 
 interface CarouselIndicatorProps {
   data: number[];
   selectedIndex: number;
 }
 
-const Home = () => {
+const Home = ({ t }) => {
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const router = useRouter();
@@ -86,7 +87,7 @@ const Home = () => {
                 left: 20,
               }}
             >
-              Balance
+              {i18n.t("Balance")}
             </Text>
             <View
               style={[
@@ -119,7 +120,9 @@ const Home = () => {
                 />
                 <Text style={{ fontSize: 14 }}>EUR</Text>
               </View>
-              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
+              <Text style={{ fontSize: 12, left: 15, top: 40 }}>
+                {i18n.t("Spending")}
+              </Text>
               <View style={styles.row}>
                 <Text style={styles.balance}>€ {balance().toFixed(2)}</Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
@@ -128,7 +131,7 @@ const Home = () => {
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
                 <Text style={{ fontWeight: "400", fontSize: 10 }}>
-                  Overall Spending is:
+                  {i18n.t("Overall Spending is:")}
                 </Text>
                 <View
                   style={{
@@ -172,7 +175,7 @@ const Home = () => {
                 left: 20,
               }}
             >
-              Cashback
+              {i18n.t("Cashback")}
             </Text>
             <View
               style={[
@@ -211,7 +214,7 @@ const Home = () => {
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
                 <Text style={{ fontWeight: "400", fontSize: 10 }}>
-                  Overall Earnings are:
+                  {i18n.t("Overall Earnings are:")}
                 </Text>
                 <View
                   style={{
@@ -253,7 +256,7 @@ const Home = () => {
                 left: 20,
               }}
             >
-              Referral
+              {i18n.t("Referral")}
             </Text>
             <View
               style={[
@@ -297,7 +300,7 @@ const Home = () => {
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
                 <Text style={{ fontWeight: "400", fontSize: 10 }}>
-                  Overall Spending is:
+                  {i18n.t("Overall Spending is:")}
                 </Text>
                 <View
                   style={{
@@ -455,7 +458,7 @@ const Home = () => {
                   marginRight: 5,
                 }}
               />
-              <Text style={styles.buttonText}>Send</Text>
+              <Text style={styles.buttonText}> {i18n.t("Send")}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -480,16 +483,16 @@ const Home = () => {
                   marginRight: 5,
                 }}
               />
-              <Text style={styles.buttonText}>Request</Text>
+              <Text style={styles.buttonText}> {i18n.t("Request")}</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={defaultStyles.sectionHeader}>Transactions</Text>
+      <Text style={defaultStyles.sectionHeader}>{i18n.t("Transactions")}</Text>
       <View style={styles.transactions}>
         {transactions.length === 0 && (
           <Text style={{ padding: 14, color: Colors.gray }}>
-            No transactions yet
+            {i18n.t("No transactions yet")}
           </Text>
         )}
         {transactions.reverse().map((transaction) => (
@@ -535,7 +538,9 @@ const Home = () => {
           }}
         />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={defaultStyles.sectionHeader}>Recent Friends</Text>
+          <Text style={defaultStyles.sectionHeader}>
+            {i18n.t("Recent Friends")}
+          </Text>
           <Link href={"/friends"} asChild>
             <Text
               style={{
@@ -546,7 +551,7 @@ const Home = () => {
                 marginBottom: 0,
               }}
             >
-              See all
+              {i18n.t("See all")}
             </Text>
           </Link>
         </View>

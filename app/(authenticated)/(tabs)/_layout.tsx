@@ -19,6 +19,14 @@ import Wallet from "./wallet";
 import Stakeholder from "./stakeholder";
 import Crypto from "./crypto";
 import { useRouteInfo } from "expo-router/build/hooks";
+import * as Localization from "expo-localization";
+import { I18n } from "i18n-js";
+import translations from "@/app/(authenticated)/(tabs)/translations.json";
+import i18n from "./translate";
+// const i18n = new I18n(translations);
+// const locale = Localization.getLocales()[0].languageCode || "en";
+// i18n.locale = locale;
+// i18n.enableFallback = true;
 
 const Slider = () => {
   //   const onPressStakeholder = () => {
@@ -93,7 +101,7 @@ const Layout = () => {
           style={{ height: iconSize, width: iconSize, tintColor: color }}
         />
         <Text style={{ color }}>
-          {routeName.charAt(0).toUpperCase() + routeName.slice(1)}
+          {i18n.t(routeName.charAt(0).toUpperCase() + routeName.slice(1))}
         </Text>
       </TouchableOpacity>
     );
@@ -114,9 +122,6 @@ const Layout = () => {
       renderCircle={({ selectedTab, navigate }) => (
         <Animated.View style={{ bottom: 50, left: 10 }}>
           <Slider />
-          {/* <TouchableOpacity>
-            <Image source={require("@/assets/images/bpay_logo.png")} />
-          </TouchableOpacity> */}
         </Animated.View>
       )}
       initialRouteName="home"
@@ -124,32 +129,33 @@ const Layout = () => {
     >
       <CurvedBottomBarExpo.Screen
         name="home"
-        component={HomeMainScreen}
+        component={() => <HomeMainScreen t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="LEFT"
       />
+
       <CurvedBottomBarExpo.Screen
         name="transactions"
-        component={TransactionScreen}
+        component={() => <TransactionScreen t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="LEFT"
       />
       <CurvedBottomBarExpo.Screen
         name="scan"
-        component={Scan}
+        component={() => <Scan t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CENTER"
       />
-      <CurvedBottomBarExpo.Screen
+      {/* <CurvedBottomBarExpo.Screen
         name="invest"
         component={InvestScreen}
         position="CIRCLE"
-      />
+      /> */}
       <CurvedBottomBarExpo.Screen
         name="wallet"
-        component={Wallet}
+        component={() => <Wallet t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CIRCLE"
       />
       <CurvedBottomBarExpo.Screen
         name="stakeholder"
-        component={Stakeholder}
+        component={() => <Stakeholder t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CIRCLE"
       />
       <CurvedBottomBarExpo.Screen
@@ -159,7 +165,7 @@ const Layout = () => {
       />
       <CurvedBottomBarExpo.Screen
         name="Apps"
-        component={Apps}
+        component={() => <Apps t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="RIGHT"
       />
       <CurvedBottomBarExpo.Screen

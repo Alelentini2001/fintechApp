@@ -4,8 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
-
-const Wallet = () => {
+import i18n from "./translate";
+const Wallet = ({ t }) => {
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const headerHeight = useHeaderHeight();
@@ -19,7 +19,7 @@ const Wallet = () => {
           left: 20,
         }}
       >
-        Account
+        {i18n.t("Account")}
       </Text>
       <View style={{ flexDirection: "row" }}>
         <View
@@ -53,7 +53,9 @@ const Wallet = () => {
             />
             <Text style={{ fontSize: 14 }}>EUR</Text>
           </View>
-          <Text style={{ fontSize: 12, left: 15, top: 40 }}>Your Balance</Text>
+          <Text style={{ fontSize: 12, left: 15, top: 40 }}>
+            {i18n.t("Your Balance")}
+          </Text>
           <View style={styles.row}>
             <Text style={styles.balance}>€ {balance().toFixed(2)}</Text>
           </View>
@@ -79,7 +81,7 @@ const Wallet = () => {
       </View>
       <View style={styles.wallet}>
         <Text style={{ fontSize: 14, fontWeight: "200", marginTop: 10 }}>
-          Quply Earnings
+          {i18n.t("Quply Earnings")}
         </Text>
         <View style={{ flexDirection: "row", padding: 30, gap: 20 }}>
           <View
@@ -104,7 +106,7 @@ const Wallet = () => {
             <Text style={styles.number}>
               € {Math.floor(Math.random() * 1000).toFixed(2)}
             </Text>
-            <Text style={styles.text}>Cashback</Text>
+            <Text style={styles.text}>{i18n.t("Cashback")}</Text>
           </View>
           <View
             style={{
@@ -116,12 +118,12 @@ const Wallet = () => {
             <Text style={styles.number}>
               € {Math.floor(Math.random() * 1000).toFixed(2)}
             </Text>
-            <Text style={styles.text}>Referral</Text>
+            <Text style={styles.text}>{i18n.t("Referral")}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.claim}>
           <Text style={{ color: "white", fontSize: 14, fontWeight: "300" }}>
-            Claim Your Earnings
+            {i18n.t("Claim Your Earnings")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -131,7 +133,7 @@ const Wallet = () => {
           style={{ marginRight: 10, width: 20, height: 20 }}
         />
         <Text style={{ color: Colors.dark, fontSize: 14, fontWeight: "300" }}>
-          Withdraw Balance
+          {i18n.t("Withdraw Balance")}
         </Text>
       </TouchableOpacity>
     </View>

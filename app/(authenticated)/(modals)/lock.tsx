@@ -1,12 +1,14 @@
-import Colors from "@/constants/Colors";
-import { useUser } from "@clerk/clerk-expo";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import * as LocalAuthentication from "expo-local-authentication";
+import * as Haptics from "expo-haptics";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -14,44 +16,82 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
+import * as LocalAuthentication from "expo-local-authentication";
+import Colors from "@/constants/Colors";
+import { MMKV } from "react-native-mmkv";
+import { useUser } from "@clerk/clerk-expo";
+
+// Initialize MMKV
+const storage = new MMKV();
+
 const Lock = () => {
-  const { user } = useUser();
-  const [firstName, setFirstName] = useState(user?.firstName);
-  const [code, setCode] = useState<number[]>([]);
-  const codeLength = Array(6).fill(0);
+  const [code, setCode] = useState("");
+  const [confirmCode, setConfirmCode] = useState("");
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [error, setError] = useState(false);
   const router = useRouter();
-
+  const { user } = useUser();
   const offset = useSharedValue(0);
-
-  const style = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: offset.value }],
-    };
-  });
-
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: offset.value }],
+  }));
   const OFFSET = 20;
   const TIME = 80;
 
-  useEffect(() => {
-    if (code.length === 6) {
-      if (code.join("") === "123456") {
+  const storedPasscode = storage.getString("passcode");
+
+  const checkPasscode = () => {
+    const storedPasscode = storage.getString("passcode");
+    if (storedPasscode) {
+      if (code === storedPasscode) {
         router.replace("/(authenticated)/(tabs)/home");
-        setCode([]);
       } else {
+        triggerError();
+      }
+    } else if (!isConfirming) {
+      setConfirmCode(code);
+      setIsConfirming(true);
+      setCode("");
+    } else if (isConfirming) {
+      if (code === confirmCode) {
+        storage.set("passcode", code);
+        router.replace("/(authenticated)/(tabs)/home");
+      } else {
+        setError(true);
+        setIsConfirming(false);
         offset.value = withSequence(
           withTiming(-OFFSET, { duration: TIME / 2 }),
           withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
           withTiming(0, { duration: TIME / 2 })
         );
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        setCode([]);
+
+        setCode("");
+        setConfirmCode("");
       }
+    }
+  };
+
+  useEffect(() => {
+    if (code.length === 6) {
+      checkPasscode();
     }
   }, [code]);
 
-  const onNumberPress = (number: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setCode([...code, number]);
+  const triggerError = () => {
+    offset.value = withSequence(
+      withTiming(-10, { duration: 50 }),
+      withRepeat(withTiming(10, { duration: 100 }), 4, true),
+      withTiming(0, { duration: 50 })
+    );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    setCode(""); // Reset code
+  };
+
+  const onNumberPress = (number) => {
+    if (code.length < 6) {
+      setCode((prev) => prev + number);
+    }
   };
 
   const numberBackspace = () => {
@@ -70,19 +110,25 @@ const Lock = () => {
 
   return (
     <SafeAreaView>
-      <Text style={styles.greeting}>Welcome back, {firstName}</Text>
+      <Text style={styles.greeting}>
+        {storedPasscode
+          ? `Welcome back, ${user?.firstName}`
+          : !isConfirming
+          ? "Set your new Passcode"
+          : "Reinsert your passcode"}
+      </Text>
       <Animated.View style={[styles.codeView, style]}>
-        {codeLength.map((_, index) => (
+        {Array.from({ length: 6 }).map((_, index) => (
           <View
             key={index}
             style={[
               styles.codeEmpty,
               {
                 backgroundColor:
-                  code[index] > -1 ? Colors.primary : Colors.lightGray,
+                  index < code.length ? Colors.primary : Colors.lightGray,
               },
             ]}
-          ></View>
+          />
         ))}
       </Animated.View>
       <View style={[styles.numbersView]}>

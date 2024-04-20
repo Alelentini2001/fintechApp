@@ -4,8 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import i18n from "./translate";
 
-const Stakeholder = () => {
+const Stakeholder = ({ t }) => {
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const headerHeight = useHeaderHeight();
@@ -60,7 +61,9 @@ const Stakeholder = () => {
                 }}
               />
               <View style={{ flexDirection: "row" }}>
-                <Text style={{ fontSize: 18, color: Colors.dark }}>Level:</Text>
+                <Text style={{ fontSize: 18, color: Colors.dark }}>
+                  {i18n.t("Level")}:
+                </Text>
                 <Text style={{ fontSize: 18, marginLeft: 1 }}>1</Text>
               </View>
             </View>
@@ -101,7 +104,7 @@ const Stakeholder = () => {
               />
               <View style={{ flexDirection: "row" }}>
                 <Text style={{ fontSize: 18, color: Colors.dark }}>
-                  Referrals:
+                  {i18n.t("Referrals")}:
                 </Text>
                 <Text style={{ fontSize: 18, marginLeft: 1 }}>1</Text>
               </View>
@@ -132,7 +135,8 @@ const Stakeholder = () => {
           }}
         >
           <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
-            Daily Earnings: {Math.floor(Math.random() * 100).toFixed(2)}
+            {i18n.t("Daily Earnings")}:{" "}
+            {Math.floor(Math.random() * 100).toFixed(2)}
           </Text>
         </View>
         <View style={{ flexDirection: "row", marginTop: 5, gap: 2 }}>
@@ -147,7 +151,7 @@ const Stakeholder = () => {
             }}
           >
             <Text style={{ color: "white", fontSize: 18, fontWeight: "400" }}>
-              Buy Stocks
+              {i18n.t("Buy Stocks")}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -161,7 +165,7 @@ const Stakeholder = () => {
             }}
           >
             <Text style={{ color: "white", fontSize: 18, fontWeight: "400" }}>
-              Sell Stocks
+              {i18n.t("Sell Stocks")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -185,7 +189,7 @@ const Stakeholder = () => {
             marginBottom: 20,
           }}
         >
-          Market Cap: {Math.floor(Math.random() * 1000).toFixed(2)}
+          {i18n.t("Market Cap")}: {Math.floor(Math.random() * 1000).toFixed(2)}
         </Text>
         <TouchableOpacity
           style={{
@@ -200,7 +204,7 @@ const Stakeholder = () => {
           }}
         >
           <Text style={{ color: Colors.dark, fontSize: 18, fontWeight: "400" }}>
-            Sell Shares of your company
+            {i18n.t("Sell Shares of your company")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -215,7 +219,7 @@ const Stakeholder = () => {
           }}
         >
           <Text style={{ color: "white", fontSize: 18, fontWeight: "400" }}>
-            Buy Shares from other companies
+            {i18n.t("Buy Shares from other companies")}
           </Text>
         </TouchableOpacity>
       </View>

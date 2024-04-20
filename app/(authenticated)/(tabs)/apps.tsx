@@ -16,8 +16,9 @@ import { defaultStyles } from "@/constants/Styles";
 import { Ionicons } from "@expo/vector-icons";
 import RoundBtn from "@/components/RoundBtn";
 import { SIZE } from "@/components/SortableList/Config";
+import i18n from "./translate";
 
-const Crypto = () => {
+const Crypto = ({ t }) => {
   const headerHeight = useHeaderHeight();
   const router = useRouter();
   const currencies = useQuery({
@@ -96,7 +97,7 @@ const Crypto = () => {
           fontWeight: "600",
         }}
       >
-        Applications
+        {i18n.t("Applications")}
       </Text>
       <View
         style={{
@@ -138,7 +139,7 @@ const Crypto = () => {
             <Text
               style={{ color: Colors.gray, fontWeight: "bold", fontSize: 18 }}
             >
-              Wallet
+              {i18n.t("Wallet")}
             </Text>
           </View>
         </TouchableOpacity>
@@ -185,7 +186,7 @@ const Crypto = () => {
               <Text
                 style={{ color: Colors.gray, fontWeight: "bold", fontSize: 18 }}
               >
-                Stakeholder
+                {i18n.t("Stakeholder")}
               </Text>
             </View>
           </View>
@@ -252,7 +253,7 @@ const Crypto = () => {
               <Text
                 style={{ color: Colors.gray, fontWeight: "bold", fontSize: 18 }}
               >
-                Discounts
+                {i18n.t("Discounts")}
               </Text>
             </View>
           </View>
@@ -295,7 +296,7 @@ const Crypto = () => {
               <Text
                 style={{ color: Colors.gray, fontWeight: "bold", fontSize: 18 }}
               >
-                Crypto
+                {i18n.t("Crypto")}
               </Text>
             </View>
           </View>
