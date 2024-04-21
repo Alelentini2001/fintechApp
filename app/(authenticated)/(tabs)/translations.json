@@ -62,7 +62,8 @@
         "Default": "Default",
         "Dark" : "Dark",
         "Vivid" : "Vivid",
-        "Applications": "Applications"
+        "Applications": "Applications",
+        "Payment Request": "Payment Request"
     },
     "it": {
       "Balance": "Saldo",
@@ -127,7 +128,8 @@
         "Default": "Normale",
         "Dark" : "Nero",
         "Vivid" : "Vivida",
-        "Applications": "Applicazioni"
+        "Applications": "Applicazioni",
+        "Payment Request": "Richiesta di Pagamento"
     },
     "es": {
       "Balance": "Saldo",
@@ -192,6 +194,7 @@
         "Default": "Predeterminado",
         "Dark" : "Oscuro",
         "Vivid" : "Vívido",
-        "Applications" : "Applicaciones"
+        "Applications" : "Applicaciones",
+        "Payment Request": "Solicitud de Pago"
     }
 }

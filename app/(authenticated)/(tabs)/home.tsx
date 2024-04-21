@@ -477,6 +477,9 @@ const Home = ({ t }) => {
                 borderRadius: 20,
               },
             ]}
+            onPress={() => {
+              router.navigate("/(authenticated)/(tabs)/request");
+            }}
           >
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Animated.Image

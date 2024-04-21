@@ -23,6 +23,8 @@ import * as Localization from "expo-localization";
 import { I18n } from "i18n-js";
 import translations from "@/app/(authenticated)/(tabs)/translations.json";
 import i18n from "./translate";
+import Request from "./request";
+import QrCode from "./qrCode";
 // const i18n = new I18n(translations);
 // const locale = Localization.getLocales()[0].languageCode || "en";
 // i18n.locale = locale;
@@ -116,7 +118,10 @@ const Layout = () => {
       type="UP"
       screenOptions={{
         headerShown:
-          route.pathname === "/settings" || route.pathname === "/scan"
+          route.pathname === "/settings" ||
+          route.pathname === "/scan" ||
+          route.pathname === "/request" ||
+          route.pathname === "/qrCode"
             ? false
             : true,
         headerTransparent: true,
@@ -159,6 +164,16 @@ const Layout = () => {
       <CurvedBottomBarExpo.Screen
         name="stakeholder"
         component={() => <Stakeholder t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="request"
+        component={() => <Request t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="qrCode"
+        component={() => <QrCode t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CIRCLE"
       />
       <CurvedBottomBarExpo.Screen
