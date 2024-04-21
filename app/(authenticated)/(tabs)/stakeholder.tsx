@@ -13,8 +13,10 @@ const Stakeholder = ({ t }) => {
   return (
     <View
       style={{
-        marginTop: headerHeight,
+        paddingTop: headerHeight,
         alignItems: "center",
+        backgroundColor: Colors.background,
+        height: "100%",
       }}
     >
       <Image
@@ -64,7 +66,11 @@ const Stakeholder = ({ t }) => {
                 <Text style={{ fontSize: 18, color: Colors.dark }}>
                   {i18n.t("Level")}:
                 </Text>
-                <Text style={{ fontSize: 18, marginLeft: 1 }}>1</Text>
+                <Text
+                  style={{ fontSize: 18, marginLeft: 1, color: Colors.dark }}
+                >
+                  1
+                </Text>
               </View>
             </View>
           </View>
@@ -106,7 +112,11 @@ const Stakeholder = ({ t }) => {
                 <Text style={{ fontSize: 18, color: Colors.dark }}>
                   {i18n.t("Referrals")}:
                 </Text>
-                <Text style={{ fontSize: 18, marginLeft: 1 }}>1</Text>
+                <Text
+                  style={{ fontSize: 18, marginLeft: 1, color: Colors.dark }}
+                >
+                  1
+                </Text>
               </View>
             </View>
           </View>
@@ -116,7 +126,7 @@ const Stakeholder = ({ t }) => {
         style={{
           width: 335,
           height: 115,
-          backgroundColor: "white",
+          backgroundColor: Colors.background,
           borderRadius: 15,
           marginTop: 10,
           flexDirection: "column",
@@ -134,7 +144,13 @@ const Stakeholder = ({ t }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: Colors.background,
+            }}
+          >
             {i18n.t("Daily Earnings")}:{" "}
             {Math.floor(Math.random() * 100).toFixed(2)}
           </Text>
@@ -176,8 +192,10 @@ const Stakeholder = ({ t }) => {
           marginTop: 20,
           height: 160,
           width: 335,
-          backgroundColor: "white",
+          backgroundColor: Colors.background,
           borderRadius: 15,
+          borderWidth: 1,
+          borderColor: Colors.dark,
           alignItems: "center",
         }}
       >
@@ -187,13 +205,14 @@ const Stakeholder = ({ t }) => {
             fontWeight: "300",
             fontSize: 12,
             marginBottom: 20,
+            color: Colors.dark,
           }}
         >
           {i18n.t("Market Cap")}: {Math.floor(Math.random() * 1000).toFixed(2)}
         </Text>
         <TouchableOpacity
           style={{
-            backgroundColor: "white",
+            backgroundColor: Colors.background,
             borderWidth: 1,
             borderColor: Colors.gray,
             width: "98%",
@@ -218,7 +237,13 @@ const Stakeholder = ({ t }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ color: "white", fontSize: 18, fontWeight: "400" }}>
+          <Text
+            style={{
+              color: Colors.background,
+              fontSize: 18,
+              fontWeight: "400",
+            }}
+          >
             {i18n.t("Buy Shares from other companies")}
           </Text>
         </TouchableOpacity>

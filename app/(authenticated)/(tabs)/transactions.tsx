@@ -66,7 +66,13 @@ const Page = ({ t }) => {
     );
 
   return (
-    <ScrollView style={{ marginTop: headerHeight, marginLeft: 20 }}>
+    <ScrollView
+      style={{
+        paddingTop: headerHeight,
+        paddingLeft: 20,
+        backgroundColor: Colors.background,
+      }}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>{i18n.t("Transactions")}</Text>
       </View>
@@ -94,7 +100,11 @@ const Page = ({ t }) => {
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <View style={styles.circle}>
-              <Ionicons name="filter-outline" size={24} color="white" />
+              <Ionicons
+                name="filter-outline"
+                size={24}
+                color={Colors.background}
+              />
             </View>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
@@ -220,10 +230,12 @@ const styles = StyleSheet.create({
   searchSelection: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.background,
     borderRadius: 30,
     alignItems: "center",
     marginRight: 20,
+    borderColor: Colors.dark,
+    borderWidth: 1,
     justifyContent: "center",
   },
   searchIcon: {

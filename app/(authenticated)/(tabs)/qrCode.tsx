@@ -171,7 +171,7 @@ const QrCode = ({ t }) => {
               marginTop: 10,
             }}
           >
-            <Text style={{ marginTop: 20 }}>Amount</Text>
+            <Text style={{ marginTop: 20 }}>{t("Amount")}</Text>
           </View>
           <View
             style={{
@@ -230,7 +230,7 @@ const QrCode = ({ t }) => {
             <Text
               style={{ fontSize: 14, fontWeight: "400", color: Colors.gray }}
             >
-              Account Name
+              {t("Account Name")}
             </Text>
             <Text
               style={{
@@ -249,7 +249,7 @@ const QrCode = ({ t }) => {
             <Text
               style={{ fontSize: 14, fontWeight: "400", color: Colors.gray }}
             >
-              Reference
+              {t("Reference")}
             </Text>
             <Text
               style={{
@@ -312,7 +312,7 @@ const QrCode = ({ t }) => {
               style={{ height: 20, width: 20, tintColor: "white" }}
             />
             <Text style={{ color: "white", fontSize: 14, fontWeight: "400" }}>
-              Check Payments
+              {t("Check Payments")}
             </Text>
           </TouchableOpacity>
         </View>

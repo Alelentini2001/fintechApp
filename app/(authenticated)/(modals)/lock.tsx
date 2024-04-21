@@ -123,7 +123,9 @@ const Lock = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{ backgroundColor: Colors.background, height: "100%" }}
+    >
       <Text style={styles.greeting}>
         {storedPasscode
           ? `Welcome back, ${user?.firstName}`
@@ -193,7 +195,7 @@ const Lock = () => {
             <MaterialCommunityIcons
               name="face-recognition"
               size={26}
-              color={"black"}
+              color={Colors.dark}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -241,8 +243,10 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 24,
     fontWeight: "bold",
-    marginTop: 80,
+    paddingTop: 80,
+    height: "auto",
     alignSelf: "center",
+    color: Colors.dark,
   },
   codeView: {
     flexDirection: "row",
@@ -260,7 +264,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 80,
     gap: 60,
   },
-  number: { fontSize: 32 },
+  number: { fontSize: 32, color: Colors.dark },
 });
 
 export default Lock;

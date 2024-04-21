@@ -63,7 +63,14 @@
         "Dark" : "Dark",
         "Vivid" : "Vivid",
         "Applications": "Applications",
-        "Payment Request": "Payment Request"
+        "Payment Request": "Payment Request",
+        "Enter Amount" : "Enter Amount",
+        "Reference": "Reference",
+        "Generate QR": "Generate QR",
+        "Share Payment Link" : "Share Payment Link",
+        "Amount" : "Amount",
+        "Account Name": "Account Name",
+        "Check Payments" : "Check Payments"
     },
     "it": {
       "Balance": "Saldo",
@@ -129,7 +136,14 @@
         "Dark" : "Nero",
         "Vivid" : "Vivida",
         "Applications": "Applicazioni",
-        "Payment Request": "Richiesta di Pagamento"
+        "Payment Request": "Richiesta di Pagamento",
+        "Enter Amount" : "Inserisci l'ammontare",
+        "Reference": "Riferimento",
+        "Generate QR": "Genera QR",
+        "Share Payment Link" : "Condividere Link Pagamento",
+        "Amount": "Quantità",
+        "Account Name": "Nome Account",
+        "Check Payments":"Verifica Transazione"
     },
     "es": {
       "Balance": "Saldo",
@@ -195,6 +209,13 @@
         "Dark" : "Oscuro",
         "Vivid" : "Vívido",
         "Applications" : "Applicaciones",
-        "Payment Request": "Solicitud de Pago"
+        "Payment Request": "Solicitud de Pago",
+        "Enter Amount" : "Introduzca el monto",
+        "Reference": "Referencia",
+        "Generate QR": "Generar QR",
+        "Share Payment Link" : "Enlaces de pago de acciones",
+        "Amount" : "Importe",
+        "Account Name" : "Nombre de cuenta",
+        "Check Payments" : "Verificar Transacciones"
     }
 }

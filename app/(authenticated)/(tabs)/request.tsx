@@ -13,13 +13,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 const Request = ({ t }) => {
-  const router = useRouter();
-  const [amount, setAmount] = useState("");
-  const [reference, setReference] = useState("");
   const { previousAmount, prevReference } = useLocalSearchParams<{
     previousAmount: string;
     prevReference: string;
   }>();
+  const router = useRouter();
+  const [amount, setAmount] = useState(previousAmount || "");
+  const [reference, setReference] = useState(prevReference || "");
 
   return (
     <View
@@ -40,7 +40,9 @@ const Request = ({ t }) => {
           marginTop: 100,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "300" }}>Enter Amount</Text>
+        <Text style={{ fontSize: 16, fontWeight: "300" }}>
+          {t("Enter Amount")}
+        </Text>
         <View style={styles.inputContainer}>
           <Text style={styles.euroIcon}>€</Text>
           <TextInput
@@ -48,7 +50,7 @@ const Request = ({ t }) => {
             keyboardType="numeric"
             style={styles.input}
             onChangeText={setAmount}
-            value={amount || previousAmount}
+            value={amount}
             placeholderTextColor={Colors.gray}
           />
         </View>
@@ -63,19 +65,22 @@ const Request = ({ t }) => {
           marginTop: 30,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "300" }}>Reference</Text>
+        <Text style={{ fontSize: 16, fontWeight: "300" }}>
+          {t("Reference")}
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="What is the purpose of the request?"
             keyboardType="default"
             style={styles.input2}
             onChangeText={setReference}
-            value={reference || prevReference}
+            value={reference}
             placeholderTextColor={Colors.gray}
           />
         </View>
       </View>
       <TouchableOpacity
+        disabled={!amount || !reference ? true : false}
         onPress={() => {
           router.push({
             pathname: "/(authenticated)/(tabs)/qrCode",
@@ -90,7 +95,7 @@ const Request = ({ t }) => {
           marginTop: 50,
           marginBottom: 15,
           width: "90%",
-          backgroundColor: "black",
+          backgroundColor: !amount || !reference ? Colors.gray : "black",
           borderRadius: 15,
           justifyContent: "center",
         }}
@@ -107,10 +112,11 @@ const Request = ({ t }) => {
             source={require("@/assets/images/scanScan.png")}
             style={{ width: 25, height: 25, tintColor: "white" }}
           />
-          <Text style={{ color: "white" }}>Generate QR</Text>
+          <Text style={{ color: "white" }}>{t("Generate QR")}</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity
+        disabled={!amount || !reference ? true : false}
         style={{
           height: 50,
           width: "90%",
@@ -133,7 +139,7 @@ const Request = ({ t }) => {
             source={require("@/assets/images/sendIcon.png")}
             style={{ width: 25, height: 25 }}
           />
-          <Text>Share Payment Link</Text>
+          <Text>{t("Share Payment Link")}</Text>
         </View>
       </TouchableOpacity>
     </View>

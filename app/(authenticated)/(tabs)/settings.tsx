@@ -63,7 +63,7 @@ const Settings = () => {
     setActiveIcon(icon);
   };
   return (
-    <ScrollView style={{ marginTop: 80 }}>
+    <ScrollView style={{ paddingTop: 80, backgroundColor: Colors.background }}>
       <View style={{ flexDirection: "column" }}>
         <Text
           style={{
@@ -87,7 +87,7 @@ const Settings = () => {
             style={{
               height: 85,
               width: "90%",
-              backgroundColor: "white",
+              backgroundColor: Colors.background,
               borderRadius: 20,
               justifyContent: "center",
               alignItems: "center",
@@ -130,23 +130,23 @@ const Settings = () => {
                 {user?.primaryPhoneNumber?.toString()}
               </Text>
             </View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: Colors.dark,
-                borderRadius: 50,
-                width: 85,
-                height: 30,
-                justifyContent: "center",
-                alignItems: "center",
-                marginRight: 10,
-              }}
-            >
-              <Link href={"/(authenticated)/(modals)/account"} asChild>
-                <Text style={{ color: "white", fontSize: 10 }}>
+            <Link href={"/(authenticated)/(modals)/account"} asChild>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: Colors.dark,
+                  borderRadius: 50,
+                  width: 85,
+                  height: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginRight: 10,
+                }}
+              >
+                <Text style={{ color: Colors.background, fontSize: 10 }}>
                   {i18n.t("Edit Profile")}
                 </Text>
-              </Link>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Link>
           </View>
         </View>
         <Text
@@ -172,7 +172,7 @@ const Settings = () => {
               height: "auto",
               padding: 10,
               width: "90%",
-              backgroundColor: "white",
+              backgroundColor: Colors.background,
               borderRadius: 20,
               justifyContent: "center",
               alignItems: "center",
@@ -215,7 +215,12 @@ const Settings = () => {
                   />
                 </View>
                 <Text
-                  style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
+                  style={{
+                    marginLeft: 20,
+                    fontSize: 16,
+                    fontWeight: "400",
+                    color: Colors.dark,
+                  }}
                 >
                   {i18n.t("Notifications")}
                 </Text>
@@ -263,7 +268,12 @@ const Settings = () => {
                   />
                 </View>
                 <Text
-                  style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
+                  style={{
+                    marginLeft: 20,
+                    fontSize: 16,
+                    fontWeight: "400",
+                    color: Colors.dark,
+                  }}
                 >
                   {i18n.t("Languages")}
                 </Text>
@@ -281,6 +291,7 @@ const Settings = () => {
                         : "arrow-forward-outline"
                     }
                     size={22}
+                    color={Colors.dark}
                   />
                 </TouchableOpacity>
               </View>
@@ -289,7 +300,7 @@ const Settings = () => {
               <View
                 style={{
                   width: "80%",
-                  backgroundColor: "white",
+                  backgroundColor: Colors.background,
                   borderColor: Colors.lightGray,
                   borderWidth: 0.5,
                   borderRadius: 10,
@@ -306,7 +317,13 @@ const Settings = () => {
                         setShowLanguages(!showLanguages);
                       }}
                     >
-                      <Text style={{ color: Colors.dark, fontSize: 18 }}>
+                      <Text
+                        style={{
+                          color: Colors.dark,
+                          fontSize: 18,
+                          color: Colors.dark,
+                        }}
+                      >
                         {Object.keys(language)[0]}
                       </Text>
                       {i18n.locale === Object.values(language)[0] && (
@@ -352,11 +369,20 @@ const Settings = () => {
                 >
                   <Image
                     source={require("@/assets/images/bpay_logo.png")}
-                    style={{ height: 30, width: 30, tintColor: "white" }}
+                    style={{
+                      height: 30,
+                      width: 30,
+                      tintColor: Colors.background,
+                    }}
                   />
                 </View>
                 <Text
-                  style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
+                  style={{
+                    marginLeft: 20,
+                    fontSize: 16,
+                    fontWeight: "400",
+                    color: Colors.dark,
+                  }}
                 >
                   {i18n.t("App Icon")}
                 </Text>
@@ -371,6 +397,7 @@ const Settings = () => {
                     name={
                       showIcons ? "arrow-down-outline" : "arrow-forward-outline"
                     }
+                    color={Colors.dark}
                     size={22}
                   />
                 </TouchableOpacity>
@@ -380,7 +407,7 @@ const Settings = () => {
               <View
                 style={{
                   width: "80%",
-                  backgroundColor: "white",
+                  backgroundColor: Colors.background,
                   borderColor: Colors.lightGray,
                   borderWidth: 0.5,
                   borderRadius: 10,
@@ -397,7 +424,13 @@ const Settings = () => {
                       source={icon.icon}
                       style={{ width: 24, height: 24 }}
                     />
-                    <Text style={{ color: Colors.dark, fontSize: 18 }}>
+                    <Text
+                      style={{
+                        color: Colors.dark,
+                        fontSize: 18,
+                        color: Colors.dark,
+                      }}
+                    >
                       {i18n.t(icon.name)}
                     </Text>
                     {activeIcon.toLowerCase() === icon.name.toLowerCase() && (
@@ -444,13 +477,22 @@ const Settings = () => {
                   />
                 </View>
                 <Text
-                  style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
+                  style={{
+                    marginLeft: 20,
+                    fontSize: 16,
+                    fontWeight: "400",
+                    color: Colors.dark,
+                  }}
                 >
                   {i18n.t("Security and Password")}
                 </Text>
                 <View style={{ flex: 1 }} />
                 <TouchableOpacity style={{ marginRight: 10 }}>
-                  <Ionicons name="arrow-forward-outline" size={22} />
+                  <Ionicons
+                    name="arrow-forward-outline"
+                    size={22}
+                    color={Colors.dark}
+                  />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -490,7 +532,12 @@ const Settings = () => {
                   />
                 </View>
                 <Text
-                  style={{ marginLeft: 20, fontSize: 16, fontWeight: "400" }}
+                  style={{
+                    marginLeft: 20,
+                    fontSize: 16,
+                    fontWeight: "400",
+                    color: Colors.dark,
+                  }}
                 >
                   {i18n.t("Logout")}
                 </Text>
@@ -501,7 +548,11 @@ const Settings = () => {
                     signOut();
                   }}
                 >
-                  <Ionicons name="arrow-forward-outline" size={22} />
+                  <Ionicons
+                    name="arrow-forward-outline"
+                    size={22}
+                    color={Colors.dark}
+                  />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>

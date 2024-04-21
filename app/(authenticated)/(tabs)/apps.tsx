@@ -95,6 +95,7 @@ const Crypto = ({ t }) => {
           marginLeft: 20,
           fontSize: 24,
           fontWeight: "600",
+          color: Colors.dark,
         }}
       >
         {i18n.t("Applications")}
@@ -201,6 +202,7 @@ const Crypto = ({ t }) => {
           left: "42%",
           marginTop: 10,
           marginBottom: 10,
+          tintColor: Colors.dark,
         }}
       />
 

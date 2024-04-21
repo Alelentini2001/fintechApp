@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
+  useColorScheme,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
@@ -15,13 +16,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import i18n from "@/app/(authenticated)/(tabs)/translate";
+let colorScheme = useColorScheme();
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
   const { user } = useUser();
-
   return (
-    <BlurView intensity={80} tint={"extraLight"} style={{ paddingTop: top }}>
+    <BlurView
+      intensity={80}
+      tint={colorScheme === "light" ? "extraLight" : "dark"}
+      style={{ paddingTop: top }}
+    >
       <View style={styles.container}>
         {/* <Link href={"/(authenticated)/(modals)/account"} asChild> */}
         {user?.imageUrl ? (
@@ -79,11 +84,7 @@ const CustomHeader = () => {
           </View>
         </View>
         <View style={styles.circle}>
-          <Ionicons
-            name="notifications-outline"
-            size={20}
-            color={Colors.dark}
-          />
+          <Ionicons name="notifications-outline" size={20} color={"black"} />
         </View>
         {/* <View style={styles.circle}>
           <Ionicons name="card" size={20} color={Colors.dark} />
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
   },
   greetingText: {
     fontSize: 12,
-    color: "black",
+    color: Colors.dark,
   },
   userNameContainer: {
     marginLeft: 0,
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "black",
+    color: Colors.dark,
   },
 });
 export default CustomHeader;

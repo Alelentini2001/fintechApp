@@ -29,7 +29,7 @@ export const defaultStyles = StyleSheet.create({
     color: Colors.gray,
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.background,
     fontSize: 18,
     fontWeight: '500',
   },
@@ -41,7 +41,7 @@ export const defaultStyles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonTextSmall: {
-    color: '#fff',
+    color: Colors.background,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -49,12 +49,13 @@ export const defaultStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     margin: 20,
+    color: Colors.dark,
     marginBottom: 10,
   },
   block: {
     marginHorizontal: 20,
     padding: 14,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background,
     borderRadius: 16,
     gap: 20,
   },

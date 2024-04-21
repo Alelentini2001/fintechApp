@@ -10,13 +10,21 @@ const Wallet = ({ t }) => {
     useBalanceStore();
   const headerHeight = useHeaderHeight();
   return (
-    <View style={{ marginTop: headerHeight, marginLeft: 10 }}>
+    <View
+      style={{
+        paddingTop: headerHeight,
+        paddingLeft: 10,
+        backgroundColor: Colors.background,
+        height: "100%",
+      }}
+    >
       <Text
         style={{
           fontSize: 18,
           fontWeight: "500",
           marginTop: 30,
           left: 20,
+          color: Colors.dark,
         }}
       >
         {i18n.t("Account")}
@@ -39,7 +47,7 @@ const Wallet = ({ t }) => {
               top: 20,
               left: 10,
               borderRadius: 20,
-              backgroundColor: "rgba(0,0,0,0.04)",
+              backgroundColor: Colors.background,
               justifyContent: "center",
               alignItems: "center",
               gap: 5,
@@ -51,9 +59,9 @@ const Wallet = ({ t }) => {
               }}
               style={{ width: 26, height: 26 }}
             />
-            <Text style={{ fontSize: 14 }}>EUR</Text>
+            <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
           </View>
-          <Text style={{ fontSize: 12, left: 15, top: 40 }}>
+          <Text style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}>
             {i18n.t("Your Balance")}
           </Text>
           <View style={styles.row}>
@@ -80,7 +88,14 @@ const Wallet = ({ t }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.wallet}>
-        <Text style={{ fontSize: 14, fontWeight: "200", marginTop: 10 }}>
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: "200",
+            marginTop: 10,
+            color: Colors.dark,
+          }}
+        >
           {i18n.t("Quply Earnings")}
         </Text>
         <View style={{ flexDirection: "row", padding: 30, gap: 20 }}>
@@ -122,7 +137,13 @@ const Wallet = ({ t }) => {
           </View>
         </View>
         <TouchableOpacity style={styles.claim}>
-          <Text style={{ color: "white", fontSize: 14, fontWeight: "300" }}>
+          <Text
+            style={{
+              color: Colors.background,
+              fontSize: 14,
+              fontWeight: "300",
+            }}
+          >
             {i18n.t("Claim Your Earnings")}
           </Text>
         </TouchableOpacity>
@@ -130,7 +151,12 @@ const Wallet = ({ t }) => {
       <TouchableOpacity style={styles.withdraw}>
         <Image
           source={require("@/assets/images/sendIcon.png")}
-          style={{ marginRight: 10, width: 20, height: 20 }}
+          style={{
+            marginRight: 10,
+            width: 20,
+            height: 20,
+            tintColor: Colors.dark,
+          }}
         />
         <Text style={{ color: Colors.dark, fontSize: 14, fontWeight: "300" }}>
           {i18n.t("Withdraw Balance")}
@@ -142,7 +168,7 @@ const Wallet = ({ t }) => {
 
 const styles = StyleSheet.create({
   account: {
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
     height: 128,
     width: 275,
     borderRadius: 15,
@@ -162,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   wallet: {
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
     flexDirection: "column",
     height: 190,
     width: 350,
@@ -184,14 +210,17 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 22,
     fontWeight: "bold",
+    color: Colors.dark,
   },
   number: {
     fontSize: 18,
     fontWeight: "400",
+    color: Colors.dark,
   },
   text: {
     fontSize: 10,
     fontWeight: "200",
+    color: Colors.dark,
   },
   claim: {
     width: "96%",
@@ -205,7 +234,7 @@ const styles = StyleSheet.create({
     width: "84%",
     height: 50,
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
     borderWidth: 1,
     borderColor: Colors.lightGray,
     marginLeft: 20,

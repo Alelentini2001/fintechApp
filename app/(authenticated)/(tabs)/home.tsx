@@ -40,7 +40,6 @@ const Home = ({ t }) => {
       setSelectedIndex(viewableItems[0].index || 0);
     }
   }).current;
-
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 80,
   };
@@ -89,6 +88,7 @@ const Home = ({ t }) => {
                 fontSize: 16,
                 fontWeight: "500",
                 marginTop: 30,
+                color: Colors.dark,
                 left: 20,
               }}
             >
@@ -111,7 +111,7 @@ const Home = ({ t }) => {
                   top: 20,
                   left: 10,
                   borderRadius: 20,
-                  backgroundColor: "rgba(0,0,0,0.04)",
+                  backgroundColor: Colors.background,
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 5,
@@ -123,9 +123,11 @@ const Home = ({ t }) => {
                   }}
                   style={{ width: 26, height: 26 }}
                 />
-                <Text style={{ fontSize: 14 }}>EUR</Text>
+                <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
               </View>
-              <Text style={{ fontSize: 12, left: 15, top: 40 }}>
+              <Text
+                style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}
+              >
                 {i18n.t("Spending")}
               </Text>
               <View style={styles.row}>
@@ -135,7 +137,13 @@ const Home = ({ t }) => {
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
-                <Text style={{ fontWeight: "400", fontSize: 10 }}>
+                <Text
+                  style={{
+                    fontWeight: "400",
+                    fontSize: 10,
+                    color: Colors.dark,
+                  }}
+                >
                   {i18n.t("Overall Spending is:")}
                 </Text>
                 <View
@@ -177,6 +185,7 @@ const Home = ({ t }) => {
                 fontSize: 16,
                 fontWeight: "500",
                 marginTop: 30,
+                color: Colors.dark,
                 left: 20,
               }}
             >
@@ -208,9 +217,13 @@ const Home = ({ t }) => {
                   }}
                   style={{ width: 26, height: 26 }}
                 />
-                <Text style={{ fontSize: 14 }}>EUR</Text>
+                <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
               </View>
-              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Cashback</Text>
+              <Text
+                style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}
+              >
+                Cashback
+              </Text>
               <View style={styles.row}>
                 <Text style={styles.balance}>€ {cashback.toFixed(3)}</Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
@@ -218,7 +231,13 @@ const Home = ({ t }) => {
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
-                <Text style={{ fontWeight: "400", fontSize: 10 }}>
+                <Text
+                  style={{
+                    fontWeight: "400",
+                    fontSize: 10,
+                    color: Colors.dark,
+                  }}
+                >
                   {i18n.t("Overall Earnings are:")}
                 </Text>
                 <View
@@ -259,6 +278,7 @@ const Home = ({ t }) => {
                 fontWeight: "500",
                 marginTop: 30,
                 left: 20,
+                color: Colors.dark,
               }}
             >
               {i18n.t("Referral")}
@@ -292,9 +312,13 @@ const Home = ({ t }) => {
                   }}
                   style={{ width: 26, height: 26 }}
                 />
-                <Text style={{ fontSize: 14 }}>EUR</Text>
+                <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
               </View>
-              <Text style={{ fontSize: 12, left: 15, top: 40 }}>Referral</Text>
+              <Text
+                style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}
+              >
+                Referral
+              </Text>
               <View style={styles.row}>
                 <Text style={styles.balance}>
                   € {Math.floor(Math.random() * 100)}
@@ -304,7 +328,13 @@ const Home = ({ t }) => {
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
               >
-                <Text style={{ fontWeight: "400", fontSize: 10 }}>
+                <Text
+                  style={{
+                    fontWeight: "400",
+                    fontSize: 10,
+                    color: Colors.dark,
+                  }}
+                >
                   {i18n.t("Overall Spending is:")}
                 </Text>
                 <View
@@ -410,7 +440,11 @@ const Home = ({ t }) => {
       <FlatList
         data={[0, 1, 2]}
         renderItem={({ index }) => (
-          <View style={{ width: Dimensions.get("window").width - 120 }}>
+          <View
+            style={{
+              width: Dimensions.get("window").width - 120,
+            }}
+          >
             {renderContent(index)}
           </View>
         )}
@@ -516,22 +550,28 @@ const Home = ({ t }) => {
               <Ionicons
                 name={transaction.amount > 0 ? "add" : "remove"}
                 size={24}
-                color={Colors.dark}
+                color={"black"}
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: "400" }}>{transaction.title}</Text>
-              <Text style={{ color: Colors.gray, fontSize: 12 }}>
+              <Text style={{ fontWeight: "400", color: Colors.dark }}>
+                {transaction.title}
+              </Text>
+              <Text
+                style={{ color: Colors.gray, fontSize: 12, color: Colors.dark }}
+              >
                 {transaction.date.toLocaleString()}
               </Text>
             </View>
-            <Text>{transaction.amount.toFixed(2)}€</Text>
+            <Text style={{ color: Colors.dark }}>
+              {transaction.amount.toFixed(2)}€
+            </Text>
           </View>
         ))}
       </View>
       <View
         style={{
-          backgroundColor: "white",
+          backgroundColor: Colors.background,
           marginTop: 15,
         }}
       >
@@ -571,7 +611,7 @@ const Home = ({ t }) => {
 
 const styles = StyleSheet.create({
   account: {
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
     height: 160,
     width: 275,
     borderRadius: 15,
@@ -587,6 +627,7 @@ const styles = StyleSheet.create({
   balance: {
     left: 15,
     top: 40,
+    color: Colors.dark,
     fontSize: 22,
     fontWeight: "bold",
   },
@@ -604,7 +645,7 @@ const styles = StyleSheet.create({
   transactions: {
     marginHorizontal: 20,
     padding: 14,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
     borderRadius: 16,
     gap: 20,
   },
@@ -630,12 +671,12 @@ const styles = StyleSheet.create({
     width: 8,
     height: 3,
     borderRadius: 4,
-    backgroundColor: "gray",
+    backgroundColor: Colors.gray,
     marginHorizontal: 4,
   },
   selectedIndicator: {
     width: 20,
-    backgroundColor: "black",
+    backgroundColor: Colors.dark,
   },
   buttonContainer: {
     marginLeft: 10,
@@ -649,7 +690,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   requestPayButton: {
-    backgroundColor: "blue",
+    backgroundColor: Colors.primary,
   },
 });
 export default Home;

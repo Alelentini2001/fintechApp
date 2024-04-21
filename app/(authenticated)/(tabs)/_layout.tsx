@@ -36,7 +36,6 @@ const Slider = () => {
   //     navigationRef.current?.navigate("StakeholderView");
   //   };
   const router = useRouter();
-
   return (
     <View
       style={{
@@ -44,7 +43,7 @@ const Slider = () => {
       }}
     >
       <ActionButton
-        buttonColor="white"
+        buttonColor={Colors.background}
         onPress={() => {
           console.log("Press");
           router.replace("/(authenticated)/(tabs)/scan");
@@ -53,7 +52,7 @@ const Slider = () => {
           <Image
             source={require("@/assets/images/bpay_logo.png")}
             style={{
-              tintColor: "black",
+              tintColor: Colors.dark,
               width: 30,
               height: 30,
               marginRight: 2,
@@ -69,7 +68,7 @@ const Slider = () => {
 const Layout = () => {
   const renderTabBar = ({ routeName, selectedTab, navigate }) => {
     const isSelected = routeName === selectedTab;
-    const color = isSelected ? "white" : "gray";
+    const color = isSelected ? Colors.background : Colors.gray;
     const iconSize = 24; // Adjust size if needed
 
     const getIcon = (name: string) => {
@@ -114,7 +113,7 @@ const Layout = () => {
   return (
     <CurvedBottomBarExpo.Navigator
       style={styles.navigator}
-      bgColor={"black"}
+      bgColor={Colors.dark}
       type="UP"
       screenOptions={{
         headerShown:
