@@ -19,7 +19,6 @@ import { useTheme } from "@/app/ThemeContext";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
-
   let colorScheme = theme;
   const { user } = useUser();
   const router = useRouter();

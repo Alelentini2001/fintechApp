@@ -11,8 +11,7 @@ const storage = new MMKV({
 export const UserInactivityProvider = ({ children }: any) => {
   const appState = useRef(AppState.currentState);
   const router = useRouter();
-  const { isSignedIn } = useAuth();
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -35,14 +34,14 @@ export const UserInactivityProvider = ({ children }: any) => {
       appState.current.match(/background/)
     ) {
       const elapsed = Date.now() - (storage.getNumber("startTime") || 0);
-      console.log(
-        "🚀 ~ handleAppStateChange ~ elapsed:",
-        elapsed,
-        user?.fullName
-      );
+      console.log("🚀 ~ handleAppStateChange ~ elapsed:", elapsed, isSignedIn);
 
-      if (elapsed > 3000 && user) {
-        router.replace("/(authenticated)/(modals)/lock");
+      if (elapsed > 3000 && isSignedIn) {
+        router.push({
+          pathname: "/(authenticated)/(modals)/lock",
+          params: { loaded: "true" },
+        });
+        // router.replace("/(authenticated)/(modals)/lock");
       }
     }
     appState.current = nextAppState;

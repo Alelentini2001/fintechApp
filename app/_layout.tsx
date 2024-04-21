@@ -235,14 +235,14 @@ const RootLayoutNav = () => {
       tokenCache={tokenCache}
     >
       <QueryClientProvider client={queryClient}>
-        <UserInactivityProvider>
-          <ThemeProvider>
+        <ThemeProvider>
+          <UserInactivityProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <StatusBar style="dark" />
               <InitialLayout />
             </GestureHandlerRootView>
-          </ThemeProvider>
-        </UserInactivityProvider>
+          </UserInactivityProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );

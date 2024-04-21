@@ -7,7 +7,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import Animated, {
   useAnimatedStyle,
@@ -20,11 +20,16 @@ import * as LocalAuthentication from "expo-local-authentication";
 import Colors from "@/constants/Colors";
 import { MMKV } from "react-native-mmkv";
 import { useUser } from "@clerk/clerk-expo";
+import { useTheme } from "@/app/ThemeContext";
 
 // Initialize MMKV
 const storage = new MMKV();
 
 const Lock = () => {
+  const { loaded } = useLocalSearchParams<{
+    loaded: string;
+  }>();
+  let colorScheme = useTheme().theme;
   const [code, setCode] = useState("");
   const [confirmCode, setConfirmCode] = useState("");
   const [isConfirming, setIsConfirming] = useState(false);
@@ -44,7 +49,11 @@ const Lock = () => {
     const storedPasscode = storage.getString("passcode");
     if (storedPasscode) {
       if (code === storedPasscode) {
-        router.replace("/(authenticated)/(tabs)/home");
+        if (loaded) {
+          router.dismiss();
+        } else {
+          router.replace("/(authenticated)/(tabs)/home");
+        }
       } else {
         triggerError();
       }
@@ -103,7 +112,12 @@ const Lock = () => {
     if (storedPasscode) {
       const { success } = await LocalAuthentication.authenticateAsync();
       if (success) {
-        router.replace("/(authenticated)/(tabs)/home");
+        if (loaded) {
+          router.dismiss();
+        } else {
+          router.replace("/(authenticated)/(tabs)/home");
+        }
+        // router.replace("/(authenticated)/(tabs)/home");
       } else {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
@@ -124,9 +138,18 @@ const Lock = () => {
 
   return (
     <SafeAreaView
-      style={{ backgroundColor: Colors.background, height: "100%" }}
+      style={{
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
+        height: "100%",
+      }}
     >
-      <Text style={styles.greeting}>
+      <Text
+        style={[
+          styles.greeting,
+          { color: colorScheme === "dark" ? Colors.background : Colors.dark },
+        ]}
+      >
         {storedPasscode
           ? `Welcome back, ${user?.firstName}`
           : !isConfirming
@@ -156,7 +179,17 @@ const Lock = () => {
                 onNumberPress(number);
               }}
             >
-              <Text style={styles.number}>{number}</Text>
+              <Text
+                style={[
+                  styles.number,
+                  {
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  },
+                ]}
+              >
+                {number}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -174,7 +207,17 @@ const Lock = () => {
                 onNumberPress(number);
               }}
             >
-              <Text style={styles.number}>{number}</Text>
+              <Text
+                style={[
+                  styles.number,
+                  {
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  },
+                ]}
+              >
+                {number}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -186,7 +229,17 @@ const Lock = () => {
                 onNumberPress(number);
               }}
             >
-              <Text style={styles.number}>{number}</Text>
+              <Text
+                style={[
+                  styles.number,
+                  {
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  },
+                ]}
+              >
+                {number}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -195,7 +248,7 @@ const Lock = () => {
             <MaterialCommunityIcons
               name="face-recognition"
               size={26}
-              color={Colors.dark}
+              color={colorScheme === "dark" ? Colors.background : Colors.dark}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -204,7 +257,17 @@ const Lock = () => {
               onNumberPress(0);
             }}
           >
-            <Text style={styles.number}>0</Text>
+            <Text
+              style={[
+                styles.number,
+                {
+                  color:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
+                },
+              ]}
+            >
+              0
+            </Text>
           </TouchableOpacity>
           <View style={{ minWidth: 30 }}>
             {code.length > 0 && (
@@ -212,7 +275,9 @@ const Lock = () => {
                 <MaterialCommunityIcons
                   name="backspace-outline"
                   size={26}
-                  color={"black"}
+                  color={
+                    colorScheme === "dark" ? Colors.background : Colors.dark
+                  }
                 />
               </TouchableOpacity>
             )}
@@ -246,7 +311,6 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     height: "auto",
     alignSelf: "center",
-    color: Colors.dark,
   },
   codeView: {
     flexDirection: "row",
@@ -264,7 +328,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 80,
     gap: 60,
   },
-  number: { fontSize: 32, color: Colors.dark },
+  number: { fontSize: 32 },
 });
 
 export default Lock;
