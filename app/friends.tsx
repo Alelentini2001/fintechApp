@@ -12,12 +12,13 @@ import {
   View,
 } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
+import { useTheme } from "./ThemeContext";
 
 const Friends = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [sortKey, setSortKey] = useState<boolean>(false); // Default sort by date
-
+  let colorScheme = useTheme().theme;
   useEffect(() => {
     const generateTransactions = () => {
       const unsortedTransactions = Array.from({ length: 18 }, () => ({
@@ -63,19 +64,45 @@ const Friends = () => {
     );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            colorScheme === "light" ? Colors.background : Colors.dark,
+        },
+      ]}
+    >
       <View style={{ flexDirection: "row", padding: 5, gap: 10 }}>
-        <View style={styles.searchSelection}>
+        <View
+          style={[
+            styles.searchSelection,
+            {
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+              borderWidth: 0.5,
+              borderColor:
+                colorScheme === "dark" ? Colors.background : Colors.dark,
+            },
+          ]}
+        >
           <Ionicons
             name="search"
             size={20}
-            color={Colors.dark}
+            color={colorScheme === "dark" ? Colors.background : Colors.dark}
             style={styles.searchIcon}
           />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
+              },
+            ]}
             placeholder="Search"
-            placeholderTextColor={Colors.dark}
+            placeholderTextColor={
+              colorScheme === "dark" ? Colors.background : Colors.dark
+            }
             onChangeText={setSearchText}
             value={searchText}
           />
@@ -87,8 +114,22 @@ const Friends = () => {
         </View> */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <View style={styles.circle}>
-              <Ionicons name="filter-outline" size={24} color="white" />
+            <View
+              style={[
+                styles.circle,
+                {
+                  backgroundColor:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
+                },
+              ]}
+            >
+              <Ionicons
+                name="filter-outline"
+                size={24}
+                color={
+                  colorScheme === "light" ? Colors.background : Colors.dark
+                }
+              />
             </View>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
@@ -130,7 +171,15 @@ const Friends = () => {
                 justifyContent: "flex-start",
               }}
             >
-              <Text style={[styles.name, { color: Colors.dark }]}>
+              <Text
+                style={[
+                  styles.name,
+                  {
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  },
+                ]}
+              >
                 {transaction.name}
               </Text>
               {/* <Text style={[styles.date, { color: Colors.dark }]}>
@@ -144,11 +193,19 @@ const Friends = () => {
                 height: 40,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: Colors.dark,
+                backgroundColor:
+                  colorScheme === "dark" ? Colors.background : Colors.dark,
                 borderRadius: 20,
               }}
             >
-              <Text style={{ color: "white" }}>Pay</Text>
+              <Text
+                style={{
+                  color:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
+                }}
+              >
+                Pay
+              </Text>
             </TouchableOpacity>
           </View>
         ))}

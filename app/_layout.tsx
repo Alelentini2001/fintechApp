@@ -245,7 +245,17 @@ const InitialLayout = () => {
       />
       <Stack.Screen
         name="friends"
-        options={{ title: "Your Friends", presentation: "modal" }}
+        options={{
+          title: "Your Friends",
+          presentation: "modal",
+          headerStyle: {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+          headerTitleStyle: {
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          },
+        }}
       />
     </Stack>
   );
