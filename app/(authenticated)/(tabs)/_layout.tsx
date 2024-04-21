@@ -33,6 +33,7 @@ import i18n from "./translate";
 import Request from "./request";
 import QrCode from "./qrCode";
 import { useTheme } from "@/app/ThemeContext";
+import PaymentConfirmationScreen from "./pay";
 
 const Slider = ({ colorScheme }) => {
   //   const onPressStakeholder = () => {
@@ -159,6 +160,11 @@ const Layout = () => {
       <CurvedBottomBarExpo.Screen
         name="scan"
         component={() => <Scan t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
+        position="CENTER"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="pay"
+        component={() => <PaymentConfirmationScreen t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CENTER"
       />
       {/* <CurvedBottomBarExpo.Screen

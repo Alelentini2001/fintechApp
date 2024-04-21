@@ -9,33 +9,48 @@ import {
   ActivityIndicator,
   Linking,
   TextInput,
+  Alert,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import i18n from "./translate";
+import { useRouter } from "expo-router";
+import { CameraView } from "expo-camera/next";
 
 const Scan = ({ t }) => {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
-
+  const router = useRouter();
   useEffect(() => {
     if (!permission?.granted) {
       requestPermission();
     }
   }, [permission]);
 
+  const handleBarCodeScanned = (data: string) => {
+    console.log(data);
+    try {
+      // const parsedData = JSON.parse(data);
+      // router.replace("/(authenticated)/(tabs)/pay", {
+      //   paymentData: parsedData,
+      // });
+      CameraView.dismissScanner();
+      router.push({
+        pathname: "/(authenticated)/(tabs)/pay",
+        params: { paymentData: data },
+      });
+    } catch (error) {
+      Alert.alert("Invalid QR Code", "The scanned QR code is not valid.");
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Camera
-        type={type}
+      <CameraView
         style={{ height: "80%", width: "100%", marginTop: -20 }}
-        onBarCodeScanned={(event) => {
-          const qrCodeData = event.data;
-          //   if (qrCodeData && Linking.canOpenURL(qrCodeData)) {
-          //     setAuthUrl(qrCodeData);
-          //     setShowScanner(false);
-          //   }
-          console.log(qrCodeData);
+        onBarcodeScanned={(event) => {
+          handleBarCodeScanned(event.data.toString());
         }}
+
         // Other camera configurations as needed
       />
       <View

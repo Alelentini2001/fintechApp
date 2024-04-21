@@ -1,4 +1,4 @@
-rootProject.name = 'fintech'
+rootProject.name = 'QUPLY'
 
 dependencyResolutionManagement {
   versionCatalogs {

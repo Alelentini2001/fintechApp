@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "493865552783",
+    "project_id": "quply-2023",
+    "storage_bucket": "quply-2023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493865552783:android:a56b8dad364cf7793399fa",
+        "android_client_info": {
+          "package_name": "com.aleprophet.fintech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6TiK_SiBdxezJINEQRQbRTjUXydsGrp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

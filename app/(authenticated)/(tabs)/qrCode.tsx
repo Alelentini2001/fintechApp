@@ -28,50 +28,23 @@ const QrCode = ({ t }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const { user } = useUser();
+
   const generateQRCode = () => {
     setIsLoading(true);
-    // Prepare data for QR code
-    let qrCodeData = {
-      amount,
+    const amountt = parseFloat(amount).toFixed(2);
+    const qrCodeData = {
+      amountt,
       reference,
+      merchantUsername: user?.username,
+      merchantId: user?.id,
     };
-    console.log(qrCodeData);
-    // Convert data to URL parameters
-    let qrCodeParams = new URLSearchParams(qrCodeData).toString();
 
-    // Create complete URL
-    let qrCodeURL = `https://app.b-pay.it?${qrCodeParams}`;
+    const qrCodeParams = new URLSearchParams(qrCodeData).toString();
+    const qrCodeURL = `${qrCodeParams}`;
 
-    // Create shortened URL using Bitly
-    const bitlyAccessToken = "beb1018dda01fdc2740b15ffbbff331acc523d27"; // Replace with your Bitly access token
-    axios
-      .post(
-        "https://api-ssl.bitly.com/v4/shorten",
-        {
-          long_url: qrCodeURL,
-          domain: "bit.ly",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${bitlyAccessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        // Set the QR code URL to the shortened URL
-        setQrCodeUrl(response.data.link);
-        setIsLoading(false);
-        setSmallQRCode(true);
-        console.log(isLoading);
-      })
-      .catch((error) => {
-        console.error("Error shortening URL:", error);
-        // Fallback: use the original URL if unable to shorten
-        setQrCodeUrl(qrCodeURL);
-        setSmallQRCode(false);
-        setIsLoading(false);
-      });
+    // Typically, you'd use a backend service or a URL shortener API here
+    setQrCodeUrl(qrCodeURL);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -170,7 +143,7 @@ const QrCode = ({ t }) => {
                   },
                 ]}
                 logo={{
-                  href: smallQRCode && require("@/assets/images/bpay_logo.png"),
+                  href: require("@/assets/images/bpay_logo.png"),
                 }}
                 padding={smallQRCode ? 20 : 10} // You can reduce the padding to make the QR code smaller
                 color={colorScheme === "dark" ? Colors.background : Colors.dark}
