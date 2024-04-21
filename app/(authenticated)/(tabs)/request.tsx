@@ -127,7 +127,7 @@ const Request = ({ t }) => {
           ]}
         >
           <TextInput
-            placeholder="What is the purpose of the request?"
+            placeholder={t("What is the purpose of the request?")}
             keyboardType="default"
             style={[
               styles.input2,

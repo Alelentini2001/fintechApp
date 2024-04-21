@@ -14,6 +14,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTheme } from "./ThemeContext";
+import { I18n } from "i18n-js";
+import * as Localization from "expo-localization";
+import translations from "@/app/(authenticated)/(tabs)/translations.json";
+
+const i18n = new I18n(translations);
+i18n.locale = Localization.getLocales()[0].languageCode || "en";
+i18n.enableFallback = true;
 
 enum SignInType {
   Phone,
@@ -30,6 +38,7 @@ const Login = () => {
   const keyboardVerticalOffset = Platform.OS === "ios" ? 90 : 0;
   const router = useRouter();
   const { signIn } = useSignIn();
+  let colorScheme = useTheme().theme;
 
   const onSignIn = async (type: SignInType) => {
     if (type === SignInType.Phone) {
@@ -111,15 +120,39 @@ const Login = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{
+        flex: 1,
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
+      }}
       behavior="padding"
       keyboardVerticalOffset={keyboardVerticalOffset}
     >
-      <View style={defaultStyles.container}>
-        <Text style={defaultStyles.header}>Welcome back!</Text>
+      <View
+        style={[
+          defaultStyles.container,
+          {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            defaultStyles.header,
+            {
+              color: colorScheme === "dark" ? Colors.background : Colors.dark,
+            },
+          ]}
+        >
+          {i18n.t("Welcome back!")}
+        </Text>
         <Text style={defaultStyles.descriptionText}>
-          Enter the {emailSignIn ? "email" : "phone number"} associated with
-          your account
+          {i18n.t(
+            `Enter the ${
+              emailSignIn ? "email" : "phone number"
+            } associated with your account`
+          )}
         </Text>
         {!emailSignIn ? (
           <View style={styles.inputContainer}>
@@ -131,7 +164,7 @@ const Login = () => {
             />
             <TextInput
               style={[styles.input, { flex: 1 }]}
-              placeholder="Mobile number"
+              placeholder={i18n.t("Mobile number")}
               placeholderTextColor={Colors.gray}
               keyboardType="numeric"
               value={phoneNumber}
@@ -162,7 +195,7 @@ const Login = () => {
             onSignIn(emailSignIn ? SignInType.Email : SignInType.Phone);
           }}
         >
-          <Text style={defaultStyles.buttonText}>Continue</Text>
+          <Text style={defaultStyles.buttonText}>{i18n.t("Continue")}</Text>
         </TouchableOpacity>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
           <View
@@ -172,7 +205,9 @@ const Login = () => {
               backgroundColor: Colors.gray,
             }}
           />
-          <Text style={{ color: Colors.gray, fontSize: 20 }}>or</Text>
+          <Text style={{ color: Colors.gray, fontSize: 20 }}>
+            {i18n.t("or")}
+          </Text>
           <View
             style={{
               flex: 1,
@@ -202,7 +237,7 @@ const Login = () => {
             color={"#000"}
           />
           <Text style={[defaultStyles.buttonText, { color: "#000" }]}>
-            Continue with {emailSignIn ? "phone number" : "email"}
+            {i18n.t(`Continue with ${emailSignIn ? "phone number" : "email"}`)}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -221,7 +256,7 @@ const Login = () => {
         >
           <Ionicons name="logo-google" size={24} color={"#000"} />
           <Text style={[defaultStyles.buttonText, { color: "#000" }]}>
-            Continue with Google
+            {i18n.t("Continue with Google")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -240,7 +275,7 @@ const Login = () => {
         >
           <Ionicons name="logo-apple" size={24} color={"#000"} />
           <Text style={[defaultStyles.buttonText, { color: "#000" }]}>
-            Continue with Apple
+            {i18n.t("Continue with Apple")}
           </Text>
         </TouchableOpacity>
       </View>

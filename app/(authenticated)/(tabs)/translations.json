@@ -72,7 +72,24 @@
         "Account Name": "Account Name",
         "Check Payments" : "Check Payments",
         "Switch to Dark Mode" : "Switch to Dark Mode",
-        "Switch to Light mode" : "Switch to Light Mode"
+        "Switch to Light Mode" : "Switch to Light Mode",
+        "What is the purpose of the request?" : "What is the purpose of the request?",
+        "Mobile number": "Mobile number",
+        "Welcome back!" : "Welcome back!",
+        "Enter the phone number associated with your account" : "Enter the phone number associated with your account",
+        "Enter the email associated with your account" : "Enter the email associated with your account",
+        "Continue": "Continue",
+        "or": "or",
+        "Continue with email": "Continue with email",
+        "Continue with phone number": "Continue with phone number",
+        "Continue with Google" : "Continue with Google",
+        "Continue with Apple" : "Continue with Apple",
+        "Let's Get Started!": "Let's Get Started!",
+        "Enter your phone number. We will send you a confirmation code there" : "Enter your phone number. We will send you a confirmation code there",
+        "Enter your email. We will send you a confirmation code there" : "Enter your email. We will send you a confirmation code there",
+        "Already have an account? Log In" : "Already have an account? Log In",
+        "Sign Up" : "Sign Up"
+
     },
     "it": {
       "Balance": "Saldo",
@@ -147,7 +164,21 @@
         "Account Name": "Nome Account",
         "Check Payments":"Verifica Transazione",
         "Switch to Dark Mode" : "Cambia a Dark Mode",
-        "Switch to Light Mode" : "Cambia a Light Mode"
+        "Switch to Light Mode" : "Cambia a Light Mode",
+        "Mobile number": "Numero di telefono",
+        "Welcome back!" : "Benvenuto!",
+        "Enter the phone number associated with your account" : "Inserisci il numero di telefono associato al tuo account",
+        "Enter the email associated with your account" : "Inserisci la email associata al tuo account",
+        "Continue": "Continua",
+        "or": "o",
+        "Continue with email": "Continua con email",
+        "Continue with phone number": "Continua con numero di telefono",
+        "Continue with Google" : "Continua con Google",
+        "Continue with Apple" : "Continua con Apple",
+        "Let's Get Started!" : "Iniziamo!",
+        "Already have an account? Log In" : "Hai un account? Fai il Log In",
+        "Sign Up" : "Registrati",
+        "What is the purpose of the request?" : "Qual'è la causa della richiesta?"
     },
     "es": {
       "Balance": "Saldo",
@@ -222,6 +253,20 @@
         "Account Name" : "Nombre de cuenta",
         "Check Payments" : "Verificar Transacciones",
         "Switch to Dark Mode" : "Cambiar a Dark Mode",
-        "Switch to Light Mode" : "Cambiar a Light Mode"
+        "Switch to Light Mode" : "Cambiar a Light Mode",
+        "Mobile number" : "Numero de tu mobil",
+        "Welcome back!" : "¡Bienvenido!",
+        "Enter the phone number associated with your account" : "Introduzca el número de teléfono asociado con tu cuenta",
+        "Enter the email associated with your account" : "Introduzca la dirección de correo asociada con tu cuenta",
+        "Continue": "Continuar",
+        "or": "o",
+        "Continue with email" : "Continuar con email",
+        "Continue with phone number" : "Continuar con tu mobil",
+        "Continue with Google" : "Continuar con Google",
+        "Continue with Apple" : "Continuar con Apple",
+        "Let's Get Started!" : "¡Empecemos!",
+        "Already have an account? Log In" : "¿Ya tiene una cuenta? Log In",
+        "Sign Up" : "Regístrate",
+        "What is the purpose of the request?" : "¿Qué es la causa de la solicitud?"
     }
 }

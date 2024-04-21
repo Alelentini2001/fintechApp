@@ -13,8 +13,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTheme } from "./ThemeContext";
+import { I18n } from "i18n-js";
+import * as Localization from "expo-localization";
+import translations from "@/app/(authenticated)/(tabs)/translations.json";
+
+const i18n = new I18n(translations);
+i18n.locale = Localization.getLocales()[0].languageCode || "en";
+i18n.enableFallback = true;
 
 const Signup = () => {
+  let colorScheme = useTheme().theme;
   const [countryCode, setCountryCode] = useState("+39");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -56,15 +65,35 @@ const Signup = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{
+        flex: 1,
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
+      }}
       behavior="padding"
       keyboardVerticalOffset={keyboardVerticalOffset}
     >
-      <View style={defaultStyles.container}>
-        <Text style={defaultStyles.header}>Let's Get Started!</Text>
+      <View
+        style={[
+          defaultStyles.container,
+          {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            defaultStyles.header,
+            { color: colorScheme === "dark" ? Colors.background : Colors.dark },
+          ]}
+        >
+          {i18n.t("Let's Get Started!")}
+        </Text>
         <Text style={defaultStyles.descriptionText}>
-          Enter your {emailSignUp ? "email" : "phone number"}. We will send you
-          a confirmation code there
+          {emailSignUp
+            ? "Enter your email. We will send you a confirmation code there"
+            : "Enter your phone number. We will send you a confirmation code there"}
         </Text>
         {!emailSignUp ? (
           <View style={styles.inputContainer}>
@@ -76,7 +105,7 @@ const Signup = () => {
             />
             <TextInput
               style={[styles.input, { flex: 1 }]}
-              placeholder="Mobile number"
+              placeholder={i18n.t("Mobile number")}
               placeholderTextColor={Colors.gray}
               keyboardType="numeric"
               value={phoneNumber}
@@ -133,13 +162,23 @@ const Signup = () => {
             color={"#000"}
           />
           <Text style={[defaultStyles.buttonText, { color: "#000" }]}>
-            Continue with {emailSignUp ? "phone number" : "email"}
+            {i18n.t(`Continue with ${emailSignUp ? "phone number" : "email"}`)}
           </Text>
         </TouchableOpacity>
         <Link href={"/login"} replace asChild style={{ marginTop: 20 }}>
           <TouchableOpacity>
-            <Text style={defaultStyles.textLink}>
-              Already have an account? Log In
+            <Text
+              style={[
+                defaultStyles.textLink,
+                {
+                  color:
+                    colorScheme === "light"
+                      ? Colors.primary
+                      : Colors.primaryMuted,
+                },
+              ]}
+            >
+              {i18n.t("Already have an account? Log In")}
             </Text>
           </TouchableOpacity>
         </Link>
@@ -150,11 +189,15 @@ const Signup = () => {
             phoneNumber !== "" || email !== ""
               ? styles.enabled
               : styles.disabled,
-            { marginBottom: 20 },
+            {
+              marginBottom: 20,
+              backgroundColor:
+                colorScheme === "dark" ? Colors.background : Colors.dark,
+            },
           ]}
           onPress={onSignup}
         >
-          <Text style={defaultStyles.buttonText}>Sign Up</Text>
+          <Text style={defaultStyles.buttonText}>{i18n.t("Sign Up")}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

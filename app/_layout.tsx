@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserInactivityProvider } from "@/context/UserInactivity";
 import { LogBox } from "react-native";
 import i18n from "./(authenticated)/(tabs)/translate";
-import { ThemeProvider } from "./ThemeContext";
+import { ThemeProvider, useTheme } from "./ThemeContext";
 LogBox.ignoreAllLogs(); // Ignore log notification by message
 
 const queryClient = new QueryClient();
@@ -87,21 +87,21 @@ const InitialLayout = () => {
       router.replace("/");
     }
   }, [isSignedIn]);
-  useEffect(() => {
-    async function prepare() {
-      await SplashScreen.preventAutoHideAsync();
-      if (fontsLoaded && isLoaded) {
-        SplashScreen.hideAsync();
-        if (isSignedIn && segments[0] !== "(authenticated)") {
-          router.replace("/(authenticated)/(modals)/lock");
-        } else if (!isSignedIn) {
-          router.replace("/");
-        }
-      }
-    }
+  // useEffect(() => {
+  //   async function prepare() {
+  //     await SplashScreen.preventAutoHideAsync();
+  //     if (fontsLoaded && isLoaded) {
+  //       SplashScreen.hideAsync();
+  //       if (isSignedIn && segments[0] !== "(authenticated)") {
+  //         router.replace("/(authenticated)/(modals)/lock");
+  //       } else if (!isSignedIn) {
+  //         router.replace("/");
+  //       }
+  //     }
+  //   }
 
-    prepare();
-  }, [fontsLoaded, isLoaded, isSignedIn, segments]);
+  //   prepare();
+  // }, [fontsLoaded, isLoaded, isSignedIn, segments]);
 
   if (!loaded || !isLoaded) {
     return (
@@ -110,7 +110,7 @@ const InitialLayout = () => {
       </View>
     );
   }
-
+  let colorScheme = useTheme().theme;
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -120,10 +120,17 @@ const InitialLayout = () => {
           title: "",
           headerBackTitle: "",
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: Colors.background },
+          headerStyle: {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
           headerLeft: () => (
             <TouchableOpacity onPress={router.back}>
-              <Ionicons name="arrow-back" size={34} color={Colors.dark} />
+              <Ionicons
+                name="arrow-back"
+                size={34}
+                color={colorScheme === "dark" ? Colors.background : Colors.dark}
+              />
             </TouchableOpacity>
           ),
         }}
@@ -134,10 +141,17 @@ const InitialLayout = () => {
           title: "",
           headerBackTitle: "",
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: Colors.background },
+          headerStyle: {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
           headerLeft: () => (
             <TouchableOpacity onPress={router.back}>
-              <Ionicons name="arrow-back" size={34} color={Colors.dark} />
+              <Ionicons
+                name="arrow-back"
+                size={34}
+                color={colorScheme === "dark" ? Colors.background : Colors.dark}
+              />
             </TouchableOpacity>
           ),
           headerRight: () => (
@@ -159,10 +173,19 @@ const InitialLayout = () => {
           title: "",
           headerBackTitle: "",
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: Colors.background },
+          headerStyle: {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
           headerLeft: () => (
             <TouchableOpacity onPress={router.back}>
-              <Ionicons name="arrow-back" size={34} color={Colors.dark} />
+              <Ionicons
+                name="arrow-back"
+                size={34}
+                color={
+                  colorScheme === "light" ? Colors.dark : Colors.background
+                }
+              />
             </TouchableOpacity>
           ),
         }}

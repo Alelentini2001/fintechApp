@@ -15,6 +15,15 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
+import { I18n } from "i18n-js";
+import * as Localization from "expo-localization";
+import translations from "@/app/(authenticated)/(tabs)/translations.json";
+import { useTheme } from "../ThemeContext";
+
+const i18n = new I18n(translations);
+i18n.locale = Localization.getLocales()[0].languageCode || "en";
+i18n.enableFallback = true;
+
 const CELL_COUNT = 6;
 
 const PhoneVerify = () => {
@@ -23,6 +32,7 @@ const PhoneVerify = () => {
     signin: string;
     email: string;
   }>();
+  let colorScheme = useTheme().theme;
   const [code, setCode] = useState("");
   const { signIn } = useSignIn();
   const { signUp, setActive } = useSignUp();
@@ -131,9 +141,29 @@ const PhoneVerify = () => {
   };
 
   return (
-    <View style={defaultStyles.container}>
-      <Text style={defaultStyles.header}>6-digit code</Text>
-      <Text style={defaultStyles.descriptionText}>
+    <View
+      style={[
+        defaultStyles.container,
+        {
+          backgroundColor:
+            colorScheme === "light" ? Colors.background : Colors.dark,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          defaultStyles.header,
+          { color: colorScheme === "dark" ? Colors.background : Colors.dark },
+        ]}
+      >
+        6-digit code
+      </Text>
+      <Text
+        style={[
+          defaultStyles.descriptionText,
+          { color: colorScheme === "dark" ? Colors.background : Colors.dark },
+        ]}
+      >
         Code sent to {phone !== "" && phone !== "[phone]" ? phone : email}{" "}
         unless you already have an account
       </Text>
