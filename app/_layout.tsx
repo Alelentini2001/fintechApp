@@ -261,7 +261,7 @@ const RootLayoutNav = () => {
         <ThemeProvider>
           <UserInactivityProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <StatusBar style="dark" />
+              <StatusBar style={"auto"} />
               <InitialLayout />
             </GestureHandlerRootView>
           </UserInactivityProvider>
