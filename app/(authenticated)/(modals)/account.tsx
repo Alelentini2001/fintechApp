@@ -19,6 +19,8 @@ const Page = () => {
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
   const [edit, setEdit] = useState(false);
+  const [editUsername, setEditUsername] = useState(false);
+  const [username, setUsername] = useState(user?.username);
   const [editEmail, setEditEmail] = useState(false);
   const [email, setEmail] = useState(user?.primaryEmailAddress?.toString());
 
@@ -30,6 +32,21 @@ const Page = () => {
       console.error(error);
     } finally {
       setEdit(false);
+    }
+  };
+  const onSaveUsername = async () => {
+    try {
+      await user?.update({ username: username?.toString() });
+      setEditUsername(false);
+    } catch (error) {
+      console.error(error);
+      if (error.errors) {
+        error.errors.forEach((err) => {
+          console.error(err.code, err.message);
+        });
+      }
+    } finally {
+      setEditUsername(false);
     }
   };
   const router = useRouter();
@@ -143,6 +160,60 @@ const Page = () => {
               </TouchableOpacity>
             </View>
           )}
+        </View>
+        <View style={{ alignItems: "center", width: "100%" }}>
+          <View
+            style={[styles.actions, { width: "80%", alignItems: "center" }]}
+          >
+            {!editUsername && (
+              <View
+                style={{
+                  height: 50,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, color: "#fff", marginRight: 20 }}>
+                  {user?.username ? user?.username : "No username yet"}{" "}
+                </Text>
+                <TouchableOpacity onPress={() => setEditUsername(true)}>
+                  <Ionicons
+                    name="ellipsis-horizontal"
+                    size={24}
+                    color={"#fff"}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+            {editUsername && (
+              <View
+                style={{
+                  height: 50,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <TextInput
+                  placeholder="Username"
+                  value={username || ""}
+                  onChangeText={setUsername}
+                  style={[styles.inputField]}
+                />
+
+                <TouchableOpacity onPress={onSaveUsername}>
+                  <Ionicons name="checkmark-outline" size={24} color={"#fff"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setEditUsername(false);
+                  }}
+                >
+                  <Ionicons name="close-outline" size={24} color={"#fff"} />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
       </View>
 
