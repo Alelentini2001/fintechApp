@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
+  Clipboard,
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Currency } from "@/interfaces/crypto";
@@ -18,11 +20,13 @@ import RoundBtn from "@/components/RoundBtn";
 import { SIZE } from "@/components/SortableList/Config";
 import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
+import { useUser } from "@clerk/clerk-expo";
 
 const Crypto = ({ t }) => {
   let colorScheme = useTheme().theme;
   const headerHeight = useHeaderHeight();
   const router = useRouter();
+  const { user } = useUser();
   const currencies = useQuery({
     queryKey: ["currencies"],
     queryFn: () => fetch("/api/listings").then((res) => res.json()),
@@ -37,6 +41,10 @@ const Crypto = ({ t }) => {
     queryFn: () => fetch(`/api/info?ids=${ids}`).then((res) => res.json()),
     enabled: !!ids,
   });
+
+  const CopyAlertMessage = async (message) => {
+    Clipboard.setString(message);
+  };
 
   return (
     <ScrollView
@@ -309,6 +317,59 @@ const Crypto = ({ t }) => {
           </View>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={{
+          width: "80%",
+          height: 50,
+          backgroundColor:
+            colorScheme === "light" ? Colors.dark : Colors.background,
+          borderRadius: 15,
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          marginTop: 40,
+          marginLeft: "auto",
+          marginRight: "auto",
+          flexDirection: "row",
+        }}
+        onPress={() => {
+          // Alert.alert(
+          //   "Link Copied",
+          //   `www.quply.it/refer/${user?.username ? user?.username : user?.id}`
+          // );
+          Alert.alert(
+            "Your Code",
+            `www.quply.it/refer/${user?.username ? user?.username : user?.id}`,
+            [
+              {
+                text: "Copy your referral code",
+                onPress: () =>
+                  CopyAlertMessage(
+                    `www.quply.it/refer/${
+                      user?.username ? user?.username : user?.id
+                    }`
+                  ),
+                style: "cancel",
+              },
+            ],
+            { cancelable: true }
+          );
+        }}
+      >
+        <Ionicons
+          name="link"
+          size={24}
+          style={{ marginRight: 10 }}
+          color={colorScheme === "dark" ? Colors.dark : Colors.background}
+        />
+        <Text
+          style={{
+            color: colorScheme === "dark" ? Colors.dark : Colors.background,
+          }}
+        >
+          Invite friends or businesses
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
