@@ -5,7 +5,9 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import i18n from "./translate";
+import { useTheme } from "@/app/ThemeContext";
 const Wallet = ({ t }) => {
+  let colorScheme = useTheme().theme;
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const headerHeight = useHeaderHeight();
@@ -14,7 +16,8 @@ const Wallet = ({ t }) => {
       style={{
         paddingTop: headerHeight,
         paddingLeft: 10,
-        backgroundColor: Colors.background,
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
         height: "100%",
       }}
     >
@@ -24,7 +27,7 @@ const Wallet = ({ t }) => {
           fontWeight: "500",
           marginTop: 30,
           left: 20,
-          color: Colors.dark,
+          color: colorScheme === "dark" ? Colors.background : Colors.dark,
         }}
       >
         {i18n.t("Account")}
@@ -36,6 +39,10 @@ const Wallet = ({ t }) => {
             {
               flexDirection: "column",
               alignItems: "flex-start",
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+              borderWidth: 0.5,
+              borderColor: Colors.lightGray,
             },
           ]}
         >
@@ -47,7 +54,9 @@ const Wallet = ({ t }) => {
               top: 20,
               left: 10,
               borderRadius: 20,
-              backgroundColor: Colors.background,
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+
               justifyContent: "center",
               alignItems: "center",
               gap: 5,
@@ -59,13 +68,37 @@ const Wallet = ({ t }) => {
               }}
               style={{ width: 26, height: 26 }}
             />
-            <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
+              }}
+            >
+              EUR
+            </Text>
           </View>
-          <Text style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}>
+          <Text
+            style={{
+              fontSize: 12,
+              left: 15,
+              top: 40,
+              color: colorScheme === "dark" ? Colors.background : Colors.dark,
+            }}
+          >
             {i18n.t("Your Balance")}
           </Text>
           <View style={styles.row}>
-            <Text style={styles.balance}>€ {balance().toFixed(2)}</Text>
+            <Text
+              style={[
+                styles.balance,
+                {
+                  color:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
+                },
+              ]}
+            >
+              € {balance().toFixed(2)}
+            </Text>
           </View>
         </View>
         <TouchableOpacity
@@ -87,13 +120,21 @@ const Wallet = ({ t }) => {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={styles.wallet}>
+      <View
+        style={[
+          styles.wallet,
+          {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
         <Text
           style={{
             fontSize: 14,
             fontWeight: "200",
             marginTop: 10,
-            color: Colors.dark,
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
           }}
         >
           {i18n.t("Quply Earnings")}
@@ -106,10 +147,28 @@ const Wallet = ({ t }) => {
               alignItems: "center",
             }}
           >
-            <Text style={styles.number}>
+            <Text
+              style={[
+                styles.number,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
               {Math.floor(Math.random() * 1000).toFixed(2)}
             </Text>
-            <Text style={styles.text}>Quply Coin</Text>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
+              Quply Coin
+            </Text>
           </View>
           <View
             style={{
@@ -118,10 +177,28 @@ const Wallet = ({ t }) => {
               alignItems: "center",
             }}
           >
-            <Text style={styles.number}>
+            <Text
+              style={[
+                styles.number,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
               € {Math.floor(Math.random() * 1000).toFixed(2)}
             </Text>
-            <Text style={styles.text}>{i18n.t("Cashback")}</Text>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
+              {i18n.t("Cashback")}
+            </Text>
           </View>
           <View
             style={{
@@ -130,16 +207,42 @@ const Wallet = ({ t }) => {
               alignItems: "center",
             }}
           >
-            <Text style={styles.number}>
+            <Text
+              style={[
+                styles.number,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
               € {Math.floor(Math.random() * 1000).toFixed(2)}
             </Text>
-            <Text style={styles.text}>{i18n.t("Referral")}</Text>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
+              {i18n.t("Referral")}
+            </Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.claim}>
+        <TouchableOpacity
+          style={[
+            styles.claim,
+            {
+              backgroundColor:
+                colorScheme === "light" ? Colors.dark : Colors.background,
+            },
+          ]}
+        >
           <Text
             style={{
-              color: Colors.background,
+              color: colorScheme === "light" ? Colors.background : Colors.dark,
               fontSize: 14,
               fontWeight: "300",
             }}
@@ -148,17 +251,31 @@ const Wallet = ({ t }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.withdraw}>
+      <TouchableOpacity
+        style={[
+          styles.withdraw,
+          {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
         <Image
           source={require("@/assets/images/sendIcon.png")}
           style={{
             marginRight: 10,
             width: 20,
             height: 20,
-            tintColor: Colors.dark,
+            tintColor: colorScheme === "dark" ? Colors.background : Colors.dark,
           }}
         />
-        <Text style={{ color: Colors.dark, fontSize: 14, fontWeight: "300" }}>
+        <Text
+          style={{
+            color: colorScheme === "light" ? Colors.dark : Colors.background,
+            fontSize: 14,
+            fontWeight: "300",
+          }}
+        >
           {i18n.t("Withdraw Balance")}
         </Text>
       </TouchableOpacity>
@@ -168,7 +285,6 @@ const Wallet = ({ t }) => {
 
 const styles = StyleSheet.create({
   account: {
-    backgroundColor: Colors.background,
     height: 128,
     width: 275,
     borderRadius: 15,
@@ -188,7 +304,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   wallet: {
-    backgroundColor: Colors.background,
     flexDirection: "column",
     height: 190,
     width: 350,
@@ -210,22 +325,18 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 22,
     fontWeight: "bold",
-    color: Colors.dark,
   },
   number: {
     fontSize: 18,
     fontWeight: "400",
-    color: Colors.dark,
   },
   text: {
     fontSize: 10,
     fontWeight: "200",
-    color: Colors.dark,
   },
   claim: {
     width: "96%",
     height: 50,
-    backgroundColor: Colors.dark,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
@@ -234,7 +345,6 @@ const styles = StyleSheet.create({
     width: "84%",
     height: 50,
     flexDirection: "row",
-    backgroundColor: Colors.background,
     borderWidth: 1,
     borderColor: Colors.lightGray,
     marginLeft: 20,

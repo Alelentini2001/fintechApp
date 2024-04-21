@@ -16,11 +16,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import i18n from "@/app/(authenticated)/(tabs)/translate";
-let colorScheme = useColorScheme();
+import { useTheme } from "@/app/ThemeContext";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
   const { user } = useUser();
+  let colorScheme = useTheme().theme;
+
   return (
     <BlurView
       intensity={80}
@@ -30,11 +32,14 @@ const CustomHeader = () => {
       <View style={styles.container}>
         {/* <Link href={"/(authenticated)/(modals)/account"} asChild> */}
         {user?.imageUrl ? (
-          <View style={styles.roundBtn}>
-            <Image style={styles.roundBtn} source={{ uri: user?.imageUrl }} />
+          <View style={[styles.roundBtn, { backgroundColor: Colors.gray }]}>
+            <Image
+              style={[styles.roundBtn, { backgroundColor: Colors.gray }]}
+              source={{ uri: user?.imageUrl }}
+            />
           </View>
         ) : (
-          <View style={styles.roundBtn}>
+          <View style={[styles.roundBtn, { backgroundColor: Colors.gray }]}>
             <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
               {user?.firstName?.charAt(0)}
               {user?.lastName?.charAt(0)}
@@ -57,7 +62,15 @@ const CustomHeader = () => {
         </View> */}
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View>
-            <Text style={styles.greetingText}>
+            <Text
+              style={[
+                styles.greetingText,
+                {
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
               {new Date().getHours() >= 12 && new Date().getHours() < 24
                 ? i18n.t("Good Afternoon")
                 : i18n.t("Good Morning")}
@@ -66,7 +79,13 @@ const CustomHeader = () => {
           <View>
             {user?.fullName ? (
               <Text
-                style={styles.userName}
+                style={[
+                  styles.userName,
+                  {
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
+                  },
+                ]}
                 numberOfLines={1} // Restrict to one line
                 ellipsizeMode="tail" // Show ellipsis (...) at the end if the text is too long
               >
@@ -108,7 +127,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.gray,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -123,14 +141,6 @@ const styles = StyleSheet.create({
   searchIcon: {
     padding: 10,
   },
-  input: {
-    flex: 1,
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingBottom: 10,
-    paddingLeft: 0,
-    color: Colors.dark,
-  },
   circle: {
     width: 40,
     height: 40,
@@ -144,7 +154,6 @@ const styles = StyleSheet.create({
   },
   greetingText: {
     fontSize: 12,
-    color: Colors.dark,
   },
   userNameContainer: {
     marginLeft: 0,
@@ -152,7 +161,6 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: Colors.dark,
   },
 });
 export default CustomHeader;

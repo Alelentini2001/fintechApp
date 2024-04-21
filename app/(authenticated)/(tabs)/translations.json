@@ -70,7 +70,9 @@
         "Share Payment Link" : "Share Payment Link",
         "Amount" : "Amount",
         "Account Name": "Account Name",
-        "Check Payments" : "Check Payments"
+        "Check Payments" : "Check Payments",
+        "Switch to Dark Mode" : "Switch to Dark Mode",
+        "Switch to Light mode" : "Switch to Light Mode"
     },
     "it": {
       "Balance": "Saldo",
@@ -143,7 +145,9 @@
         "Share Payment Link" : "Condividere Link Pagamento",
         "Amount": "Quantità",
         "Account Name": "Nome Account",
-        "Check Payments":"Verifica Transazione"
+        "Check Payments":"Verifica Transazione",
+        "Switch to Dark Mode" : "Cambia a Dark Mode",
+        "Switch to Light Mode" : "Cambia a Light Mode"
     },
     "es": {
       "Balance": "Saldo",
@@ -216,6 +220,8 @@
         "Share Payment Link" : "Enlaces de pago de acciones",
         "Amount" : "Importe",
         "Account Name" : "Nombre de cuenta",
-        "Check Payments" : "Verificar Transacciones"
+        "Check Payments" : "Verificar Transacciones",
+        "Switch to Dark Mode" : "Cambiar a Dark Mode",
+        "Switch to Light Mode" : "Cambiar a Light Mode"
     }
 }

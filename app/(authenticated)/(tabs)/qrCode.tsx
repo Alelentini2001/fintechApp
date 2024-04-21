@@ -14,8 +14,11 @@ import axios from "axios";
 import QRCodeStyled from "react-native-qrcode-styled";
 import Colors from "@/constants/Colors";
 import { useUser } from "@clerk/clerk-expo";
+import { useTheme } from "@/app/ThemeContext";
 
 const QrCode = ({ t }) => {
+  let colorScheme = useTheme().theme;
+
   const { amount, reference } = useLocalSearchParams<{
     amount: string;
     reference: string;
@@ -78,10 +81,12 @@ const QrCode = ({ t }) => {
   return (
     <View
       style={{
-        marginTop: 50,
+        paddingTop: 50,
         alignItems: "center",
         justifyContent: "center",
         alignContent: "center",
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
       }}
     >
       <View
@@ -102,9 +107,19 @@ const QrCode = ({ t }) => {
             });
           }}
         >
-          <Ionicons name="arrow-back-outline" size={22} />
+          <Ionicons
+            name="arrow-back-outline"
+            size={22}
+            color={colorScheme === "dark" ? Colors.background : Colors.dark}
+          />
         </TouchableOpacity>
-        <Text style={{ fontSize: 18, fontWeight: "400" }}>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "400",
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          }}
+        >
           {t("Payment Request")}
         </Text>
         <View style={{ flex: 1 }} />
@@ -119,7 +134,16 @@ const QrCode = ({ t }) => {
       >
         <View
           //   source={require("@/assets/images/cardQrCode.png")}
-          style={styles.backgroundImage}
+          style={[
+            styles.backgroundImage,
+            {
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+              borderColor:
+                colorScheme === "light" ? Colors.dark : Colors.background,
+              borderWidth: 0.5,
+            },
+          ]}
         >
           <View
             style={{
@@ -141,23 +165,27 @@ const QrCode = ({ t }) => {
                     marginTop: 20,
                     width: 20,
                     height: 20,
+                    backgroundColor:
+                      colorScheme === "light" ? Colors.background : Colors.dark,
                   },
                 ]}
                 logo={{
                   href: smallQRCode && require("@/assets/images/bpay_logo.png"),
                 }}
                 padding={smallQRCode ? 20 : 10} // You can reduce the padding to make the QR code smaller
-                color={"#000"}
+                color={colorScheme === "dark" ? Colors.background : Colors.dark}
                 pieceSize={smallQRCode ? 7 : 5} // You can reduce the pieceSize to make the QR code smaller
                 pieceBorderRadius={smallQRCode ? 4 : 2} // You can reduce the pieceBorderRadius to make the QR code smaller
                 isPiecesGlued
                 innerEyesOptions={{
                   borderRadius: smallQRCode ? 8 : 4, // You can reduce the borderRadius to make the inner eyes smaller
-                  color: "#000",
+                  color:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
                 }}
                 outerEyesOptions={{
                   borderRadius: smallQRCode ? 20 : 10, // You can reduce the borderRadius to make the outer eyes smaller
-                  color: "#000",
+                  color:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
                 }}
               />
             )}
@@ -171,7 +199,14 @@ const QrCode = ({ t }) => {
               marginTop: 10,
             }}
           >
-            <Text style={{ marginTop: 20 }}>{t("Amount")}</Text>
+            <Text
+              style={{
+                marginTop: 20,
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
+              }}
+            >
+              {t("Amount")}
+            </Text>
           </View>
           <View
             style={{
@@ -200,7 +235,12 @@ const QrCode = ({ t }) => {
                 €
               </Text>
               <Text
-                style={{ color: Colors.dark, fontSize: 35, fontWeight: "bold" }}
+                style={{
+                  color:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
+                  fontSize: 35,
+                  fontWeight: "bold",
+                }}
               >
                 {parseFloat(amount).toFixed(2).slice(0, -3)}
                 <Text style={{ fontSize: 20, color: "gray" }}>
@@ -236,7 +276,7 @@ const QrCode = ({ t }) => {
               style={{
                 fontSize: 16,
                 fontWeight: "500",
-                color: Colors.dark,
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
                 marginTop: 10,
               }}
             >
@@ -255,7 +295,7 @@ const QrCode = ({ t }) => {
               style={{
                 fontSize: 16,
                 fontWeight: "500",
-                color: Colors.dark,
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
                 marginTop: 10,
               }}
             >
@@ -294,7 +334,8 @@ const QrCode = ({ t }) => {
         >
           <TouchableOpacity
             style={{
-              backgroundColor: "black",
+              backgroundColor:
+                colorScheme === "dark" ? Colors.background : Colors.dark,
               borderRadius: 15,
               width: "80%",
               height: 50,
@@ -309,9 +350,21 @@ const QrCode = ({ t }) => {
           >
             <Image
               source={require("@/assets/images/bpay_logo.png")}
-              style={{ height: 20, width: 20, tintColor: "white" }}
+              style={{
+                height: 20,
+                width: 20,
+                tintColor:
+                  colorScheme === "light" ? Colors.background : Colors.dark,
+              }}
             />
-            <Text style={{ color: "white", fontSize: 14, fontWeight: "400" }}>
+            <Text
+              style={{
+                color:
+                  colorScheme === "light" ? Colors.background : Colors.dark,
+                fontSize: 14,
+                fontWeight: "400",
+              }}
+            >
               {t("Check Payments")}
             </Text>
           </TouchableOpacity>
@@ -330,14 +383,11 @@ const styles = StyleSheet.create({
     objectFit: "scale-down",
     marginTop: 40,
     borderRadius: 15,
-    backgroundColor: "white",
   },
   text: {
-    color: "white", // White text color for better visibility on dark backgrounds
     fontSize: 24, // Larger text to be easily readable
   },
   svg: {
-    backgroundColor: "rgba(0,0,0,0.03)",
     borderRadius: 40,
     overflow: "hidden",
   },

@@ -17,8 +17,10 @@ import { Ionicons } from "@expo/vector-icons";
 import RoundBtn from "@/components/RoundBtn";
 import { SIZE } from "@/components/SortableList/Config";
 import i18n from "./translate";
+import { useTheme } from "@/app/ThemeContext";
 
 const Crypto = ({ t }) => {
+  let colorScheme = useTheme().theme;
   const headerHeight = useHeaderHeight();
   const router = useRouter();
   const currencies = useQuery({
@@ -38,7 +40,10 @@ const Crypto = ({ t }) => {
 
   return (
     <ScrollView
-      style={{ backgroundColor: Colors.background }}
+      style={{
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
+      }}
       contentContainerStyle={{ paddingTop: headerHeight }}
     >
       {/* <Text style={defaultStyles.sectionHeader}>Latest Crypto</Text>
@@ -95,7 +100,7 @@ const Crypto = ({ t }) => {
           marginLeft: 20,
           fontSize: 24,
           fontWeight: "600",
-          color: Colors.dark,
+          color: colorScheme === "dark" ? Colors.background : Colors.dark,
         }}
       >
         {i18n.t("Applications")}
@@ -202,7 +207,7 @@ const Crypto = ({ t }) => {
           left: "42%",
           marginTop: 10,
           marginBottom: 10,
-          tintColor: Colors.dark,
+          tintColor: colorScheme === "dark" ? Colors.background : Colors.dark,
         }}
       />
 

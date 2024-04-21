@@ -11,8 +11,11 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useTheme } from "@/app/ThemeContext";
 
 const Request = ({ t }) => {
+  let colorScheme = useTheme().theme;
+
   const { previousAmount, prevReference } = useLocalSearchParams<{
     previousAmount: string;
     prevReference: string;
@@ -24,11 +27,21 @@ const Request = ({ t }) => {
   return (
     <View
       style={{
-        marginTop: 50,
+        paddingTop: 50,
         alignItems: "center",
+        height: "100%",
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
       }}
     >
-      <Text style={{ fontSize: 22, fontWeight: "400", marginTop: 20 }}>
+      <Text
+        style={{
+          fontSize: 22,
+          fontWeight: "400",
+          marginTop: 20,
+          color: colorScheme === "light" ? Colors.dark : Colors.background,
+        }}
+      >
         {t("Payment Request")}
       </Text>
       <View
@@ -40,15 +53,45 @@ const Request = ({ t }) => {
           marginTop: 100,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "300" }}>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "300",
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          }}
+        >
           {t("Enter Amount")}
         </Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.euroIcon}>€</Text>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.euroIcon,
+              {
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              },
+            ]}
+          >
+            €
+          </Text>
           <TextInput
             placeholder="10"
             keyboardType="numeric"
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              },
+            ]}
             onChangeText={setAmount}
             value={amount}
             placeholderTextColor={Colors.gray}
@@ -65,14 +108,34 @@ const Request = ({ t }) => {
           marginTop: 30,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "300" }}>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "300",
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          }}
+        >
           {t("Reference")}
         </Text>
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+            },
+          ]}
+        >
           <TextInput
             placeholder="What is the purpose of the request?"
             keyboardType="default"
-            style={styles.input2}
+            style={[
+              styles.input2,
+              {
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              },
+            ]}
             onChangeText={setReference}
             value={reference}
             placeholderTextColor={Colors.gray}
@@ -95,7 +158,12 @@ const Request = ({ t }) => {
           marginTop: 50,
           marginBottom: 15,
           width: "90%",
-          backgroundColor: !amount || !reference ? Colors.gray : "black",
+          backgroundColor:
+            !amount || !reference
+              ? Colors.gray
+              : colorScheme === "dark"
+              ? Colors.background
+              : Colors.dark,
           borderRadius: 15,
           justifyContent: "center",
         }}
@@ -110,9 +178,20 @@ const Request = ({ t }) => {
         >
           <Image
             source={require("@/assets/images/scanScan.png")}
-            style={{ width: 25, height: 25, tintColor: "white" }}
+            style={{
+              width: 25,
+              height: 25,
+              tintColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+            }}
           />
-          <Text style={{ color: "white" }}>{t("Generate QR")}</Text>
+          <Text
+            style={{
+              color: colorScheme === "light" ? Colors.background : Colors.dark,
+            }}
+          >
+            {t("Generate QR")}
+          </Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity
@@ -120,7 +199,8 @@ const Request = ({ t }) => {
         style={{
           height: 50,
           width: "90%",
-          backgroundColor: "rgba(251, 251, 251, 0.4)",
+          backgroundColor:
+            colorScheme === "light" ? Colors.background : Colors.dark,
           borderRadius: 15,
           borderWidth: 0.5,
           borderColor: Colors.lightGray,
@@ -137,9 +217,20 @@ const Request = ({ t }) => {
         >
           <Image
             source={require("@/assets/images/sendIcon.png")}
-            style={{ width: 25, height: 25 }}
+            style={{
+              width: 25,
+              height: 25,
+              tintColor:
+                colorScheme === "dark" ? Colors.background : Colors.dark,
+            }}
           />
-          <Text>{t("Share Payment Link")}</Text>
+          <Text
+            style={{
+              color: colorScheme === "dark" ? Colors.background : Colors.dark,
+            }}
+          >
+            {t("Share Payment Link")}
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -150,7 +241,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(251, 251, 251, 0.4)",
     width: "90%",
     marginTop: 10,
     borderRadius: 30,
@@ -160,14 +250,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5, // Padding to push content slightly from the border
   },
   euroIcon: {
-    color: Colors.dark,
     paddingHorizontal: 5, // Space between the icon and the text
     fontSize: 18, // Adjust size as needed
   },
   input: {
     flex: 1,
     height: "100%", // Match parent height
-    color: Colors.dark,
     fontWeight: "500",
     fontSize: 18, // Adjust text size as needed
     paddingHorizontal: 0, // No padding at the sides inside the input

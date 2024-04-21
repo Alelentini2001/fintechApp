@@ -5,6 +5,7 @@ import {
   TextInput,
   Image,
   ScrollView,
+  useColorScheme,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { defaultStyles } from "@/constants/Styles";
@@ -14,8 +15,11 @@ import { faker } from "@faker-js/faker";
 import { useEffect, useState } from "react";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import i18n from "./translate";
+import { useTheme } from "@/app/ThemeContext";
 
+let colorScheme: any;
 const Page = ({ t }) => {
+  colorScheme = useTheme().theme;
   const headerHeight = useHeaderHeight();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [searchText, setSearchText] = useState<string>("");
@@ -70,24 +74,48 @@ const Page = ({ t }) => {
       style={{
         paddingTop: headerHeight,
         paddingLeft: 20,
-        backgroundColor: Colors.background,
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
       }}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>{i18n.t("Transactions")}</Text>
+        <Text
+          style={[
+            styles.title,
+            { color: colorScheme === "dark" ? Colors.background : Colors.dark },
+          ]}
+        >
+          {i18n.t("Transactions")}
+        </Text>
       </View>
       <View style={{ flexDirection: "row", padding: 5 }}>
-        <View style={styles.searchSelection}>
+        <View
+          style={[
+            styles.searchSelection,
+            {
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
+            },
+          ]}
+        >
           <Ionicons
             name="search"
             size={20}
-            color={Colors.dark}
+            color={colorScheme === "dark" ? Colors.background : Colors.dark}
             style={styles.searchIcon}
           />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              },
+            ]}
             placeholder={i18n.t("Search")}
-            placeholderTextColor={Colors.dark}
+            placeholderTextColor={
+              colorScheme === "light" ? Colors.dark : Colors.background
+            }
             onChangeText={setSearchText}
             value={searchText}
           />
@@ -99,11 +127,21 @@ const Page = ({ t }) => {
         </View> */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <View style={styles.circle}>
+            <View
+              style={[
+                styles.circle,
+                {
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                },
+              ]}
+            >
               <Ionicons
                 name="filter-outline"
                 size={24}
-                color={Colors.background}
+                color={
+                  colorScheme === "light" ? Colors.background : Colors.dark
+                }
               />
             </View>
           </DropdownMenu.Trigger>
@@ -186,7 +224,13 @@ const Page = ({ t }) => {
               >
                 <Image
                   source={{ uri: transaction.avatar }}
-                  style={{ width: "100%", height: "100%", borderRadius: 30 }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: 30,
+                    borderColor: Colors.gray,
+                    borderWidth: 0.5,
+                  }}
                 />
               </View>
               <View
@@ -195,10 +239,30 @@ const Page = ({ t }) => {
                   justifyContent: "flex-start",
                 }}
               >
-                <Text style={[styles.name, { color: Colors.dark }]}>
+                <Text
+                  style={[
+                    styles.name,
+                    {
+                      color:
+                        colorScheme === "dark"
+                          ? Colors.background
+                          : Colors.dark,
+                    },
+                  ]}
+                >
                   {transaction.name}
                 </Text>
-                <Text style={[styles.date, { color: Colors.dark }]}>
+                <Text
+                  style={[
+                    styles.date,
+                    {
+                      color:
+                        colorScheme === "dark"
+                          ? Colors.background
+                          : Colors.dark,
+                    },
+                  ]}
+                >
                   {transaction.date.toLocaleString()}
                 </Text>
               </View>
@@ -225,16 +289,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "400",
     marginBottom: 20,
-    color: Colors.dark,
   },
   searchSelection: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: Colors.background,
     borderRadius: 30,
     alignItems: "center",
     marginRight: 20,
-    borderColor: Colors.dark,
+    borderColor: Colors.gray,
     borderWidth: 1,
     justifyContent: "center",
   },
@@ -247,14 +309,13 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    color: Colors.dark,
   },
   circle: {
     width: 44,
     height: 44,
     borderRadius: 70,
     marginRight: 10,
-    backgroundColor: Colors.dark,
+
     justifyContent: "center",
     alignItems: "center",
   },

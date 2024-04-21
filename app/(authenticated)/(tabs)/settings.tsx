@@ -15,8 +15,12 @@ import { Link, useRouter } from "expo-router";
 import { setAppIcon } from "expo-dynamic-app-icon";
 import * as Localization from "expo-localization";
 import i18n from "./translate";
+import { useTheme } from "@/app/ThemeContext";
 
 const Settings = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  let colorScheme = theme;
   const { user } = useUser();
   const router = useRouter();
   const { signOut } = useAuth();
@@ -33,6 +37,9 @@ const Settings = () => {
   // State to manage the switch position
   const [isNotificationsEnabled, setIsNotificationsEnabled] =
     useState<boolean>(false);
+  const [colorSchemeSwitch, setColorSchemeSwitch] = useState<boolean>(
+    theme === "light" ? true : false
+  );
 
   // Handler to toggle the switch state
   const toggleSwitch = () =>
@@ -63,13 +70,19 @@ const Settings = () => {
     setActiveIcon(icon);
   };
   return (
-    <ScrollView style={{ paddingTop: 80, backgroundColor: Colors.background }}>
+    <ScrollView
+      style={{
+        paddingTop: 80,
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
+      }}
+    >
       <View style={{ flexDirection: "column" }}>
         <Text
           style={{
             marginTop: 30,
             marginLeft: 20,
-            color: Colors.dark,
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
             fontSize: 18,
             fontWeight: "bold",
           }}
@@ -87,7 +100,8 @@ const Settings = () => {
             style={{
               height: 85,
               width: "90%",
-              backgroundColor: Colors.background,
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
               borderRadius: 20,
               justifyContent: "center",
               alignItems: "center",
@@ -115,7 +129,12 @@ const Settings = () => {
               }}
             >
               <Text
-                style={{ color: Colors.dark, fontSize: 16, fontWeight: "500" }}
+                style={{
+                  color:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
+                  fontSize: 16,
+                  fontWeight: "500",
+                }}
               >
                 {user?.fullName}
               </Text>
@@ -133,7 +152,8 @@ const Settings = () => {
             <Link href={"/(authenticated)/(modals)/account"} asChild>
               <TouchableOpacity
                 style={{
-                  backgroundColor: Colors.dark,
+                  backgroundColor:
+                    colorScheme === "dark" ? Colors.background : Colors.dark,
                   borderRadius: 50,
                   width: 85,
                   height: 30,
@@ -142,7 +162,13 @@ const Settings = () => {
                   marginRight: 10,
                 }}
               >
-                <Text style={{ color: Colors.background, fontSize: 10 }}>
+                <Text
+                  style={{
+                    color:
+                      colorScheme === "light" ? Colors.background : Colors.dark,
+                    fontSize: 10,
+                  }}
+                >
                   {i18n.t("Edit Profile")}
                 </Text>
               </TouchableOpacity>
@@ -153,7 +179,7 @@ const Settings = () => {
           style={{
             marginTop: 30,
             marginLeft: 20,
-            color: Colors.dark,
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
             fontSize: 18,
             fontWeight: "bold",
           }}
@@ -172,7 +198,8 @@ const Settings = () => {
               height: "auto",
               padding: 10,
               width: "90%",
-              backgroundColor: Colors.background,
+              backgroundColor:
+                colorScheme === "light" ? Colors.background : Colors.dark,
               borderRadius: 20,
               justifyContent: "center",
               alignItems: "center",
@@ -219,7 +246,8 @@ const Settings = () => {
                     marginLeft: 20,
                     fontSize: 16,
                     fontWeight: "400",
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
                   }}
                 >
                   {i18n.t("Notifications")}
@@ -229,6 +257,68 @@ const Settings = () => {
                   style={{ marginRight: 10 }}
                   value={isNotificationsEnabled}
                   onValueChange={toggleSwitch}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+              >
+                <View
+                  style={{
+                    height: 60,
+                    width: 60,
+                    backgroundColor:
+                      colorScheme === "light" ? Colors.background : Colors.dark,
+                    borderRadius: 50,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderColor: Colors.lightGray,
+                    borderWidth: 0.5,
+                  }}
+                >
+                  <Ionicons
+                    name={
+                      colorScheme === "dark" ? "moon-outline" : "sunny-outline"
+                    }
+                    size={28}
+                    color={
+                      colorScheme === "light" ? Colors.dark : Colors.background
+                    }
+                  />
+                </View>
+                <Text
+                  style={{
+                    marginLeft: 20,
+                    fontSize: 16,
+                    fontWeight: "400",
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  }}
+                >
+                  {i18n.t(
+                    `Switch to ${
+                      colorScheme === "light" ? "Dark Mode" : "Light Mode"
+                    }`
+                  )}
+                </Text>
+                <View style={{ flex: 1 }} />
+                <Switch
+                  style={{ marginRight: 10 }}
+                  value={colorScheme === "dark" ? true : false}
+                  onValueChange={() => {
+                    toggleTheme(colorScheme === "dark" ? "light" : "dark");
+                  }}
                 />
               </View>
             </TouchableOpacity>
@@ -272,7 +362,8 @@ const Settings = () => {
                     marginLeft: 20,
                     fontSize: 16,
                     fontWeight: "400",
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
                   }}
                 >
                   {i18n.t("Languages")}
@@ -291,7 +382,9 @@ const Settings = () => {
                         : "arrow-forward-outline"
                     }
                     size={22}
-                    color={Colors.dark}
+                    color={
+                      colorScheme === "dark" ? Colors.background : Colors.dark
+                    }
                   />
                 </TouchableOpacity>
               </View>
@@ -300,7 +393,8 @@ const Settings = () => {
               <View
                 style={{
                   width: "80%",
-                  backgroundColor: Colors.background,
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
                   borderColor: Colors.lightGray,
                   borderWidth: 0.5,
                   borderRadius: 10,
@@ -319,9 +413,11 @@ const Settings = () => {
                     >
                       <Text
                         style={{
-                          color: Colors.dark,
+                          color:
+                            colorScheme === "dark"
+                              ? Colors.background
+                              : Colors.dark,
                           fontSize: 18,
-                          color: Colors.dark,
                         }}
                       >
                         {Object.keys(language)[0]}
@@ -330,7 +426,11 @@ const Settings = () => {
                         <Ionicons
                           name="checkmark"
                           size={24}
-                          color={Colors.dark}
+                          color={
+                            colorScheme === "dark"
+                              ? Colors.background
+                              : Colors.dark
+                          }
                         />
                       )}
                     </TouchableOpacity>
@@ -359,7 +459,8 @@ const Settings = () => {
                   style={{
                     height: 60,
                     width: 60,
-                    backgroundColor: Colors.dark,
+                    backgroundColor:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
                     borderRadius: 50,
                     justifyContent: "center",
                     alignItems: "center",
@@ -372,7 +473,10 @@ const Settings = () => {
                     style={{
                       height: 30,
                       width: 30,
-                      tintColor: Colors.background,
+                      tintColor:
+                        colorScheme === "light"
+                          ? Colors.background
+                          : Colors.dark,
                     }}
                   />
                 </View>
@@ -381,7 +485,8 @@ const Settings = () => {
                     marginLeft: 20,
                     fontSize: 16,
                     fontWeight: "400",
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
                   }}
                 >
                   {i18n.t("App Icon")}
@@ -397,7 +502,9 @@ const Settings = () => {
                     name={
                       showIcons ? "arrow-down-outline" : "arrow-forward-outline"
                     }
-                    color={Colors.dark}
+                    color={
+                      colorScheme === "dark" ? Colors.background : Colors.dark
+                    }
                     size={22}
                   />
                 </TouchableOpacity>
@@ -407,7 +514,8 @@ const Settings = () => {
               <View
                 style={{
                   width: "80%",
-                  backgroundColor: Colors.background,
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
                   borderColor: Colors.lightGray,
                   borderWidth: 0.5,
                   borderRadius: 10,
@@ -426,9 +534,11 @@ const Settings = () => {
                     />
                     <Text
                       style={{
-                        color: Colors.dark,
+                        color:
+                          colorScheme === "dark"
+                            ? Colors.background
+                            : Colors.dark,
                         fontSize: 18,
-                        color: Colors.dark,
                       }}
                     >
                       {i18n.t(icon.name)}
@@ -437,7 +547,11 @@ const Settings = () => {
                       <Ionicons
                         name="checkmark"
                         size={24}
-                        color={Colors.dark}
+                        color={
+                          colorScheme === "dark"
+                            ? Colors.background
+                            : Colors.dark
+                        }
                       />
                     )}
                   </TouchableOpacity>
@@ -481,7 +595,8 @@ const Settings = () => {
                     marginLeft: 20,
                     fontSize: 16,
                     fontWeight: "400",
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
                   }}
                 >
                   {i18n.t("Security and Password")}
@@ -491,7 +606,9 @@ const Settings = () => {
                   <Ionicons
                     name="arrow-forward-outline"
                     size={22}
-                    color={Colors.dark}
+                    color={
+                      colorScheme === "dark" ? Colors.background : Colors.dark
+                    }
                   />
                 </TouchableOpacity>
               </View>
@@ -536,7 +653,8 @@ const Settings = () => {
                     marginLeft: 20,
                     fontSize: 16,
                     fontWeight: "400",
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
                   }}
                 >
                   {i18n.t("Logout")}
@@ -551,7 +669,9 @@ const Settings = () => {
                   <Ionicons
                     name="arrow-forward-outline"
                     size={22}
-                    color={Colors.dark}
+                    color={
+                      colorScheme === "dark" ? Colors.background : Colors.dark
+                    }
                   />
                 </TouchableOpacity>
               </View>

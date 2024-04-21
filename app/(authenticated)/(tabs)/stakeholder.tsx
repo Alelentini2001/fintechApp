@@ -5,8 +5,10 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import i18n from "./translate";
+import { useTheme } from "@/app/ThemeContext";
 
 const Stakeholder = ({ t }) => {
+  let colorScheme = useTheme().theme;
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const headerHeight = useHeaderHeight();
@@ -15,7 +17,8 @@ const Stakeholder = ({ t }) => {
       style={{
         paddingTop: headerHeight,
         alignItems: "center",
-        backgroundColor: Colors.background,
+        backgroundColor:
+          colorScheme === "light" ? Colors.background : Colors.dark,
         height: "100%",
       }}
     >
@@ -63,11 +66,22 @@ const Stakeholder = ({ t }) => {
                 }}
               />
               <View style={{ flexDirection: "row" }}>
-                <Text style={{ fontSize: 18, color: Colors.dark }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  }}
+                >
                   {i18n.t("Level")}:
                 </Text>
                 <Text
-                  style={{ fontSize: 18, marginLeft: 1, color: Colors.dark }}
+                  style={{
+                    fontSize: 18,
+                    marginLeft: 1,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  }}
                 >
                   1
                 </Text>
@@ -109,11 +123,22 @@ const Stakeholder = ({ t }) => {
                 }}
               />
               <View style={{ flexDirection: "row" }}>
-                <Text style={{ fontSize: 18, color: Colors.dark }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  }}
+                >
                   {i18n.t("Referrals")}:
                 </Text>
                 <Text
-                  style={{ fontSize: 18, marginLeft: 1, color: Colors.dark }}
+                  style={{
+                    fontSize: 18,
+                    marginLeft: 1,
+                    color:
+                      colorScheme === "dark" ? Colors.background : Colors.dark,
+                  }}
                 >
                   1
                 </Text>
@@ -126,7 +151,8 @@ const Stakeholder = ({ t }) => {
         style={{
           width: 335,
           height: 115,
-          backgroundColor: Colors.background,
+          backgroundColor:
+            colorScheme === "light" ? Colors.background : Colors.dark,
           borderRadius: 15,
           marginTop: 10,
           flexDirection: "column",
@@ -136,7 +162,8 @@ const Stakeholder = ({ t }) => {
       >
         <View
           style={{
-            backgroundColor: Colors.dark,
+            backgroundColor:
+              colorScheme === "dark" ? Colors.background : Colors.dark,
             width: "96%",
             borderRadius: 15,
             height: 50,
@@ -148,7 +175,7 @@ const Stakeholder = ({ t }) => {
             style={{
               fontSize: 18,
               fontWeight: "bold",
-              color: Colors.background,
+              color: colorScheme === "light" ? Colors.background : Colors.dark,
             }}
           >
             {i18n.t("Daily Earnings")}:{" "}
@@ -192,10 +219,11 @@ const Stakeholder = ({ t }) => {
           marginTop: 20,
           height: 160,
           width: 335,
-          backgroundColor: Colors.background,
+          backgroundColor:
+            colorScheme === "light" ? Colors.background : Colors.dark,
           borderRadius: 15,
           borderWidth: 1,
-          borderColor: Colors.dark,
+          borderColor: colorScheme === "dark" ? Colors.background : Colors.dark,
           alignItems: "center",
         }}
       >
@@ -205,14 +233,15 @@ const Stakeholder = ({ t }) => {
             fontWeight: "300",
             fontSize: 12,
             marginBottom: 20,
-            color: Colors.dark,
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
           }}
         >
           {i18n.t("Market Cap")}: {Math.floor(Math.random() * 1000).toFixed(2)}
         </Text>
         <TouchableOpacity
           style={{
-            backgroundColor: Colors.background,
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
             borderWidth: 1,
             borderColor: Colors.gray,
             width: "98%",
@@ -222,13 +251,20 @@ const Stakeholder = ({ t }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ color: Colors.dark, fontSize: 18, fontWeight: "400" }}>
+          <Text
+            style={{
+              color: colorScheme === "dark" ? Colors.background : Colors.dark,
+              fontSize: 18,
+              fontWeight: "400",
+            }}
+          >
             {i18n.t("Sell Shares of your company")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
-            backgroundColor: Colors.dark,
+            backgroundColor:
+              colorScheme === "dark" ? Colors.background : Colors.dark,
             width: "98%",
             borderRadius: 15,
             marginTop: 5,
@@ -239,7 +275,7 @@ const Stakeholder = ({ t }) => {
         >
           <Text
             style={{
-              color: Colors.background,
+              color: colorScheme === "light" ? Colors.background : Colors.dark,
               fontSize: 18,
               fontWeight: "400",
             }}

@@ -16,19 +16,23 @@ import {
   Dimensions,
   ViewabilityConfig,
   TouchableOpacity,
+  useColorScheme,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect, useRef, useState } from "react";
 import Animated from "react-native-reanimated";
 import { Link, useRouter } from "expo-router";
 import i18n from "./translate";
+import { useTheme } from "@/app/ThemeContext";
 
 interface CarouselIndicatorProps {
   data: number[];
   selectedIndex: number;
 }
+let colorScheme: string;
 
 const Home = ({ t }) => {
+  colorScheme = useTheme().theme;
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const router = useRouter();
@@ -71,6 +75,11 @@ const Home = ({ t }) => {
             style={[
               styles.indicator,
               index === selectedIndex ? styles.selectedIndicator : null,
+              ,
+              {
+                backgroundColor:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              },
             ]}
           />
         ))}
@@ -88,7 +97,8 @@ const Home = ({ t }) => {
                 fontSize: 16,
                 fontWeight: "500",
                 marginTop: 30,
-                color: Colors.dark,
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
                 left: 20,
               }}
             >
@@ -100,6 +110,10 @@ const Home = ({ t }) => {
                 {
                   flexDirection: "column",
                   alignItems: "flex-start",
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
+                  borderWidth: 0.5,
+                  borderColor: Colors.lightGray,
                 },
               ]}
             >
@@ -111,7 +125,8 @@ const Home = ({ t }) => {
                   top: 20,
                   left: 10,
                   borderRadius: 20,
-                  backgroundColor: Colors.background,
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 5,
@@ -123,15 +138,41 @@ const Home = ({ t }) => {
                   }}
                   style={{ width: 26, height: 26 }}
                 />
-                <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
+                  }}
+                >
+                  EUR
+                </Text>
               </View>
               <Text
-                style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}
+                style={{
+                  fontSize: 12,
+                  left: 15,
+                  top: 40,
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                }}
               >
                 {i18n.t("Spending")}
               </Text>
               <View style={styles.row}>
-                <Text style={styles.balance}>€ {balance().toFixed(2)}</Text>
+                <Text
+                  style={[
+                    styles.balance,
+                    {
+                      color:
+                        colorScheme === "light"
+                          ? Colors.dark
+                          : Colors.background,
+                    },
+                  ]}
+                >
+                  € {balance().toFixed(2)}
+                </Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
               </View>
               <View
@@ -141,7 +182,8 @@ const Home = ({ t }) => {
                   style={{
                     fontWeight: "400",
                     fontSize: 10,
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
                   }}
                 >
                   {i18n.t("Overall Spending is:")}
@@ -185,7 +227,8 @@ const Home = ({ t }) => {
                 fontSize: 16,
                 fontWeight: "500",
                 marginTop: 30,
-                color: Colors.dark,
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
                 left: 20,
               }}
             >
@@ -194,7 +237,14 @@ const Home = ({ t }) => {
             <View
               style={[
                 styles.account,
-                { flexDirection: "column", alignItems: "flex-start" },
+                {
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
+                  borderWidth: 0.5,
+                  borderColor: Colors.lightGray,
+                },
               ]}
             >
               <View
@@ -205,7 +255,8 @@ const Home = ({ t }) => {
                   top: 20,
                   left: 10,
                   borderRadius: 20,
-                  backgroundColor: "rgba(0,0,0,0.04)",
+                  backgroundColor:
+                    colorScheme === "dark" ? Colors.dark : Colors.background,
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 5,
@@ -217,15 +268,41 @@ const Home = ({ t }) => {
                   }}
                   style={{ width: 26, height: 26 }}
                 />
-                <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
+                  }}
+                >
+                  EUR
+                </Text>
               </View>
               <Text
-                style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}
+                style={{
+                  fontSize: 12,
+                  left: 15,
+                  top: 40,
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                }}
               >
                 Cashback
               </Text>
               <View style={styles.row}>
-                <Text style={styles.balance}>€ {cashback.toFixed(3)}</Text>
+                <Text
+                  style={[
+                    styles.balance,
+                    {
+                      color:
+                        colorScheme === "light"
+                          ? Colors.dark
+                          : Colors.background,
+                    },
+                  ]}
+                >
+                  € {cashback.toFixed(3)}
+                </Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
               </View>
               <View
@@ -235,7 +312,8 @@ const Home = ({ t }) => {
                   style={{
                     fontWeight: "400",
                     fontSize: 10,
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
                   }}
                 >
                   {i18n.t("Overall Earnings are:")}
@@ -278,7 +356,8 @@ const Home = ({ t }) => {
                 fontWeight: "500",
                 marginTop: 30,
                 left: 20,
-                color: Colors.dark,
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
               }}
             >
               {i18n.t("Referral")}
@@ -289,6 +368,10 @@ const Home = ({ t }) => {
                 {
                   flexDirection: "column",
                   alignItems: "flex-start",
+                  backgroundColor:
+                    colorScheme === "light" ? Colors.background : Colors.dark,
+                  borderWidth: 0.5,
+                  borderColor: Colors.lightGray,
                 },
               ]}
             >
@@ -300,7 +383,8 @@ const Home = ({ t }) => {
                   top: 20,
                   left: 10,
                   borderRadius: 20,
-                  backgroundColor: "rgba(0,0,0,0.04)",
+                  backgroundColor:
+                    colorScheme === "dark" ? Colors.dark : Colors.background,
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 5,
@@ -312,15 +396,39 @@ const Home = ({ t }) => {
                   }}
                   style={{ width: 26, height: 26 }}
                 />
-                <Text style={{ fontSize: 14, color: Colors.dark }}>EUR</Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
+                  }}
+                >
+                  EUR
+                </Text>
               </View>
               <Text
-                style={{ fontSize: 12, left: 15, top: 40, color: Colors.dark }}
+                style={{
+                  fontSize: 12,
+                  left: 15,
+                  top: 40,
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                }}
               >
                 Referral
               </Text>
               <View style={styles.row}>
-                <Text style={styles.balance}>
+                <Text
+                  style={[
+                    styles.balance,
+                    {
+                      color:
+                        colorScheme === "light"
+                          ? Colors.dark
+                          : Colors.background,
+                    },
+                  ]}
+                >
                   € {Math.floor(Math.random() * 100)}
                 </Text>
                 {/* <Text style={styles.balance}>{balance()}</Text> */}
@@ -332,7 +440,8 @@ const Home = ({ t }) => {
                   style={{
                     fontWeight: "400",
                     fontSize: 10,
-                    color: Colors.dark,
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
                   }}
                 >
                   {i18n.t("Overall Spending is:")}
@@ -373,7 +482,10 @@ const Home = ({ t }) => {
 
   return (
     <ScrollView
-      style={{ backgroundColor: Colors.background }}
+      style={{
+        backgroundColor:
+          colorScheme === "dark" ? Colors.dark : Colors.background,
+      }}
       contentContainerStyle={{
         paddingTop: headerHeight,
       }}
@@ -497,7 +609,16 @@ const Home = ({ t }) => {
                   marginRight: 5,
                 }}
               />
-              <Text style={styles.buttonText}> {i18n.t("Send")}</Text>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {
+                    color: Colors.background,
+                  },
+                ]}
+              >
+                {i18n.t("Send")}
+              </Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -525,13 +646,39 @@ const Home = ({ t }) => {
                   marginRight: 5,
                 }}
               />
-              <Text style={styles.buttonText}> {i18n.t("Request")}</Text>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {
+                    color: Colors.background,
+                  },
+                ]}
+              >
+                {i18n.t("Request")}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={defaultStyles.sectionHeader}>{i18n.t("Transactions")}</Text>
-      <View style={styles.transactions}>
+      <Text
+        style={[
+          defaultStyles.sectionHeader,
+          {
+            color: colorScheme === "light" ? Colors.dark : Colors.background,
+          },
+        ]}
+      >
+        {i18n.t("Transactions")}
+      </Text>
+      <View
+        style={[
+          styles.transactions,
+          {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
         {transactions.length === 0 && (
           <Text style={{ padding: 14, color: Colors.gray }}>
             {i18n.t("No transactions yet")}
@@ -550,20 +697,29 @@ const Home = ({ t }) => {
               <Ionicons
                 name={transaction.amount > 0 ? "add" : "remove"}
                 size={24}
-                color={"black"}
+                color={Colors.dark}
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: "400", color: Colors.dark }}>
+              <Text
+                style={{
+                  fontWeight: "400",
+                  color:
+                    colorScheme === "light" ? Colors.dark : Colors.background,
+                }}
+              >
                 {transaction.title}
               </Text>
-              <Text
-                style={{ color: Colors.gray, fontSize: 12, color: Colors.dark }}
-              >
+              <Text style={{ color: Colors.gray, fontSize: 12 }}>
                 {transaction.date.toLocaleString()}
               </Text>
             </View>
-            <Text style={{ color: Colors.dark }}>
+            <Text
+              style={{
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              }}
+            >
               {transaction.amount.toFixed(2)}€
             </Text>
           </View>
@@ -571,7 +727,8 @@ const Home = ({ t }) => {
       </View>
       <View
         style={{
-          backgroundColor: Colors.background,
+          backgroundColor:
+            colorScheme === "dark" ? Colors.dark : Colors.background,
           marginTop: 15,
         }}
       >
@@ -586,7 +743,15 @@ const Home = ({ t }) => {
           }}
         />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={defaultStyles.sectionHeader}>
+          <Text
+            style={[
+              defaultStyles.sectionHeader,
+              {
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              },
+            ]}
+          >
             {i18n.t("Recent Friends")}
           </Text>
           <Link href={"/friends"} asChild>
@@ -611,7 +776,6 @@ const Home = ({ t }) => {
 
 const styles = StyleSheet.create({
   account: {
-    backgroundColor: Colors.background,
     height: 160,
     width: 275,
     borderRadius: 15,
@@ -627,7 +791,6 @@ const styles = StyleSheet.create({
   balance: {
     left: 15,
     top: 40,
-    color: Colors.dark,
     fontSize: 22,
     fontWeight: "bold",
   },
@@ -645,7 +808,6 @@ const styles = StyleSheet.create({
   transactions: {
     marginHorizontal: 20,
     padding: 14,
-    backgroundColor: Colors.background,
     borderRadius: 16,
     gap: 20,
   },
@@ -676,7 +838,6 @@ const styles = StyleSheet.create({
   },
   selectedIndicator: {
     width: 20,
-    backgroundColor: Colors.dark,
   },
   buttonContainer: {
     marginLeft: 10,
@@ -687,7 +848,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: "white",
   },
   requestPayButton: {
     backgroundColor: Colors.primary,

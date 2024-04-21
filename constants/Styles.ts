@@ -49,7 +49,6 @@ export const defaultStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     margin: 20,
-    color: Colors.dark,
     marginBottom: 10,
   },
   block: {

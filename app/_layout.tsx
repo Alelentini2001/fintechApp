@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserInactivityProvider } from "@/context/UserInactivity";
 import { LogBox } from "react-native";
 import i18n from "./(authenticated)/(tabs)/translate";
+import { ThemeProvider } from "./ThemeContext";
 LogBox.ignoreAllLogs(); // Ignore log notification by message
 
 const queryClient = new QueryClient();
@@ -86,21 +87,21 @@ const InitialLayout = () => {
       router.replace("/");
     }
   }, [isSignedIn]);
-  // useEffect(() => {
-  //   async function prepare() {
-  //     await SplashScreen.preventAutoHideAsync();
-  //     if (fontsLoaded && isLoaded) {
-  //       SplashScreen.hideAsync();
-  //       if (isSignedIn && segments[0] !== "(authenticated)") {
-  //         router.replace("/(authenticated)/(modals)/lock");
-  //       } else if (!isSignedIn) {
-  //         router.replace("/");
-  //       }
-  //     }
-  //   }
+  useEffect(() => {
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+      if (fontsLoaded && isLoaded) {
+        SplashScreen.hideAsync();
+        if (isSignedIn && segments[0] !== "(authenticated)") {
+          router.replace("/(authenticated)/(modals)/lock");
+        } else if (!isSignedIn) {
+          router.replace("/");
+        }
+      }
+    }
 
-  //   prepare();
-  // }, [fontsLoaded, isLoaded, isSignedIn, segments]);
+    prepare();
+  }, [fontsLoaded, isLoaded, isSignedIn, segments]);
 
   if (!loaded || !isLoaded) {
     return (
@@ -235,10 +236,12 @@ const RootLayoutNav = () => {
     >
       <QueryClientProvider client={queryClient}>
         <UserInactivityProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <StatusBar style="dark" />
-            <InitialLayout />
-          </GestureHandlerRootView>
+          <ThemeProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <StatusBar style="dark" />
+              <InitialLayout />
+            </GestureHandlerRootView>
+          </ThemeProvider>
         </UserInactivityProvider>
       </QueryClientProvider>
     </ClerkProvider>

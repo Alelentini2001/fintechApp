@@ -1,6 +1,13 @@
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  useColorScheme,
+} from "react-native";
 import { BlurView } from "expo-blur";
 import CustomHeader from "@/components/CustomHeader";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
@@ -25,17 +32,15 @@ import translations from "@/app/(authenticated)/(tabs)/translations.json";
 import i18n from "./translate";
 import Request from "./request";
 import QrCode from "./qrCode";
-// const i18n = new I18n(translations);
-// const locale = Localization.getLocales()[0].languageCode || "en";
-// i18n.locale = locale;
-// i18n.enableFallback = true;
+import { useTheme } from "@/app/ThemeContext";
 
-const Slider = () => {
+const Slider = ({ colorScheme }) => {
   //   const onPressStakeholder = () => {
   //     // Navigate to 'StakeholderScreen'
   //     navigationRef.current?.navigate("StakeholderView");
   //   };
   const router = useRouter();
+
   return (
     <View
       style={{
@@ -43,7 +48,7 @@ const Slider = () => {
       }}
     >
       <ActionButton
-        buttonColor={Colors.background}
+        buttonColor={colorScheme === "light" ? Colors.background : Colors.dark}
         onPress={() => {
           console.log("Press");
           router.replace("/(authenticated)/(tabs)/scan");
@@ -52,7 +57,8 @@ const Slider = () => {
           <Image
             source={require("@/assets/images/bpay_logo.png")}
             style={{
-              tintColor: Colors.dark,
+              tintColor:
+                colorScheme === "light" ? Colors.dark : Colors.background,
               width: 30,
               height: 30,
               marginRight: 2,
@@ -66,9 +72,16 @@ const Slider = () => {
 };
 
 const Layout = () => {
+  let colorScheme = useTheme().theme;
+
   const renderTabBar = ({ routeName, selectedTab, navigate }) => {
     const isSelected = routeName === selectedTab;
-    const color = isSelected ? Colors.background : Colors.gray;
+
+    const color = isSelected
+      ? colorScheme === "light"
+        ? Colors.background
+        : Colors.dark
+      : Colors.gray;
     const iconSize = 24; // Adjust size if needed
 
     const getIcon = (name: string) => {
@@ -109,26 +122,24 @@ const Layout = () => {
   };
 
   const route = useRouteInfo();
-
   return (
     <CurvedBottomBarExpo.Navigator
       style={styles.navigator}
-      bgColor={Colors.dark}
+      bgColor={colorScheme === "light" ? Colors.dark : Colors.background}
       type="UP"
       screenOptions={{
-        headerShown:
-          route.pathname === "/settings" ||
-          route.pathname === "/scan" ||
-          route.pathname === "/request" ||
-          route.pathname === "/qrCode"
-            ? false
-            : true,
+        headerShown: ["/settings", "/scan", "/request", "/qrCode"].includes(
+          route.pathname
+        )
+          ? false
+          : true,
+
         headerTransparent: true,
         header: CustomHeader,
       }}
       renderCircle={({ selectedTab, navigate }) => (
         <Animated.View style={{ bottom: 50, left: 10 }}>
-          <Slider />
+          <Slider colorScheme={colorScheme} />
         </Animated.View>
       )}
       initialRouteName="home"
