@@ -88,7 +88,8 @@
         "Enter your phone number. We will send you a confirmation code there" : "Enter your phone number. We will send you a confirmation code there",
         "Enter your email. We will send you a confirmation code there" : "Enter your email. We will send you a confirmation code there",
         "Already have an account? Log In" : "Already have an account? Log In",
-        "Sign Up" : "Sign Up"
+        "Sign Up" : "Sign Up",
+        "Earnings": "Earnings"
 
     },
     "it": {
@@ -178,7 +179,8 @@
         "Let's Get Started!" : "Iniziamo!",
         "Already have an account? Log In" : "Hai un account? Fai il Log In",
         "Sign Up" : "Registrati",
-        "What is the purpose of the request?" : "Qual'è la causa della richiesta?"
+        "What is the purpose of the request?" : "Qual'è la causa della richiesta?",
+        "Earnings" : "Guadagni"
     },
     "es": {
       "Balance": "Saldo",
@@ -267,6 +269,7 @@
         "Let's Get Started!" : "¡Empecemos!",
         "Already have an account? Log In" : "¿Ya tiene una cuenta? Log In",
         "Sign Up" : "Regístrate",
-        "What is the purpose of the request?" : "¿Qué es la causa de la solicitud?"
+        "What is the purpose of the request?" : "¿Qué es la causa de la solicitud?",
+        "Earnings" : "Ganancias"
     }
 }

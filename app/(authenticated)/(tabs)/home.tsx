@@ -24,6 +24,8 @@ import Animated from "react-native-reanimated";
 import { Link, useRouter } from "expo-router";
 import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
+import firestore, { firebase } from "@react-native-firebase/firestore";
+import { useUser } from "@clerk/clerk-expo";
 
 interface CarouselIndicatorProps {
   data: number[];
@@ -33,10 +35,11 @@ let colorScheme: string;
 
 const Home = ({ t }) => {
   colorScheme = useTheme().theme;
-  const { balance, runTransaction, transactions, clearTransactions } =
-    useBalanceStore();
+  // const { balance } = useBalanceStore();
   const router = useRouter();
-
+  const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const { user } = useUser();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
@@ -49,20 +52,68 @@ const Home = ({ t }) => {
   };
 
   const headerHeight = useHeaderHeight();
-  const onAddMoney = () => {
-    runTransaction({
-      id: Math.random().toString(),
-      amount: Math.floor(Math.random() * 1000) * (Math.random() > 0.5 ? 1 : -1),
-      date: new Date(),
-      title: "Added money",
-    });
-  };
+  // const onAddMoney = () => {
+  //   runTransaction({
+  //     id: Math.random().toString(),
+  //     amount: Math.floor(Math.random() * 1000) * (Math.random() > 0.5 ? 1 : -1),
+  //     date: new Date(),
+  //     title: "Added money",
+  //   });
+  // };
 
   useEffect(() => {
-    if (transactions.length <= 4) {
-      onAddMoney();
-    }
-  }, [transactions]);
+    const fetchTransactions = async () => {
+      if (!user?.id) return; // Ensure user id is present
+
+      const merchantTransactions = firestore()
+        .collection("transactions")
+        .where("merchantId", "==", user.id);
+
+      const payeeTransactions = firestore()
+        .collection("transactions")
+        .where("payeeId", "==", user.id);
+
+      try {
+        const [merchantSnapshot, payeeSnapshot] = await Promise.all([
+          merchantTransactions.get(),
+          payeeTransactions.get(),
+        ]);
+
+        let fetchedTransactions = [];
+        let newBalance = 0;
+
+        merchantSnapshot.forEach((doc) => {
+          const data = doc.data();
+          fetchedTransactions.push(data);
+          newBalance -= parseFloat(data.amount);
+        });
+
+        payeeSnapshot.forEach((doc) => {
+          const data = doc.data();
+          fetchedTransactions.push(data);
+          newBalance += parseFloat(data.amount);
+        });
+        console.log(newBalance);
+
+        const mergedTransactions = [];
+        merchantSnapshot.forEach((doc) => mergedTransactions.push(doc.data()));
+        payeeSnapshot.forEach((doc) => mergedTransactions.push(doc.data()));
+
+        setTransactions(mergedTransactions);
+        setBalance(newBalance);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    fetchTransactions();
+  }, [user?.id]);
+
+  // useEffect(() => {
+  //   if (transactions.length <= 4) {
+  //     onAddMoney();
+  //   }
+  // }, [transactions]);
   const CarouselIndicator: React.FC<CarouselIndicatorProps> = ({
     data,
     selectedIndex,
@@ -157,7 +208,7 @@ const Home = ({ t }) => {
                     colorScheme === "light" ? Colors.dark : Colors.background,
                 }}
               >
-                {i18n.t("Spending")}
+                {balance < 0 ? i18n.t("Earnings") : i18n.t("Spending")}
               </Text>
               <View style={styles.row}>
                 <Text
@@ -171,9 +222,9 @@ const Home = ({ t }) => {
                     },
                   ]}
                 >
-                  € {balance().toFixed(2)}
+                  € {balance < 0 ? -balance.toFixed(2) : balance.toFixed(2)}
                 </Text>
-                {/* <Text style={styles.balance}>{balance()}</Text> */}
+                {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
@@ -202,7 +253,7 @@ const Home = ({ t }) => {
                   }}
                 >
                   <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-                    {balance() > 0
+                    {balance > 0
                       ? Math.floor(Math.random() * 100)
                       : Math.floor(Math.random() * -100)}
                     %
@@ -218,7 +269,7 @@ const Home = ({ t }) => {
           </>
         );
       case 1:
-        const cashback = balance() > 0 ? balance() * 0.001 : 0;
+        const cashback = balance > 0 ? balance * 0.001 : 0;
 
         return (
           <>
@@ -303,7 +354,7 @@ const Home = ({ t }) => {
                 >
                   € {cashback.toFixed(3)}
                 </Text>
-                {/* <Text style={styles.balance}>{balance()}</Text> */}
+                {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
@@ -332,7 +383,7 @@ const Home = ({ t }) => {
                   }}
                 >
                   <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-                    {balance() > 0
+                    {balance > 0
                       ? Math.floor(Math.random() * 100)
                       : Math.floor(Math.random() * -100)}
                     %
@@ -431,7 +482,7 @@ const Home = ({ t }) => {
                 >
                   € {Math.floor(Math.random() * 100)}
                 </Text>
-                {/* <Text style={styles.balance}>{balance()}</Text> */}
+                {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>
               <View
                 style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}
@@ -460,7 +511,7 @@ const Home = ({ t }) => {
                   }}
                 >
                   <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-                    {balance() > 0
+                    {balance > 0
                       ? Math.floor(Math.random() * 100)
                       : Math.floor(Math.random() * -100)}
                     %
@@ -520,7 +571,7 @@ const Home = ({ t }) => {
         </View>
         <Text style={{ fontSize: 12, left: 15, top: 40 }}>Spending</Text>
         <View style={styles.row}>
-          <Text style={styles.balance}>€ {balance()}</Text>
+          <Text style={styles.balance}>€ {balance}</Text>
         </View>
         <View style={{ flexDirection: "row", gap: 10, margin: 12, top: 50 }}>
           <Text style={{ fontWeight: "400", fontSize: 10 }}>
@@ -540,7 +591,7 @@ const Home = ({ t }) => {
             }}
           >
             <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-              {balance() > 0
+              {balance > 0
                 ? Math.floor(Math.random() * 100)
                 : Math.floor(Math.random() * -100)}
               %
@@ -684,46 +735,68 @@ const Home = ({ t }) => {
             {i18n.t("No transactions yet")}
           </Text>
         )}
-        {transactions.reverse().map((transaction) => (
-          <View
-            key={transaction.id}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 16,
-            }}
-          >
-            <View style={styles.circle}>
-              <Ionicons
-                name={transaction.amount > 0 ? "add" : "remove"}
-                size={24}
-                color={Colors.dark}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
+        {transactions
+          .sort((a, b) => {
+            // Convert dates from Firestore Timestamp to JavaScript Date objects
+            const dateA = new Date(
+              a.timestamp.seconds * 1000 + a.timestamp.nanoseconds / 1000000
+            );
+            const dateB = new Date(
+              b.timestamp.seconds * 1000 + b.timestamp.nanoseconds / 1000000
+            );
+            return dateB - dateA;
+          })
+          .slice(0, 4)
+          .map((transaction) => (
+            <View
+              key={transaction.id}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 16,
+              }}
+            >
+              <View style={styles.circle}>
+                <Ionicons
+                  name={transaction.payeeId !== user?.id ? "add" : "remove"}
+                  size={24}
+                  color={Colors.dark}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={{
+                    fontWeight: "400",
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
+                  }}
+                >
+                  {transaction.reference}
+                </Text>
+                <Text style={{ color: Colors.gray, fontSize: 12 }}>
+                  {new Date(
+                    transaction.timestamp.seconds * 1000 +
+                      transaction.timestamp.nanoseconds / 1000000
+                  ).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
+                </Text>
+              </View>
               <Text
                 style={{
-                  fontWeight: "400",
                   color:
                     colorScheme === "light" ? Colors.dark : Colors.background,
                 }}
               >
-                {transaction.title}
-              </Text>
-              <Text style={{ color: Colors.gray, fontSize: 12 }}>
-                {transaction.date.toLocaleString()}
+                {parseFloat(transaction.amount).toFixed(2)}€
               </Text>
             </View>
-            <Text
-              style={{
-                color:
-                  colorScheme === "light" ? Colors.dark : Colors.background,
-              }}
-            >
-              {transaction.amount.toFixed(2)}€
-            </Text>
-          </View>
-        ))}
+          ))}
       </View>
       <View
         style={{

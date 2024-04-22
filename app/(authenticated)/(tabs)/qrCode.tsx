@@ -33,10 +33,13 @@ const QrCode = ({ t }) => {
     setIsLoading(true);
     const amountt = parseFloat(amount).toFixed(2);
     const qrCodeData = {
-      amountt,
+      amount: amountt,
       reference,
       merchantUsername: user?.username,
       merchantId: user?.id,
+      merchantFullName: user?.fullName,
+      merchantEmail: user?.primaryEmailAddress?.emailAddress.toString(),
+      merchantPhone: user?.primaryPhoneNumber?.phoneNumber,
     };
 
     const qrCodeParams = new URLSearchParams(qrCodeData).toString();

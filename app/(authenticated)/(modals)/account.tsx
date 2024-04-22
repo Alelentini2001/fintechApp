@@ -13,6 +13,9 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import firestore from "@react-native-firebase/firestore";
+import { storage } from "@/interfaces/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Page = () => {
   const { user } = useUser();
@@ -25,9 +28,64 @@ const Page = () => {
   const [email, setEmail] = useState(user?.primaryEmailAddress?.toString());
 
   const onSaveUser = async () => {
+    console.log(user?.primaryPhoneNumber?.phoneNumber.toString());
+
     try {
       await user?.update({ firstName: firstName!, lastName: lastName! });
       setEdit(false);
+      try {
+        firestore()
+          .collection("users")
+          .where(
+            "email",
+            "==",
+            user?.primaryEmailAddress?.emailAddress || "test"
+          )
+          .get()
+          .then((querySnapshot) => {
+            // Handle the case where no matching email documents found
+            if (querySnapshot.empty) {
+              console.log("No documents found with matching email.");
+              // If no email match, try phone
+              return firestore()
+                .collection("users")
+                .where(
+                  "phone",
+                  "==",
+                  user?.primaryPhoneNumber?.phoneNumber || "test"
+                )
+                .get();
+            }
+            return querySnapshot; // Return the found snapshot
+          })
+          .then((querySnapshot) => {
+            // This could be the result of either email or phone query
+            if (querySnapshot.empty) {
+              console.log("No documents found with matching phone.");
+              return; // Exit if no documents are found
+            }
+
+            // If there are matching documents, update each one
+            querySnapshot.forEach((doc) => {
+              doc.ref
+                .update({
+                  firstName: firstName, // Assuming user.imageUrl contains the base64 string of the new avatar
+                  lastName: lastName,
+                })
+                .then(() => {
+                  console.log("User avatar updated successfully.");
+                })
+                .catch((error) => {
+                  console.error("Error updating avatar:", error);
+                });
+            });
+          })
+          .catch((error) => {
+            console.error("Error retrieving user:", error);
+          });
+      } catch (error) {
+        console.error(error);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -38,6 +96,50 @@ const Page = () => {
     try {
       await user?.update({ username: username?.toString() });
       setEditUsername(false);
+      firestore()
+        .collection("users")
+        .where("email", "==", user?.primaryEmailAddress?.emailAddress || "test")
+        .get()
+        .then((querySnapshot) => {
+          // Handle the case where no matching email documents found
+          if (querySnapshot.empty) {
+            console.log("No documents found with matching email.");
+            // If no email match, try phone
+            return firestore()
+              .collection("users")
+              .where(
+                "phone",
+                "==",
+                user?.primaryPhoneNumber?.phoneNumber || "test"
+              )
+              .get();
+          }
+          return querySnapshot; // Return the found snapshot
+        })
+        .then((querySnapshot) => {
+          // This could be the result of either email or phone query
+          if (querySnapshot.empty) {
+            console.log("No documents found with matching phone.");
+            return; // Exit if no documents are found
+          }
+
+          // If there are matching documents, update each one
+          querySnapshot.forEach((doc) => {
+            doc.ref
+              .update({
+                username: username, // Assuming user.imageUrl contains the base64 string of the new avatar
+              })
+              .then(() => {
+                console.log("User avatar updated successfully.");
+              })
+              .catch((error) => {
+                console.error("Error updating avatar:", error);
+              });
+          });
+        })
+        .catch((error) => {
+          console.error("Error retrieving user:", error);
+        });
     } catch (error) {
       console.error(error);
       if (error.errors) {
@@ -65,18 +167,20 @@ const Page = () => {
   };
 
   const onSaveEmail = async () => {
-    if (email) {
+    if (newEmail) {
       try {
         // Assuming `user` is available via useUser() hook from Clerk.
         // First, add the email address to the user account.
         console.log("START");
-        const emailAddress = await user?.createEmailAddress({ email: email! });
+        const emailAddress = await user?.createEmailAddress({
+          email: newEmail!,
+        });
         console.log("Email address added:", emailAddress?.id);
         await emailAddress?.prepareVerification({ strategy: "email_code" });
         router.dismiss();
         router.navigate({
           pathname: "/verify/[phone]",
-          params: { email: email, edit: true },
+          params: { email: newEmail, edit: true },
         });
 
         setEditEmail(false); // UI state updated to reflect the end of the editing process.
@@ -103,13 +207,95 @@ const Page = () => {
       base64: true,
     });
 
-    if (!result.canceled) {
-      const base64 = `data:image/png;base64,${result.assets[0].base64}`;
-      console.log(base64);
+    if (!result.canceled && result.assets && result.assets[0].base64) {
+      const base64Image = `data:image/png;base64,${result.assets[0].base64}`;
+      //   console.log(base64Image);
+      const imageUri = result.assets[0].uri; // Correctly get the local file URI
 
-      user?.setProfileImage({
-        file: base64,
-      });
+      if (user?.id) {
+        // Assuming setProfileImage method exists and works as expected
+        user.setProfileImage({ file: base64Image });
+        console.log(
+          user?.primaryEmailAddress
+            ? user?.primaryEmailAddress?.emailAddress
+            : "test"
+        );
+        const imageName = `uploads/${user.id}/${new Date().getTime()}.jpg`; // Creating a unique name for the image file based on user ID and timestamp
+        console.log(imageName);
+        let reference;
+        let url;
+        try {
+          reference = ref(storage, imageName);
+          //   reference = storage().ref(imageName);
+          console.log("Test");
+          const response = await fetch(imageUri);
+          const blob = await response.blob(); // Convert the image URI to a blob which is required by Firebase
+          await uploadBytes(reference, blob);
+          url = await getDownloadURL(reference);
+        } catch (error) {
+          console.error("Failed to create storage reference:", error);
+          if (error.errors) {
+            error.errors.forEach((err) => {
+              console.error(err.code, err.message);
+            });
+          }
+        }
+        // await reference?.putFile(imageUri);
+        // Get the URL of the uploaded image
+        console.log("Uploaded Image URL: ", url);
+
+        // Fetch the user's document using the user id and then update the avatar field
+        firestore()
+          .collection("users")
+          .where(
+            "email",
+            "==",
+            user?.primaryEmailAddress?.emailAddress || "test"
+          )
+          .get()
+          .then((querySnapshot) => {
+            // Handle the case where no matching email documents found
+            if (querySnapshot.empty) {
+              console.log("No documents found with matching email.");
+              // If no email match, try phone
+              return firestore()
+                .collection("users")
+                .where(
+                  "phone",
+                  "==",
+                  user?.primaryPhoneNumber?.phoneNumber || "test"
+                )
+                .get();
+            }
+            return querySnapshot; // Return the found snapshot
+          })
+          .then((querySnapshot) => {
+            // This could be the result of either email or phone query
+            if (querySnapshot.empty) {
+              console.log("No documents found with matching phone.");
+              return; // Exit if no documents are found
+            }
+
+            // If there are matching documents, update each one
+            querySnapshot.forEach((doc) => {
+              doc.ref
+                .update({
+                  avatar: url, // Assuming user.imageUrl contains the base64 string of the new avatar
+                })
+                .then(() => {
+                  console.log("User avatar updated successfully.");
+                })
+                .catch((error) => {
+                  console.error("Error updating avatar:", error);
+                });
+            });
+          })
+          .catch((error) => {
+            console.error("Error retrieving user:", error);
+          });
+      } else {
+        console.error("User not defined or missing ID.");
+      }
     }
   };
 

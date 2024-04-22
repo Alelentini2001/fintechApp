@@ -19,6 +19,8 @@ import { I18n } from "i18n-js";
 import * as Localization from "expo-localization";
 import translations from "@/app/(authenticated)/(tabs)/translations.json";
 import { useTheme } from "../ThemeContext";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
@@ -62,8 +64,13 @@ const PhoneVerify = () => {
     if (phone !== "" && phone !== "[phone]") {
       try {
         await signUp!.attemptPhoneNumberVerification({ code });
-
         await setActive!({ session: signUp!.createdSessionId });
+        await firestore().collection("users").add({
+          id: signUp?.id,
+          email: signUp?.emailAddress,
+          phone: signUp?.phoneNumber,
+          username: signUp?.username,
+        });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {
@@ -88,6 +95,12 @@ const PhoneVerify = () => {
           if (completeSignUp.status === "complete") {
             await setActive({ session: completeSignUp.createdSessionId });
           }
+          await firestore().collection("users").add({
+            id: signUp?.id,
+            email: signUp?.emailAddress,
+            phone: signUp?.phoneNumber,
+            username: signUp?.username,
+          });
         } else {
           // Normalize the email search to be case-insensitive and trim whitespace
           const normalizedEmail = email.trim().toLowerCase();
@@ -105,6 +118,54 @@ const PhoneVerify = () => {
             code,
           });
           console.log(verificationResult);
+          firestore()
+            .collection("users")
+            .where(
+              "email",
+              "==",
+              user?.primaryEmailAddress?.emailAddress || "test"
+            )
+            .get()
+            .then((querySnapshot) => {
+              // Handle the case where no matching email documents found
+              if (querySnapshot.empty) {
+                console.log("No documents found with matching email.");
+                // If no email match, try phone
+                return firestore()
+                  .collection("users")
+                  .where(
+                    "phone",
+                    "==",
+                    user?.primaryPhoneNumber?.phoneNumber || "test"
+                  )
+                  .get();
+              }
+              return querySnapshot; // Return the found snapshot
+            })
+            .then((querySnapshot) => {
+              // This could be the result of either email or phone query
+              if (querySnapshot.empty) {
+                console.log("No documents found with matching phone.");
+                return; // Exit if no documents are found
+              }
+
+              // If there are matching documents, update each one
+              querySnapshot.forEach((doc) => {
+                doc.ref
+                  .update({
+                    email: normalizedEmail, // Assuming user.imageUrl contains the base64 string of the new avatar
+                  })
+                  .then(() => {
+                    console.log("User avatar updated successfully.");
+                  })
+                  .catch((error) => {
+                    console.error("Error updating avatar:", error);
+                  });
+              });
+            })
+            .catch((error) => {
+              console.error("Error retrieving user:", error);
+            });
           router.back();
         }
       } catch (err) {
@@ -121,6 +182,14 @@ const PhoneVerify = () => {
       try {
         await signIn!.attemptFirstFactor({ strategy: "phone_code", code });
         await setActive!({ session: signIn!.createdSessionId });
+        auth()
+          .createUserWithEmailAndPassword(phone, "defaultPassword")
+          .then((userCredential) => {
+            console.log("User registered with Firebase", userCredential);
+          })
+          .catch((error) => {
+            console.error("Firebase registration failed:", error);
+          });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {
@@ -131,6 +200,29 @@ const PhoneVerify = () => {
       try {
         await signIn!.attemptFirstFactor({ strategy: "email_code", code });
         await setActive!({ session: signIn!.createdSessionId });
+        auth()
+          .createUserWithEmailAndPassword(email, "defaultPassword")
+          .then((userCredential) => {
+            console.log("User registered with Firebase", userCredential);
+          })
+          .catch((error) => {
+            console.error("Firebase registration failed:", error);
+          });
+        await setDoc(doc(db, "users", res.user.uid), {
+          id: res.user.uid,
+          username: username.toLowerCase(),
+          email: email,
+          avatar: "",
+          fullName,
+          role,
+          genres,
+          instrument,
+          gender,
+          location,
+          signed,
+          languages,
+          date: Date.now(),
+        });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {

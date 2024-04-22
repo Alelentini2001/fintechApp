@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,48 +11,73 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { Camera, CameraType } from "expo-camera";
+// import { Camera, CameraType } from "expo-camera";
 import i18n from "./translate";
 import { useRouter } from "expo-router";
-import { CameraView } from "expo-camera/next";
+// import { CameraView } from "expo-camera/next";
+import {
+  useCameraPermission,
+  useCameraDevice,
+  Camera,
+  useCodeScanner,
+} from "react-native-vision-camera";
+import { useIsFocused } from "@react-navigation/native";
 
 const Scan = ({ t }) => {
-  const [type, setType] = useState(CameraType.back);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const isFocused = useIsFocused();
+  const isActive = isFocused;
+  const [type, setType] = useState("back");
+  // const [isActive, setIsActive] = useState<boolean>(true);
+  const cameraRef = useRef(null);
+  // const [permission, requestPermission] = Camera.useCameraPermissions();
   const router = useRouter();
+  const device = useCameraDevice("back");
+
   useEffect(() => {
-    if (!permission?.granted) {
+    if (!hasPermission) {
       requestPermission();
     }
-  }, [permission]);
+  }, [hasPermission]);
+  const codeScanner = useCodeScanner({
+    codeTypes: ["qr", "ean-13"],
+    onCodeScanned: (event) => {
+      handleBarCodeScanned(event[0]?.value!);
+    },
+  });
 
   const handleBarCodeScanned = (data: string) => {
-    console.log(data);
-    try {
+    if (data.split("&")[0].split("=")[0].match("amount")) {
       // const parsedData = JSON.parse(data);
       // router.replace("/(authenticated)/(tabs)/pay", {
       //   paymentData: parsedData,
       // });
-      CameraView.dismissScanner();
-      router.push({
+
+      // router.push({
+      //   pathname: "/(authenticated)/(tabs)/pay",
+      //   params: { paymentData: data },
+      // });
+
+      router.navigate({
         pathname: "/(authenticated)/(tabs)/pay",
         params: { paymentData: data },
       });
-    } catch (error) {
-      Alert.alert("Invalid QR Code", "The scanned QR code is not valid.");
     }
   };
 
   return (
     <View style={styles.container}>
-      <CameraView
-        style={{ height: "80%", width: "100%", marginTop: -20 }}
-        onBarcodeScanned={(event) => {
-          handleBarCodeScanned(event.data.toString());
+      <Camera
+        codeScanner={codeScanner}
+        style={{
+          height: "80%",
+          width: "100%",
+          marginTop: -20,
         }}
-
-        // Other camera configurations as needed
+        device={device!}
+        isActive={isActive}
       />
+
       <View
         style={{
           alignItems: "center",

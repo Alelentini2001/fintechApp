@@ -16,6 +16,9 @@ import { useEffect, useState } from "react";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
+import { useUser, useClerk } from "@clerk/clerk-expo";
+
+import firestore, { firebase } from "@react-native-firebase/firestore";
 
 let colorScheme: any;
 const Page = ({ t }) => {
@@ -24,31 +27,140 @@ const Page = ({ t }) => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [sortKey, setSortKey] = useState<string>("date"); // Default sort by date
+  const { user } = useUser();
+  // useEffect(() => {
+  //   const generateTransactions = () => {
+  //     const unsortedTransactions = Array.from({ length: 18 }, () => ({
+  //       id: faker.number.int(),
+  //       avatar: faker.image.avatar(),
+  //       name: faker.person.fullName(),
+  //       date: new Date(faker.date.recent().toISOString()), // Change to Date object for easier comparison
+  //       price: parseFloat((Math.random() * 100).toFixed(2)), // Generate random prices
+  //     }));
+  //     unsortedTransactions.push({
+  //       id: "ale",
+  //       avatar: faker.image.avatar(),
+  //       name: "Alessandro Lentini",
+  //       date: new Date(),
+  //       price: -3.25,
+  //     });
+  //     // Sorting the transactions by date
+  //     return unsortedTransactions.sort((a, b) => b.date - a.date); // Descending order
+  //   };
+  //   setTransactions(generateTransactions());
+  // }, []);
+  const fetchTransactions = async () => {
+    if (!user?.id) return; // Ensure there is a user id to query against
+
+    // Fetch all transactions where the user is either a payee or a merchant
+    const transactionRef = firestore().collection("transactions");
+    const querySnapshotPayee = await transactionRef
+      .where("payeeId", "==", user.id)
+      .get();
+
+    // Fetch all transactions where the user is the merchant
+    const querySnapshotMerchant = await transactionRef
+      .where("merchantId", "==", user.id)
+      .get();
+
+    let transactions = []; // Initialize the array to hold combined transactions
+
+    // Process payee transactions
+    querySnapshotPayee.forEach((doc) => {
+      transactions.push({ id: doc.id, ...doc.data() });
+    });
+
+    // Process merchant transactions, avoiding duplicates
+    querySnapshotMerchant.forEach((doc) => {
+      if (!transactions.find((t) => t.id === doc.id)) {
+        transactions.push({ id: doc.id, ...doc.data() });
+      }
+    });
+
+    if (transactions.length === 0) {
+      console.log("No transactions found as payee or merchant");
+      return; // Exit if no transactions are found
+    }
+
+    const fetchedTransactions = transactions;
+    const updatedTransactions = await Promise.all(
+      fetchedTransactions.map(async (transaction) => {
+        // Decide which details to fetch based on the transaction role
+        let targetRef;
+
+        const merchantEmail = decodeURIComponent(transaction.merchantEmail);
+        const payeeEmail = decodeURIComponent(transaction.payeeEmail);
+        const merchantPhoneNumber = decodeURIComponent(
+          transaction.merchantPhoneNumber
+        );
+        const payeePhoneNumber = decodeURIComponent(
+          transaction.payeePhoneNumber
+        );
+
+        if (transaction.payeeId === user?.id) {
+          // User is the payee; fetch merchant details by email or phone
+          targetRef = firestore()
+            .collection("users")
+            .where("email", "==", merchantEmail)
+            .get()
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) {
+                return querySnapshot.docs[0].data();
+              }
+              // If no result found by email, try by phone
+              return firestore()
+                .collection("users")
+                .where("phone", "==", merchantPhoneNumber)
+                .get()
+                .then((phoneSnapshot) => {
+                  if (!phoneSnapshot.empty) {
+                    return phoneSnapshot.docs[0].data();
+                  }
+                  return null; // No user data found
+                });
+            });
+        } else {
+          // User is the merchant; assume you fetch payee details similarly
+          targetRef = firestore()
+            .collection("users")
+            .where("username", "==", payeeEmail)
+            .get()
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) {
+                return querySnapshot.docs[0].data();
+              }
+              // If no result found by email, try by phone
+              return firestore()
+                .collection("users")
+                .where("phone", "==", payeePhoneNumber)
+                .get()
+                .then((phoneSnapshot) => {
+                  if (!phoneSnapshot.empty) {
+                    return phoneSnapshot.docs[0].data();
+                  }
+                  return null; // No user data found
+                });
+            });
+        }
+
+        const additionalUserData = await targetRef;
+        return { ...transaction, additionalUserData }; // Append additional user data to the transaction
+      })
+    );
+    setTransactions(updatedTransactions); // Update state with transactions including additional user data
+  };
 
   useEffect(() => {
-    const generateTransactions = () => {
-      const unsortedTransactions = Array.from({ length: 18 }, () => ({
-        id: faker.number.int(),
-        avatar: faker.image.avatar(),
-        name: faker.person.fullName(),
-        date: new Date(faker.date.recent().toISOString()), // Change to Date object for easier comparison
-        price: parseFloat((Math.random() * 100).toFixed(2)), // Generate random prices
-      }));
-      unsortedTransactions.push({
-        id: "ale",
-        avatar: faker.image.avatar(),
-        name: "Alessandro Lentini",
-        date: new Date(),
-        price: -3.25,
-      });
-      // Sorting the transactions by date
-      return unsortedTransactions.sort((a, b) => b.date - a.date); // Descending order
-    };
-    setTransactions(generateTransactions());
-  }, []);
+    fetchTransactions();
+  }, [user?.id]);
 
   const filteredTransactions = transactions.filter((transaction) =>
-    transaction.name.toLowerCase().includes(searchText.toLowerCase())
+    (transaction.payeeId === user?.id
+      ? transaction?.merchantFullName
+      : transaction?.userFullName
+    )
+      .toLowerCase()
+      .includes(searchText.toLowerCase())
   );
 
   const handleSort = (key: string) => {
@@ -56,18 +168,35 @@ const Page = ({ t }) => {
   };
 
   const sortedTransactions = transactions
-    .sort((a, b) => {
-      if (sortKey === "date") {
-        return b.date - a.date;
-      } else if (sortKey === "price") {
-        return b.price - a.price;
-      } else if (sortKey === "name") {
-        return a.name.localeCompare(b.name);
-      }
+    .filter((transaction) => {
+      // Determine the correct name field to use based on whether the user is the payee
+      const nameToCheck =
+        transaction.payeeId === user?.id
+          ? transaction.merchantFullName
+          : transaction.userFullName;
+
+      // Check if the name contains the search text
+      return nameToCheck.toLowerCase().includes(searchText.toLowerCase());
     })
-    .filter((transaction) =>
-      transaction.name.toLowerCase().includes(searchText.toLowerCase())
-    );
+    .sort((a, b) => {
+      // Convert dates from Firestore Timestamp to JavaScript Date objects
+      const dateA = new Date(a.timestamp.seconds * 1000);
+      const dateB = new Date(b.timestamp.seconds * 1000);
+
+      // Sorting logic based on the selected key
+      if (sortKey === "date") {
+        return dateB - dateA; // Sort by date descending
+      } else if (sortKey === "price") {
+        return parseFloat(b.amount) - parseFloat(a.amount); // Sort by amount descending
+      } else if (sortKey === "name") {
+        // Use a consistent name field for sorting, depending on the transaction's context
+        const nameA =
+          a.payeeId === user?.id ? a.merchantFullName : a.userFullName;
+        const nameB =
+          a.payeeId === user?.id ? b.merchantFullName : b.userFullName;
+        return nameA.localeCompare(nameB); // Sort by name alphabetically
+      }
+    });
 
   return (
     <ScrollView
@@ -223,7 +352,7 @@ const Page = ({ t }) => {
                 style={[styles.circle, { overflow: "hidden", marginRight: 10 }]}
               >
                 <Image
-                  source={{ uri: transaction.avatar }}
+                  source={{ uri: transaction?.additionalUserData?.avatar }}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -250,7 +379,11 @@ const Page = ({ t }) => {
                     },
                   ]}
                 >
-                  {transaction.name}
+                  {transaction.payeeId === user?.id
+                    ? transaction?.merchantFullName.split("+")[0] +
+                      " " +
+                      transaction?.merchantFullName.split("+")[1]
+                    : transaction?.userFullName}
                 </Text>
                 <Text
                   style={[
@@ -263,18 +396,34 @@ const Page = ({ t }) => {
                     },
                   ]}
                 >
-                  {transaction.date.toLocaleString()}
+                  {new Date(
+                    transaction.timestamp.seconds * 1000 +
+                      transaction.timestamp.nanoseconds / 1000000
+                  ).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
                 </Text>
               </View>
               <View style={{ flex: 1 }} />
               <Text
                 style={[
                   styles.price,
-                  { color: transaction.price > 0 ? "#0ABF8A" : "#FF6868" },
+                  {
+                    color:
+                      transaction.payeeId !== user?.id ? "#0ABF8A" : "#FF6868",
+                  },
                 ]}
-              >{`${
-                transaction.price > 0 ? "+" : "-"
-              }€${transaction.price.toFixed(2)}`}</Text>
+              >{`${transaction.payeeId !== user?.id ? "+" : "-"}€${parseFloat(
+                transaction.payeeId === user?.id
+                  ? transaction.amount
+                  : parseFloat(transaction.amount) -
+                      parseFloat(transaction.fees)
+              ).toFixed(2)}`}</Text>
             </View>
           ))}
         </View>
