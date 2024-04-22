@@ -123,7 +123,7 @@ const Page = ({ t }) => {
           // User is the merchant; assume you fetch payee details similarly
           targetRef = firestore()
             .collection("users")
-            .where("username", "==", payeeEmail)
+            .where("email", "==", payeeEmail)
             .get()
             .then((querySnapshot) => {
               if (!querySnapshot.empty) {
