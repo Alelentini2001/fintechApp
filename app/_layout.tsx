@@ -83,7 +83,7 @@ const InitialLayout = () => {
     if (isSignedIn && !inAuthGroup) {
       //router.replace("/(authenticated)/(tabs)/crypto");
       router.replace("/(authenticated)/(modals)/lock");
-    } else if (!isSignedIn) {
+    } else if (!isSignedIn && router) {
       router.replace("/");
     }
   }, [isSignedIn]);

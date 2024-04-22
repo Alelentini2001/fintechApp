@@ -19,8 +19,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.aleprophet.fintech",
       "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID."
+        "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID.",
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
+        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone."
       }
     },
     "notifications": false,
@@ -88,7 +91,7 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks" : "static"
+            "useFrameworks": "static"
           }
         }
       ],
@@ -104,7 +107,14 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": "https://galaxies.dev"
+      },
+      "eas": {
+        "projectId": "5765a9c6-e77c-4e7c-a75b-4127d0b82c8b"
+      }
     }
   }
-
+}
