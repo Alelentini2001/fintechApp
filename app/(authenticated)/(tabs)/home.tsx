@@ -118,8 +118,10 @@ const Home = ({ t }) => {
 
     // Cleanup function to unsubscribe from onSnapshot when component unmounts
     return () => {
+      clearTransactions();
       unsubscribeMerchant();
       unsubscribePayee();
+      runTransaction(transactions, user?.id);
     };
   }, [user?.id, setTransactions]);
 
@@ -778,7 +780,14 @@ const Home = ({ t }) => {
             >
               <View style={styles.circle}>
                 <Ionicons
-                  name={transaction.payeeId !== user?.id ? "add" : "remove"}
+                  name={
+                    transaction.reference === "deposit" &&
+                    transaction.merchantId === user?.id
+                      ? "add"
+                      : transaction.payeeId !== user?.id
+                      ? "add"
+                      : "remove"
+                  }
                   size={24}
                   color={Colors.dark}
                 />

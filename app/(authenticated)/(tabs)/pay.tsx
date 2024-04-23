@@ -75,7 +75,9 @@ const PaymentConfirmationScreen = () => {
             {
               text: "Check your payments",
               onPress: () => {
-                router.push("/(authenticated)/(tabs)/home");
+                if (router) {
+                  router.push("/(authenticated)/(tabs)/home");
+                }
               },
               style: "cancel",
             },

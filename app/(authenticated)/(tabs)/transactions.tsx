@@ -50,51 +50,89 @@ const Page = ({ t }) => {
   //   setTransactions(generateTransactions());
   // }, []);
   useEffect(() => {
-    if (!user?.id) return; // Guard to ensure we have a valid user ID
+    if (!user?.id) return; // Ensure user id is present
 
-    // Firestore reference to the transactions collection
+    // References to Firestore collections
     const transactionRef = firestore().collection("transactions");
 
     // Subscribe to changes where the user is the payee
     const unsubscribePayee = transactionRef
       .where("payeeId", "==", user.id)
-      .onSnapshot({
-        next: (querySnapshot) => {
-          const transactions = [];
-          querySnapshot.forEach((doc) => {
-            transactions.push({ id: doc.id, ...doc.data() });
-          });
-          // Update the transaction state with the new data
-          setTransactions(transactions);
+      .onSnapshot(
+        (querySnapshot) => {
+          handleTransactionUpdate(querySnapshot);
         },
-        error: (error) => {
-          console.error("Error fetching transactions as payee:", error);
-        },
-      });
+        (error) => {
+          console.error("Error fetching payee transactions:", error);
+        }
+      );
 
     // Subscribe to changes where the user is the merchant
     const unsubscribeMerchant = transactionRef
       .where("merchantId", "==", user.id)
-      .onSnapshot({
-        next: (querySnapshot) => {
-          const transactions = [];
-          querySnapshot.forEach((doc) => {
-            transactions.push({ id: doc.id, ...doc.data() });
-          });
-          // Update the transaction state with the new data
-          setTransactions(transactions);
+      .onSnapshot(
+        (querySnapshot) => {
+          handleTransactionUpdate(querySnapshot);
         },
-        error: (error) => {
-          console.error("Error fetching transactions as merchant:", error);
-        },
-      });
+        (error) => {
+          console.error("Error fetching merchant transactions:", error);
+        }
+      );
 
-    // Cleanup function to unsubscribe from Firestore listeners when the component unmounts
+    // Cleanup function to unsubscribe from listeners
     return () => {
       unsubscribePayee();
       unsubscribeMerchant();
     };
-  }, [user?.id, setTransactions]);
+  }, [user?.id]);
+
+  const handleTransactionUpdate = async (querySnapshot) => {
+    const fetchedTransactions = [];
+    querySnapshot.forEach((doc) => {
+      fetchedTransactions.push({ id: doc.id, ...doc.data() });
+    });
+
+    // Fetch user details for each transaction
+    const transactionsWithUserData = await Promise.all(
+      fetchedTransactions.map(async (transaction) => {
+        return appendUserData(transaction);
+      })
+    );
+
+    setTransactions(transactionsWithUserData);
+  };
+
+  const appendUserData = async (transaction) => {
+    // Fetch user data based on whether the user is the payee or the merchant
+    const userRef = firestore().collection("users");
+    let query;
+
+    if (transaction.payeeId === user?.id) {
+      query = userRef.where(
+        "email",
+        "==",
+        decodeURIComponent(transaction.merchantEmail)
+      );
+    } else {
+      query = userRef.where(
+        "email",
+        "==",
+        decodeURIComponent(transaction.payeeEmail)
+      );
+    }
+
+    const snapshot = await query.get();
+    if (!snapshot.empty) {
+      const userData = snapshot.docs[0].data();
+      return { ...transaction, additionalUserData: userData };
+    }
+
+    return transaction; // Return transaction unchanged if user data is not found
+  };
+
+  // useEffect(() => {
+  //   fetchTransactions();
+  // }, [user?.id]);
 
   const filteredTransactions = transactions.filter((transaction) =>
     (transaction.payeeId === user?.id
@@ -122,8 +160,8 @@ const Page = ({ t }) => {
     })
     .sort((a, b) => {
       // Convert dates from Firestore Timestamp to JavaScript Date objects
-      const dateA = new Date(a.timestamp.seconds * 1000);
-      const dateB = new Date(b.timestamp.seconds * 1000);
+      const dateA = new Date(a?.timestamp?.seconds * 1000);
+      const dateB = new Date(b?.timestamp?.seconds * 1000);
 
       // Sorting logic based on the selected key
       if (sortKey === "date") {
@@ -143,7 +181,7 @@ const Page = ({ t }) => {
   return (
     <ScrollView
       style={{
-        paddingTop: headerHeight,
+        marginTop: headerHeight,
         paddingLeft: 20,
         backgroundColor:
           colorScheme === "light" ? Colors.background : Colors.dark,
@@ -348,8 +386,8 @@ const Page = ({ t }) => {
                   ]}
                 >
                   {new Date(
-                    transaction.timestamp.seconds * 1000 +
-                      transaction.timestamp.nanoseconds / 1000000
+                    transaction?.timestamp?.seconds * 1000 +
+                      transaction?.timestamp?.nanoseconds / 1000000
                   ).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "2-digit",

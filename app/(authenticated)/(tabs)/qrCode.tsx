@@ -150,7 +150,7 @@ const QrCode = ({ t }) => {
                 }}
                 padding={smallQRCode ? 20 : 10} // You can reduce the padding to make the QR code smaller
                 color={colorScheme === "dark" ? Colors.background : Colors.dark}
-                pieceSize={smallQRCode ? 7 : 5} // You can reduce the pieceSize to make the QR code smaller
+                pieceSize={smallQRCode ? 7 : 3} // You can reduce the pieceSize to make the QR code smaller
                 pieceBorderRadius={smallQRCode ? 4 : 2} // You can reduce the pieceBorderRadius to make the QR code smaller
                 isPiecesGlued
                 innerEyesOptions={{
