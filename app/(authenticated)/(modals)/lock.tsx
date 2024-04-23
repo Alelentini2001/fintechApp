@@ -175,6 +175,7 @@ const Lock = () => {
           {[1, 2, 3].map((number) => (
             <TouchableOpacity
               key={number}
+              style={styles.circle}
               onPress={() => {
                 onNumberPress(number);
               }}
@@ -203,6 +204,7 @@ const Lock = () => {
           {[4, 5, 6].map((number) => (
             <TouchableOpacity
               key={number}
+              style={styles.circle}
               onPress={() => {
                 onNumberPress(number);
               }}
@@ -225,6 +227,7 @@ const Lock = () => {
           {[7, 8, 9].map((number) => (
             <TouchableOpacity
               key={number}
+              style={styles.circle}
               onPress={() => {
                 onNumberPress(number);
               }}
@@ -244,7 +247,11 @@ const Lock = () => {
           ))}
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <TouchableOpacity key={10} onPress={onBiometricAuthPress}>
+          <TouchableOpacity
+            key={10}
+            onPress={onBiometricAuthPress}
+            style={styles.circle}
+          >
             <MaterialCommunityIcons
               name="face-recognition"
               size={26}
@@ -252,6 +259,7 @@ const Lock = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity
+            style={styles.circle}
             key={0}
             onPress={() => {
               onNumberPress(0);
@@ -271,7 +279,11 @@ const Lock = () => {
           </TouchableOpacity>
           <View style={{ minWidth: 30 }}>
             {code.length > 0 && (
-              <TouchableOpacity key={11} onPress={numberBackspace}>
+              <TouchableOpacity
+                key={11}
+                onPress={numberBackspace}
+                style={styles.circle}
+              >
                 <MaterialCommunityIcons
                   name="backspace-outline"
                   size={26}
@@ -329,6 +341,13 @@ const styles = StyleSheet.create({
     gap: 60,
   },
   number: { fontSize: 32 },
+  circle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 export default Lock;

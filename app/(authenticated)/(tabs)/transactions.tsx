@@ -49,110 +49,52 @@ const Page = ({ t }) => {
   //   };
   //   setTransactions(generateTransactions());
   // }, []);
-  const fetchTransactions = async () => {
-    if (!user?.id) return; // Ensure there is a user id to query against
-
-    // Fetch all transactions where the user is either a payee or a merchant
-    const transactionRef = firestore().collection("transactions");
-    const querySnapshotPayee = await transactionRef
-      .where("payeeId", "==", user.id)
-      .get();
-
-    // Fetch all transactions where the user is the merchant
-    const querySnapshotMerchant = await transactionRef
-      .where("merchantId", "==", user.id)
-      .get();
-
-    let transactions = []; // Initialize the array to hold combined transactions
-
-    // Process payee transactions
-    querySnapshotPayee.forEach((doc) => {
-      transactions.push({ id: doc.id, ...doc.data() });
-    });
-
-    // Process merchant transactions, avoiding duplicates
-    querySnapshotMerchant.forEach((doc) => {
-      if (!transactions.find((t) => t.id === doc.id)) {
-        transactions.push({ id: doc.id, ...doc.data() });
-      }
-    });
-
-    if (transactions.length === 0) {
-      console.log("No transactions found as payee or merchant");
-      return; // Exit if no transactions are found
-    }
-
-    const fetchedTransactions = transactions;
-    const updatedTransactions = await Promise.all(
-      fetchedTransactions.map(async (transaction) => {
-        // Decide which details to fetch based on the transaction role
-        let targetRef;
-
-        const merchantEmail = decodeURIComponent(transaction.merchantEmail);
-        const payeeEmail = decodeURIComponent(transaction.payeeEmail);
-        const merchantPhoneNumber = decodeURIComponent(
-          transaction.merchantPhoneNumber
-        );
-        const payeePhoneNumber = decodeURIComponent(
-          transaction.payeePhoneNumber
-        );
-
-        if (transaction.payeeId === user?.id) {
-          // User is the payee; fetch merchant details by email or phone
-          targetRef = firestore()
-            .collection("users")
-            .where("email", "==", merchantEmail)
-            .get()
-            .then((querySnapshot) => {
-              if (!querySnapshot.empty) {
-                return querySnapshot.docs[0].data();
-              }
-              // If no result found by email, try by phone
-              return firestore()
-                .collection("users")
-                .where("phone", "==", merchantPhoneNumber)
-                .get()
-                .then((phoneSnapshot) => {
-                  if (!phoneSnapshot.empty) {
-                    return phoneSnapshot.docs[0].data();
-                  }
-                  return null; // No user data found
-                });
-            });
-        } else {
-          // User is the merchant; assume you fetch payee details similarly
-          targetRef = firestore()
-            .collection("users")
-            .where("email", "==", payeeEmail)
-            .get()
-            .then((querySnapshot) => {
-              if (!querySnapshot.empty) {
-                return querySnapshot.docs[0].data();
-              }
-              // If no result found by email, try by phone
-              return firestore()
-                .collection("users")
-                .where("phone", "==", payeePhoneNumber)
-                .get()
-                .then((phoneSnapshot) => {
-                  if (!phoneSnapshot.empty) {
-                    return phoneSnapshot.docs[0].data();
-                  }
-                  return null; // No user data found
-                });
-            });
-        }
-
-        const additionalUserData = await targetRef;
-        return { ...transaction, additionalUserData }; // Append additional user data to the transaction
-      })
-    );
-    setTransactions(updatedTransactions); // Update state with transactions including additional user data
-  };
-
   useEffect(() => {
-    fetchTransactions();
-  }, [user?.id]);
+    if (!user?.id) return; // Guard to ensure we have a valid user ID
+
+    // Firestore reference to the transactions collection
+    const transactionRef = firestore().collection("transactions");
+
+    // Subscribe to changes where the user is the payee
+    const unsubscribePayee = transactionRef
+      .where("payeeId", "==", user.id)
+      .onSnapshot({
+        next: (querySnapshot) => {
+          const transactions = [];
+          querySnapshot.forEach((doc) => {
+            transactions.push({ id: doc.id, ...doc.data() });
+          });
+          // Update the transaction state with the new data
+          setTransactions(transactions);
+        },
+        error: (error) => {
+          console.error("Error fetching transactions as payee:", error);
+        },
+      });
+
+    // Subscribe to changes where the user is the merchant
+    const unsubscribeMerchant = transactionRef
+      .where("merchantId", "==", user.id)
+      .onSnapshot({
+        next: (querySnapshot) => {
+          const transactions = [];
+          querySnapshot.forEach((doc) => {
+            transactions.push({ id: doc.id, ...doc.data() });
+          });
+          // Update the transaction state with the new data
+          setTransactions(transactions);
+        },
+        error: (error) => {
+          console.error("Error fetching transactions as merchant:", error);
+        },
+      });
+
+    // Cleanup function to unsubscribe from Firestore listeners when the component unmounts
+    return () => {
+      unsubscribePayee();
+      unsubscribeMerchant();
+    };
+  }, [user?.id, setTransactions]);
 
   const filteredTransactions = transactions.filter((transaction) =>
     (transaction.payeeId === user?.id
@@ -352,7 +294,13 @@ const Page = ({ t }) => {
                 style={[styles.circle, { overflow: "hidden", marginRight: 10 }]}
               >
                 <Image
-                  source={{ uri: transaction?.additionalUserData?.avatar }}
+                  source={{
+                    uri:
+                      transaction.reference === "deposit" &&
+                      transaction.merchantId === user?.id
+                        ? user?.imageUrl
+                        : transaction?.additionalUserData?.avatar,
+                  }}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -379,7 +327,10 @@ const Page = ({ t }) => {
                     },
                   ]}
                 >
-                  {transaction.payeeId === user?.id
+                  {transaction.reference === "deposit" &&
+                  transaction.merchantId === user?.id
+                    ? "Deposit"
+                    : transaction.payeeId === user?.id
                     ? transaction?.merchantFullName.split("+")[0] +
                       " " +
                       transaction?.merchantFullName.split("+")[1]
@@ -415,10 +366,22 @@ const Page = ({ t }) => {
                   styles.price,
                   {
                     color:
-                      transaction.payeeId !== user?.id ? "#0ABF8A" : "#FF6868",
+                      transaction.reference === "deposit" &&
+                      transaction.merchantId === user?.id
+                        ? "#0ABF8A"
+                        : transaction.payeeId !== user?.id
+                        ? "#0ABF8A"
+                        : "#FF6868",
                   },
                 ]}
-              >{`${transaction.payeeId !== user?.id ? "+" : "-"}€${parseFloat(
+              >{`${
+                transaction.reference === "deposit" &&
+                transaction.merchantId === user?.id
+                  ? "+"
+                  : transaction.payeeId !== user?.id
+                  ? "+"
+                  : "-"
+              }€${parseFloat(
                 transaction.payeeId === user?.id
                   ? transaction.amount
                   : parseFloat(transaction.amount) -

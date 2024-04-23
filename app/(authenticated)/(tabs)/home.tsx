@@ -35,10 +35,13 @@ let colorScheme: string;
 
 const Home = ({ t }) => {
   colorScheme = useTheme().theme;
-  // const { balance } = useBalanceStore();
+  const {
+    balance: balanceWallet,
+    runTransaction,
+    clearTransactions,
+  } = useBalanceStore();
   const router = useRouter();
   const [transactions, setTransactions] = useState([]);
-  const [balance, setBalance] = useState(0);
   const { user } = useUser();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -62,52 +65,67 @@ const Home = ({ t }) => {
   // };
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!user?.id) return; // Ensure user id is present
+    if (!user?.id) return;
 
-      const merchantTransactions = firestore()
-        .collection("transactions")
-        .where("merchantId", "==", user.id);
+    // Define references to the transactions collections based on user role
+    const merchantRef = firestore()
+      .collection("transactions")
+      .where("merchantId", "==", user.id);
+    const payeeRef = firestore()
+      .collection("transactions")
+      .where("payeeId", "==", user.id);
 
-      const payeeTransactions = firestore()
-        .collection("transactions")
-        .where("payeeId", "==", user.id);
+    const unsubscribeMerchant = merchantRef.onSnapshot({
+      next: (querySnapshot) => {
+        let transactions = [];
 
-      try {
-        const [merchantSnapshot, payeeSnapshot] = await Promise.all([
-          merchantTransactions.get(),
-          payeeTransactions.get(),
-        ]);
-
-        let fetchedTransactions = [];
-        let newBalance = 0;
-
-        merchantSnapshot.forEach((doc) => {
+        querySnapshot.forEach((doc) => {
           const data = doc.data();
-          fetchedTransactions.push(data);
-          newBalance -= parseFloat(data.amount);
+          transactions.push(data);
         });
 
-        payeeSnapshot.forEach((doc) => {
+        // Update state or context with new transactions and balance
+        setTransactions(transactions); // This might need to combine with existing state
+        console.log("Updated merchant transactions:", transactions);
+        console.log("Updated balance:", balanceWallet());
+      },
+      error: (error) => {
+        console.error("Error fetching merchant transactions:", error);
+      },
+    });
+
+    const unsubscribePayee = payeeRef.onSnapshot({
+      next: (querySnapshot) => {
+        let transactions = [];
+
+        querySnapshot.forEach((doc) => {
           const data = doc.data();
-          fetchedTransactions.push(data);
-          newBalance += parseFloat(data.amount);
+          transactions.push(data);
         });
-        console.log(newBalance);
 
-        const mergedTransactions = [];
-        merchantSnapshot.forEach((doc) => mergedTransactions.push(doc.data()));
-        payeeSnapshot.forEach((doc) => mergedTransactions.push(doc.data()));
+        // Update state or context with new transactions and balance
+        setTransactions(transactions); // This might need to combine with existing state
+        clearTransactions();
+        runTransaction(transactions, user?.id);
 
-        setTransactions(mergedTransactions);
-        setBalance(newBalance);
-      } catch (error) {
-        console.error("Error fetching transactions:", error);
-      }
+        console.log("Updated payee transactions:", transactions);
+        console.log("Updated balance:", balanceWallet());
+      },
+      error: (error) => {
+        console.error("Error fetching payee transactions:", error);
+      },
+    });
+
+    // Cleanup function to unsubscribe from onSnapshot when component unmounts
+    return () => {
+      unsubscribeMerchant();
+      unsubscribePayee();
     };
+  }, [user?.id, setTransactions]);
 
-    fetchTransactions();
-  }, [user?.id]);
+  // useEffect(() => {
+  //   clearTransactions();
+  // }, []);
 
   // useEffect(() => {
   //   if (transactions.length <= 4) {
@@ -208,7 +226,8 @@ const Home = ({ t }) => {
                     colorScheme === "light" ? Colors.dark : Colors.background,
                 }}
               >
-                {balance < 0 ? i18n.t("Earnings") : i18n.t("Spending")}
+                {/* {balance < 0 ? i18n.t("Earnings") : i18n.t("Spending")} */}
+                {t("Balance")}
               </Text>
               <View style={styles.row}>
                 <Text
@@ -222,7 +241,8 @@ const Home = ({ t }) => {
                     },
                   ]}
                 >
-                  € {balance < 0 ? -balance.toFixed(2) : balance.toFixed(2)}
+                  {/* € {balance < 0 ? -balance.toFixed(2) : balance.toFixed(2)} */}
+                  € {balanceWallet()}
                 </Text>
                 {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>
@@ -253,7 +273,7 @@ const Home = ({ t }) => {
                   }}
                 >
                   <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-                    {balance > 0
+                    {balanceWallet() > 0
                       ? Math.floor(Math.random() * 100)
                       : Math.floor(Math.random() * -100)}
                     %
@@ -269,7 +289,7 @@ const Home = ({ t }) => {
           </>
         );
       case 1:
-        const cashback = balance > 0 ? balance * 0.001 : 0;
+        const cashback = balanceWallet() > 0 ? balanceWallet() * 0.001 : 0;
 
         return (
           <>
@@ -383,7 +403,7 @@ const Home = ({ t }) => {
                   }}
                 >
                   <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-                    {balance > 0
+                    {balanceWallet() > 0
                       ? Math.floor(Math.random() * 100)
                       : Math.floor(Math.random() * -100)}
                     %
@@ -511,7 +531,7 @@ const Home = ({ t }) => {
                   }}
                 >
                   <Text style={{ fontSize: 10, color: "rgba(82,220,79,1)" }}>
-                    {balance > 0
+                    {balanceWallet() > 0
                       ? Math.floor(Math.random() * 100)
                       : Math.floor(Math.random() * -100)}
                     %
@@ -739,10 +759,10 @@ const Home = ({ t }) => {
           .sort((a, b) => {
             // Convert dates from Firestore Timestamp to JavaScript Date objects
             const dateA = new Date(
-              a.timestamp.seconds * 1000 + a.timestamp.nanoseconds / 1000000
+              a?.timestamp?.seconds * 1000 + a?.timestamp?.nanoseconds / 1000000
             );
             const dateB = new Date(
-              b.timestamp.seconds * 1000 + b.timestamp.nanoseconds / 1000000
+              b?.timestamp?.seconds * 1000 + b?.timestamp?.nanoseconds / 1000000
             );
             return dateB - dateA;
           })
@@ -775,8 +795,8 @@ const Home = ({ t }) => {
                 </Text>
                 <Text style={{ color: Colors.gray, fontSize: 12 }}>
                   {new Date(
-                    transaction.timestamp.seconds * 1000 +
-                      transaction.timestamp.nanoseconds / 1000000
+                    transaction?.timestamp?.seconds * 1000 +
+                      transaction?.timestamp?.nanoseconds / 1000000
                   ).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "2-digit",

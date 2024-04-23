@@ -14,6 +14,7 @@ import { useTheme } from "@/app/ThemeContext";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useBalanceStore } from "@/store/balanceStore";
 
 const PaymentConfirmationScreen = () => {
   let colorScheme = useTheme().theme;
@@ -38,56 +39,63 @@ const PaymentConfirmationScreen = () => {
   const merchantFullName = decodeURIComponent(params.merchantFullName); // Decoding potentially encoded characters
   const merchantEmail = params.merchantEmail;
   const merchantPhone = params.merchantPhone;
-
+  const { balance } = useBalanceStore();
   const router = useRouter();
   const fees = (parseFloat(amount) * 0.005).toFixed(2); // Calculate fees and format to 2 decimal places
   const handleAcceptPayment = async () => {
-    try {
-      await firestore()
-        .collection("transactions")
-        .add({
-          amount: amount,
-          fees: fees,
-          reference: reference,
-          payeeUsername: user?.username || "",
-          merchantUsername: merchantUsername,
-          merchantFullName: merchantFullName,
-          merchantEmail: merchantEmail,
-          merchantPhone: merchantPhone,
-          userFullName: user?.fullName,
-          payeeId: user?.id || "",
-          payeeEmail: user?.primaryEmailAddress
-            ? user?.primaryEmailAddress?.emailAddress
-            : "test",
-          payeePhoneNumber: user?.primaryPhoneNumber
-            ? user?.primaryPhoneNumber?.phoneNumber
-            : "test",
-          merchantId: merchantId,
-          timestamp: firestore.FieldValue.serverTimestamp(),
-        });
-      //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
-      Alert.alert(
-        "Payment Successful",
-        "Your payment has been processed successfully",
-        [
-          {
-            text: "Check your payments",
-            onPress: () => {
-              router.push("/(authenticated)/(tabs)/home");
+    if (balance() >= parseFloat(amount)) {
+      try {
+        await firestore()
+          .collection("transactions")
+          .add({
+            amount: amount,
+            fees: fees,
+            reference: reference,
+            payeeUsername: user?.username || "",
+            merchantUsername: merchantUsername,
+            merchantFullName: merchantFullName,
+            merchantEmail: merchantEmail,
+            merchantPhone: merchantPhone,
+            userFullName: user?.fullName,
+            payeeId: user?.id || "",
+            payeeEmail: user?.primaryEmailAddress
+              ? user?.primaryEmailAddress?.emailAddress
+              : "test",
+            payeePhoneNumber: user?.primaryPhoneNumber
+              ? user?.primaryPhoneNumber?.phoneNumber
+              : "test",
+            merchantId: merchantId,
+            timestamp: firestore.FieldValue.serverTimestamp(),
+          });
+        //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
+        Alert.alert(
+          "Payment Successful",
+          "Your payment has been processed successfully",
+          [
+            {
+              text: "Check your payments",
+              onPress: () => {
+                router.push("/(authenticated)/(tabs)/home");
+              },
+              style: "cancel",
             },
-            style: "cancel",
-          },
-        ],
-        { cancelable: true }
-      );
-    } catch (error) {
-      console.error("Error saving transaction: ", error);
-      if (error.errors) {
-        error.errors.forEach((err) => {
-          console.error(err.code, err.message);
-        });
+          ],
+          { cancelable: true }
+        );
+      } catch (error) {
+        console.error("Error saving transaction: ", error);
+        if (error.errors) {
+          error.errors.forEach((err) => {
+            console.error(err.code, err.message);
+          });
+        }
+        Alert.alert("Error", "There was a problem processing your payment.");
       }
-      Alert.alert("Error", "There was a problem processing your payment.");
+    } else {
+      Alert.alert(
+        "Error",
+        "Your balance is not enough to cover the transaction."
+      );
     }
   };
 

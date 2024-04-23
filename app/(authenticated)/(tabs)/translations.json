@@ -89,7 +89,8 @@
         "Enter your email. We will send you a confirmation code there" : "Enter your email. We will send you a confirmation code there",
         "Already have an account? Log In" : "Already have an account? Log In",
         "Sign Up" : "Sign Up",
-        "Earnings": "Earnings"
+        "Earnings": "Earnings",
+        "Deposit 10€": "Deposit 10€"
 
     },
     "it": {
@@ -180,7 +181,8 @@
         "Already have an account? Log In" : "Hai un account? Fai il Log In",
         "Sign Up" : "Registrati",
         "What is the purpose of the request?" : "Qual'è la causa della richiesta?",
-        "Earnings" : "Guadagni"
+        "Earnings" : "Guadagni",
+        "Deposit 10€" : "Deposita 10€"
     },
     "es": {
       "Balance": "Saldo",
@@ -270,6 +272,7 @@
         "Already have an account? Log In" : "¿Ya tiene una cuenta? Log In",
         "Sign Up" : "Regístrate",
         "What is the purpose of the request?" : "¿Qué es la causa de la solicitud?",
-        "Earnings" : "Ganancias"
+        "Earnings" : "Ganancias",
+        "Deposit 10€" : "Depositar 10€"
     }
 }

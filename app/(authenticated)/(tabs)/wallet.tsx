@@ -2,15 +2,71 @@ import Colors from "@/constants/Colors";
 import { useBalanceStore } from "@/store/balanceStore";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
+import { useUser } from "@clerk/clerk-expo";
+import firestore, { firebase } from "@react-native-firebase/firestore";
+import { useRouter } from "expo-router";
+
 const Wallet = ({ t }) => {
   let colorScheme = useTheme().theme;
+  const { user } = useUser();
   const { balance, runTransaction, transactions, clearTransactions } =
     useBalanceStore();
   const headerHeight = useHeaderHeight();
+  const router = useRouter();
+  const depositI0euro = async () => {
+    try {
+      await firestore().collection("transactions").add({
+        amount: "10",
+        fees: "",
+        reference: "deposit",
+        payeeUsername: "",
+        merchantUsername: "",
+        merchantFullName: "",
+        merchantEmail: "",
+        merchantPhone: "",
+        userFullName: "",
+        payeeId: user?.id,
+        payeeEmail: "",
+        payeePhoneNumber: "",
+        merchantId: user?.id,
+        timestamp: firestore.FieldValue.serverTimestamp(),
+      });
+      //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
+      Alert.alert(
+        "Deposit Successful",
+        "Your deposit has been processed successfully",
+        [
+          {
+            text: "Check your homepage",
+            onPress: () => {
+              router.push("/(authenticated)/(tabs)/home");
+            },
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    } catch (error) {
+      console.error("Error saving transaction: ", error);
+      if (error.errors) {
+        error.errors.forEach((err) => {
+          console.error(err.code, err.message);
+        });
+      }
+      Alert.alert("Error", "There was a problem processing your deposit.");
+    }
+  };
   return (
     <View
       style={{
@@ -186,7 +242,7 @@ const Wallet = ({ t }) => {
                 },
               ]}
             >
-              € {Math.floor(Math.random() * 1000).toFixed(2)}
+              € {(balance() * 0.005).toFixed(3)}
             </Text>
             <Text
               style={[
@@ -277,6 +333,38 @@ const Wallet = ({ t }) => {
           }}
         >
           {i18n.t("Withdraw Balance")}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          depositI0euro();
+        }}
+        style={[
+          styles.withdraw,
+          {
+            marginTop: 20,
+            alignItems: "center",
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
+        <Ionicons
+          name="logo-euro"
+          size={22}
+          style={{
+            marginRight: 10,
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          }}
+        />
+        <Text
+          style={{
+            color: colorScheme === "light" ? Colors.dark : Colors.background,
+            fontSize: 14,
+            fontWeight: "300",
+          }}
+        >
+          {i18n.t("Deposit 10€")}
         </Text>
       </TouchableOpacity>
     </View>
