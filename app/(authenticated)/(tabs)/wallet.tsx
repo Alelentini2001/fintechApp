@@ -171,6 +171,19 @@ const Wallet = ({ t }) => {
       Alert.alert("Error", "There was a problem processing your deposit.");
     }
   };
+
+  const [cashback, setCashback] = useState(0);
+
+  // Calculate cashback whenever transactions update
+  useEffect(() => {
+    const sumPayeeTransactions = transactions.reduce((acc, curr) => {
+      if (curr.payeeId === user?.id && curr.merchantId !== user?.id) {
+        return acc + parseFloat(curr.amount);
+      }
+      return acc;
+    }, 0);
+    setCashback(sumPayeeTransactions * 0.005); // 0.5% of the transactions sum
+  }, [transactions, user?.id]);
   return (
     <View
       style={{
@@ -346,7 +359,7 @@ const Wallet = ({ t }) => {
                 },
               ]}
             >
-              € {(balance() * 0.005).toFixed(3)}
+              € {cashback.toFixed(3)}
             </Text>
             <Text
               style={[
