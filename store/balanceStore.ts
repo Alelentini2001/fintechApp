@@ -31,14 +31,16 @@ export interface BalanceState {
 export const useBalanceStore = create<BalanceState>()(
     persist((set, get) => ({
         transactions: [],
+        clearTransactions: () => {
+            set({ transactions: [] });
+        },
         runTransaction: (newTransactions: Array<Transaction>, userId: string) => {
             set((state) => {
+                set({ transactions: [] });
                 const updatedTransactions = newTransactions
-                  .filter(newTrans => !state.transactions.some(existingTrans => existingTrans.timestamp === newTrans.timestamp)) // Prevent duplicates based on timestamp
                   .map(transaction => {
                       // Adjust the amount if the current user is the payee
                       if (userId === transaction.payeeId && userId !== transaction.merchantId) {
-                        console.log(transaction.payeeId, userId);
                           return {
                               ...transaction,
                               amount: (-parseFloat(transaction.amount)).toString() // Convert the amount to negative
@@ -48,17 +50,15 @@ export const useBalanceStore = create<BalanceState>()(
                   });
 
                 return {
-                    transactions: [...state.transactions, ...updatedTransactions]
+                    transactions: [...updatedTransactions]
                 };
             });
         },
 
         balance: () => {
-            return get().transactions.reduce((acc, transaction) => acc + parseFloat(transaction.amount), 0);
+            return get().transactions.reduce((acc, transaction) => acc + parseFloat(transaction?.amount), 0);
         },
-        clearTransactions: () => {
-            set({ transactions: [] });
-        },
+        
     }), {
         name: "balance",
         storage: createJSONStorage(() => zustandStorage),

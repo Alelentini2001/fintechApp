@@ -1,7 +1,7 @@
 import Colors from "@/constants/Colors";
 import { useBalanceStore } from "@/store/balanceStore";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -20,10 +20,113 @@ import { useRouter } from "expo-router";
 const Wallet = ({ t }) => {
   let colorScheme = useTheme().theme;
   const { user } = useUser();
-  const { balance, runTransaction, transactions, clearTransactions } =
-    useBalanceStore();
+  const { balance, runTransaction, transactions: transact } = useBalanceStore();
+
   const headerHeight = useHeaderHeight();
   const router = useRouter();
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    if (!user?.id) return; // Ensure user id is present
+
+    // References to Firestore collections
+    const transactionRef = firestore().collection("transactions");
+
+    // Function to handle the new snapshot data
+    const handleTransactionUpdate = async (querySnapshot) => {
+      const newFetchedTransactions = [];
+      querySnapshot.forEach((doc) => {
+        newFetchedTransactions.push({ id: doc.id, ...doc.data() });
+      });
+
+      const transactionsWithUserData = await Promise.all(
+        newFetchedTransactions.map(async (transaction) => {
+          return appendUserData(transaction);
+        })
+      );
+
+      setTransactions((prevTransactions) => {
+        const updatedTransactions = [...prevTransactions];
+        transactionsWithUserData.forEach((tx) => {
+          const index = updatedTransactions.findIndex(
+            (item) => item.id === tx.id
+          );
+          if (index !== -1) {
+            updatedTransactions[index] = tx;
+          } else {
+            updatedTransactions.push(tx);
+          }
+        });
+        return updatedTransactions;
+      });
+    };
+
+    // Subscribe to changes where the user is the payee
+    const unsubscribePayee = transactionRef
+      .where("payeeId", "==", user.id)
+      .onSnapshot(handleTransactionUpdate, (error) => {
+        console.error("Error fetching payee transactions:", error);
+      });
+
+    // Subscribe to changes where the user is the merchant
+    const unsubscribeMerchant = transactionRef
+      .where("merchantId", "==", user.id)
+      .onSnapshot(handleTransactionUpdate, (error) => {
+        console.error("Error fetching merchant transactions:", error);
+      });
+
+    // Cleanup function to unsubscribe from listeners
+    return () => {
+      unsubscribePayee();
+      unsubscribeMerchant();
+    };
+  }, [user?.id]);
+
+  const appendUserData = async (transaction) => {
+    const userRef = firestore().collection("users");
+    let query = userRef.where(
+      "email",
+      "==",
+      decodeURIComponent(
+        transaction.payeeId === user?.id
+          ? transaction.merchantEmail
+          : transaction.payeeEmail
+      )
+    );
+
+    const snapshot = await query.get();
+    if (!snapshot.empty) {
+      const userData = snapshot.docs[0].data();
+      return { ...transaction, additionalUserData: userData };
+    }
+    return transaction;
+  };
+
+  const handleTransactionUpdate = async (querySnapshot) => {
+    const fetchedTransactions = [];
+    querySnapshot.forEach((doc) => {
+      fetchedTransactions.push({ id: doc.id, ...doc.data() });
+    });
+
+    // Fetch user details for each transaction
+    const transactionsWithUserData = await Promise.all(
+      fetchedTransactions.map(async (transaction) => {
+        return appendUserData(transaction);
+      })
+    );
+
+    setTransactions((transact) => {
+      return [...transact, transactionsWithUserData];
+    });
+  };
+
+  useEffect(() => {
+    console.log(transactions, balance());
+    if (transactions.length > 0) {
+      runTransaction(transactions, user?.id!);
+    }
+  }, [transactions, user?.id]);
+
   const depositI0euro = async () => {
     try {
       await firestore().collection("transactions").add({
@@ -42,6 +145,7 @@ const Wallet = ({ t }) => {
         merchantId: user?.id,
         timestamp: firestore.FieldValue.serverTimestamp(),
       });
+      runTransaction(transactions, user?.id!);
       //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
       Alert.alert(
         "Deposit Successful",

@@ -38,7 +38,7 @@ const Home = ({ t }) => {
   const {
     balance: balanceWallet,
     runTransaction,
-    clearTransactions,
+    transactions: transact,
   } = useBalanceStore();
   const router = useRouter();
   const [transactions, setTransactions] = useState([]);
@@ -65,65 +65,114 @@ const Home = ({ t }) => {
   // };
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) return; // Ensure user id is present
 
-    // Define references to the transactions collections based on user role
-    const merchantRef = firestore()
-      .collection("transactions")
-      .where("merchantId", "==", user.id);
-    const payeeRef = firestore()
-      .collection("transactions")
-      .where("payeeId", "==", user.id);
+    // References to Firestore collections
+    const transactionRef = firestore().collection("transactions");
 
-    const unsubscribeMerchant = merchantRef.onSnapshot({
-      next: (querySnapshot) => {
-        let transactions = [];
+    // Function to handle the new snapshot data
+    const handleTransactionUpdate = async (querySnapshot) => {
+      const newFetchedTransactions = [];
+      querySnapshot.forEach((doc) => {
+        newFetchedTransactions.push({ id: doc.id, ...doc.data() });
+      });
 
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          transactions.push(data);
+      const transactionsWithUserData = await Promise.all(
+        newFetchedTransactions.map(async (transaction) => {
+          return appendUserData(transaction);
+        })
+      );
+
+      setTransactions((prevTransactions) => {
+        const updatedTransactions = [...prevTransactions];
+        transactionsWithUserData.forEach((tx) => {
+          const index = updatedTransactions.findIndex(
+            (item) => item.id === tx.id
+          );
+          if (index !== -1) {
+            updatedTransactions[index] = tx;
+          } else {
+            updatedTransactions.push(tx);
+          }
         });
-
-        // Update state or context with new transactions and balance
-        setTransactions(transactions); // This might need to combine with existing state
-        console.log("Updated merchant transactions:", transactions);
-        console.log("Updated balance:", balanceWallet());
-      },
-      error: (error) => {
-        console.error("Error fetching merchant transactions:", error);
-      },
-    });
-
-    const unsubscribePayee = payeeRef.onSnapshot({
-      next: (querySnapshot) => {
-        let transactions = [];
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          transactions.push(data);
-        });
-
-        // Update state or context with new transactions and balance
-        setTransactions(transactions); // This might need to combine with existing state
-        clearTransactions();
-        runTransaction(transactions, user?.id);
-
-        console.log("Updated payee transactions:", transactions);
-        console.log("Updated balance:", balanceWallet());
-      },
-      error: (error) => {
-        console.error("Error fetching payee transactions:", error);
-      },
-    });
-
-    // Cleanup function to unsubscribe from onSnapshot when component unmounts
-    return () => {
-      clearTransactions();
-      unsubscribeMerchant();
-      unsubscribePayee();
-      runTransaction(transactions, user?.id);
+        return updatedTransactions;
+      });
     };
-  }, [user?.id, setTransactions]);
+
+    // Subscribe to changes where the user is the payee
+    const unsubscribePayee = transactionRef
+      .where("payeeId", "==", user.id)
+      .onSnapshot(handleTransactionUpdate, (error) => {
+        console.error("Error fetching payee transactions:", error);
+      });
+
+    // Subscribe to changes where the user is the merchant
+    const unsubscribeMerchant = transactionRef
+      .where("merchantId", "==", user.id)
+      .onSnapshot(handleTransactionUpdate, (error) => {
+        console.error("Error fetching merchant transactions:", error);
+      });
+
+    // Cleanup function to unsubscribe from listeners
+    return () => {
+      unsubscribePayee();
+      unsubscribeMerchant();
+    };
+  }, [user?.id]);
+
+  const appendUserData = async (transaction) => {
+    const userRef = firestore().collection("users");
+    let query = userRef.where(
+      "email",
+      "==",
+      decodeURIComponent(
+        transaction.payeeId === user?.id
+          ? transaction.merchantEmail
+          : transaction.payeeEmail
+      )
+    );
+
+    const snapshot = await query.get();
+    if (!snapshot.empty) {
+      const userData = snapshot.docs[0].data();
+      return { ...transaction, additionalUserData: userData };
+    }
+    return transaction;
+  };
+
+  const handleTransactionUpdate = async (querySnapshot) => {
+    const fetchedTransactions = [];
+    querySnapshot.forEach((doc) => {
+      fetchedTransactions.push({ id: doc.id, ...doc.data() });
+    });
+
+    // Fetch user details for each transaction
+    const transactionsWithUserData = await Promise.all(
+      fetchedTransactions.map(async (transaction) => {
+        return appendUserData(transaction);
+      })
+    );
+
+    setTransactions(transactionsWithUserData);
+  };
+
+  useEffect(() => {
+    console.log(transactions, balanceWallet());
+    if (transactions.length > 0) {
+      runTransaction(transactions, user?.id!);
+    }
+    console.log(transactions, balanceWallet());
+  }, [transactions, user?.id]);
+
+  function updateTransactions(newTransactions) {
+    setTransactions((prevTransactions) => {
+      const existingIds = new Set(prevTransactions.map((tx) => tx.id));
+      const filteredNewTransactions = newTransactions.filter(
+        (tx) => !existingIds.has(tx.id)
+      );
+      return [...prevTransactions, ...filteredNewTransactions];
+    });
+  }
 
   // useEffect(() => {
   //   clearTransactions();
@@ -771,7 +820,7 @@ const Home = ({ t }) => {
           .slice(0, 4)
           .map((transaction) => (
             <View
-              key={transaction.id}
+              key={transaction?.timestamp}
               style={{
                 flexDirection: "row",
                 alignItems: "center",

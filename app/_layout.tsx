@@ -80,7 +80,7 @@ const InitialLayout = () => {
 
     const inAuthGroup = segments[0] === "(authenticated)";
 
-    if (isSignedIn && !inAuthGroup) {
+    if (isSignedIn && !inAuthGroup && router) {
       //router.replace("/(authenticated)/(tabs)/crypto");
       router.replace("/(authenticated)/(modals)/lock");
     } else if (!isSignedIn && router) {

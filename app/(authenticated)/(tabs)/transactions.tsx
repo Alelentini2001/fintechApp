@@ -17,7 +17,6 @@ import * as DropdownMenu from "zeego/dropdown-menu";
 import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
 import { useUser, useClerk } from "@clerk/clerk-expo";
-
 import firestore, { firebase } from "@react-native-firebase/firestore";
 
 let colorScheme: any;
@@ -55,29 +54,48 @@ const Page = ({ t }) => {
     // References to Firestore collections
     const transactionRef = firestore().collection("transactions");
 
+    // Function to handle the new snapshot data
+    const handleTransactionUpdate = async (querySnapshot) => {
+      const newFetchedTransactions = [];
+      querySnapshot.forEach((doc) => {
+        newFetchedTransactions.push({ id: doc.id, ...doc.data() });
+      });
+
+      const transactionsWithUserData = await Promise.all(
+        newFetchedTransactions.map(async (transaction) => {
+          return appendUserData(transaction);
+        })
+      );
+
+      setTransactions((prevTransactions) => {
+        const updatedTransactions = [...prevTransactions];
+        transactionsWithUserData.forEach((tx) => {
+          const index = updatedTransactions.findIndex(
+            (item) => item.id === tx.id
+          );
+          if (index !== -1) {
+            updatedTransactions[index] = tx;
+          } else {
+            updatedTransactions.push(tx);
+          }
+        });
+        return updatedTransactions;
+      });
+    };
+
     // Subscribe to changes where the user is the payee
     const unsubscribePayee = transactionRef
       .where("payeeId", "==", user.id)
-      .onSnapshot(
-        (querySnapshot) => {
-          handleTransactionUpdate(querySnapshot);
-        },
-        (error) => {
-          console.error("Error fetching payee transactions:", error);
-        }
-      );
+      .onSnapshot(handleTransactionUpdate, (error) => {
+        console.error("Error fetching payee transactions:", error);
+      });
 
     // Subscribe to changes where the user is the merchant
     const unsubscribeMerchant = transactionRef
       .where("merchantId", "==", user.id)
-      .onSnapshot(
-        (querySnapshot) => {
-          handleTransactionUpdate(querySnapshot);
-        },
-        (error) => {
-          console.error("Error fetching merchant transactions:", error);
-        }
-      );
+      .onSnapshot(handleTransactionUpdate, (error) => {
+        console.error("Error fetching merchant transactions:", error);
+      });
 
     // Cleanup function to unsubscribe from listeners
     return () => {
@@ -85,6 +103,26 @@ const Page = ({ t }) => {
       unsubscribeMerchant();
     };
   }, [user?.id]);
+
+  const appendUserData = async (transaction) => {
+    const userRef = firestore().collection("users");
+    let query = userRef.where(
+      "email",
+      "==",
+      decodeURIComponent(
+        transaction.payeeId === user?.id
+          ? transaction.merchantEmail
+          : transaction.payeeEmail
+      )
+    );
+
+    const snapshot = await query.get();
+    if (!snapshot.empty) {
+      const userData = snapshot.docs[0].data();
+      return { ...transaction, additionalUserData: userData };
+    }
+    return transaction;
+  };
 
   const handleTransactionUpdate = async (querySnapshot) => {
     const fetchedTransactions = [];
@@ -102,33 +140,33 @@ const Page = ({ t }) => {
     setTransactions(transactionsWithUserData);
   };
 
-  const appendUserData = async (transaction) => {
-    // Fetch user data based on whether the user is the payee or the merchant
-    const userRef = firestore().collection("users");
-    let query;
+  // const appendUserData = async (transaction) => {
+  //   // Fetch user data based on whether the user is the payee or the merchant
+  //   const userRef = firestore().collection("users");
+  //   let query;
 
-    if (transaction.payeeId === user?.id) {
-      query = userRef.where(
-        "email",
-        "==",
-        decodeURIComponent(transaction.merchantEmail)
-      );
-    } else {
-      query = userRef.where(
-        "email",
-        "==",
-        decodeURIComponent(transaction.payeeEmail)
-      );
-    }
+  //   if (transaction.payeeId === user?.id) {
+  //     query = userRef.where(
+  //       "email",
+  //       "==",
+  //       decodeURIComponent(transaction.merchantEmail)
+  //     );
+  //   } else {
+  //     query = userRef.where(
+  //       "email",
+  //       "==",
+  //       decodeURIComponent(transaction.payeeEmail)
+  //     );
+  //   }
 
-    const snapshot = await query.get();
-    if (!snapshot.empty) {
-      const userData = snapshot.docs[0].data();
-      return { ...transaction, additionalUserData: userData };
-    }
+  //   const snapshot = await query.get();
+  //   if (!snapshot.empty) {
+  //     const userData = snapshot.docs[0].data();
+  //     return { ...transaction, additionalUserData: userData };
+  //   }
 
-    return transaction; // Return transaction unchanged if user data is not found
-  };
+  //   return transaction; // Return transaction unchanged if user data is not found
+  // };
 
   // useEffect(() => {
   //   fetchTransactions();
