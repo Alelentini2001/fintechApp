@@ -7,46 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06BF51F22DD1452D94E083C7 /* vivid-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 141D2D4DDB584E9A930E5299 /* vivid-Icon-60x60@2x.png */; };
 		0DDDC18F3742448E86AE8125 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D4966414818447083D95467 /* GoogleService-Info.plist */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3DE67F63648E414F54413E8E /* Pods_fintech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD7710E228CB6C26C288C94 /* Pods_fintech.framework */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		768D624F51FD4F019D859762 /* dark-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9019541555A546CFA0CBD47A /* dark-Icon-60x60@2x.png */; };
 		92968625788E4B99885C8ED4 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C90F18CF9C4B8BAA08FE94 /* noop-file.swift */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		FC6CA6ECAD534DA78C1EFEB2 /* default-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F829C6A17B1644E2B1BB6501 /* default-Icon-60x60@2x.png */; };
-		D5074A4962DA4266B37DB83A /* default-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 256DC13820C24149BD1831EB /* default-Icon-60x60@3x.png */; };
-		768D624F51FD4F019D859762 /* dark-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9019541555A546CFA0CBD47A /* dark-Icon-60x60@2x.png */; };
 		CA81C24912804E66986FCA8D /* dark-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F2EA7B412E464053BC43B70A /* dark-Icon-60x60@3x.png */; };
-		06BF51F22DD1452D94E083C7 /* vivid-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 141D2D4DDB584E9A930E5299 /* vivid-Icon-60x60@2x.png */; };
+		D5074A4962DA4266B37DB83A /* default-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 256DC13820C24149BD1831EB /* default-Icon-60x60@3x.png */; };
 		EF043A926E584F388DEB066A /* vivid-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09AE4BB98E8D4768AC0D2022 /* vivid-Icon-60x60@3x.png */; };
+		FC6CA6ECAD534DA78C1EFEB2 /* default-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F829C6A17B1644E2B1BB6501 /* default-Icon-60x60@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		09AE4BB98E8D4768AC0D2022 /* vivid-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "vivid-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@3x.png"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* QUPLY.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QUPLY.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = fintech/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = fintech/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = fintech/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = fintech/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = fintech/main.m; sourceTree = "<group>"; };
+		141D2D4DDB584E9A930E5299 /* vivid-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "vivid-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@2x.png"; sourceTree = "<group>"; };
+		256DC13820C24149BD1831EB /* default-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "default-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@3x.png"; sourceTree = "<group>"; };
 		52C90F18CF9C4B8BAA08FE94 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "fintech/noop-file.swift"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-fintech.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fintech.debug.xcconfig"; path = "Target Support Files/Pods-fintech/Pods-fintech.debug.xcconfig"; sourceTree = "<group>"; };
 		6D4966414818447083D95467 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "fintech/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-fintech.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fintech.release.xcconfig"; path = "Target Support Files/Pods-fintech/Pods-fintech.release.xcconfig"; sourceTree = "<group>"; };
 		8086FDC9456A41988DFEBFB3 /* fintech-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "fintech-Bridging-Header.h"; path = "fintech/fintech-Bridging-Header.h"; sourceTree = "<group>"; };
+		9019541555A546CFA0CBD47A /* dark-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "dark-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@2x.png"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = fintech/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F2EA7B412E464053BC43B70A /* dark-Icon-60x60@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "dark-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@3x.png"; sourceTree = "<group>"; };
+		F829C6A17B1644E2B1BB6501 /* default-Icon-60x60@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "default-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@2x.png"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-fintech/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		FAD7710E228CB6C26C288C94 /* Pods_fintech.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_fintech.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F829C6A17B1644E2B1BB6501 /* default-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "default-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		256DC13820C24149BD1831EB /* default-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "default-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9019541555A546CFA0CBD47A /* dark-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "dark-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F2EA7B412E464053BC43B70A /* dark-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "dark-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		141D2D4DDB584E9A930E5299 /* vivid-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "vivid-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		09AE4BB98E8D4768AC0D2022 /* vivid-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "vivid-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,7 +348,10 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreInternal/FirebaseCoreInternal_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseFirestore/FirebaseFirestore_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseFirestoreInternal/FirebaseFirestoreInternal_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations/FirebaseInstallations_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMessaging/FirebaseMessaging_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher/GTMSessionFetcher_Core_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport/GoogleDataTransport_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities/GoogleUtilities_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC/FBLPromises_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
@@ -374,7 +377,10 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseCoreInternal_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseFirestore_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseFirestoreInternal_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseInstallations_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseMessaging_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GTMSessionFetcher_Core_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleDataTransport_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleUtilities_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FBLPromises_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
@@ -441,7 +447,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aleprophet.fintech;
-				PRODUCT_NAME = "QUPLY";
+				PRODUCT_NAME = QUPLY;
 				SWIFT_OBJC_BRIDGING_HEADER = "fintech/fintech-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -476,7 +482,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aleprophet.fintech;
-				PRODUCT_NAME = "QUPLY";
+				PRODUCT_NAME = QUPLY;
 				SWIFT_OBJC_BRIDGING_HEADER = "fintech/fintech-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -651,9 +657,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin PBXVariantGroup section */
-/* End PBXVariantGroup section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

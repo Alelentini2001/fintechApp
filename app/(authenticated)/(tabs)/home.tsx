@@ -17,6 +17,7 @@ import {
   ViewabilityConfig,
   TouchableOpacity,
   useColorScheme,
+  Alert,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect, useRef, useState } from "react";
@@ -26,6 +27,7 @@ import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
 import firestore, { firebase } from "@react-native-firebase/firestore";
 import { useUser } from "@clerk/clerk-expo";
+import messaging from "@react-native-firebase/messaging";
 
 interface CarouselIndicatorProps {
   data: number[];
@@ -67,6 +69,52 @@ const Home = ({ t }) => {
   //     title: "Added money",
   //   });
   // };
+
+  //PUSH NOTIFICATIONS
+  // async function requestUserPermission() {
+  //   const authStatus = await messaging().requestPermission();
+  //   const enabled =
+  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  //   if (enabled) {
+  //     console.log("Authorization status:", authStatus);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   if (requestUserPermission()) {
+  //     messaging()
+  //       .getToken()
+  //       .then((token) => {
+  //         console.log(token);
+  //       });
+  //   } else {
+  //     console.log("Permission not granted");
+  //   }
+
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(async (remoteMessage) => {
+  //       if (remoteMessage) {
+  //         console.log("Notifications test", remoteMessage.notification);
+  //       }
+  //     });
+
+  //   messaging().onNotificationOpenedApp(async (remoteMessage) => {
+  //     console.log("Notification caused", remoteMessage.notification);
+  //   });
+
+  //   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  //     console.log("Message handled in the backgroun!", remoteMessage);
+  //   });
+
+  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+  //     Alert.alert("A new FCM message arrived", JSON.stringify(remoteMessage));
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
 
   useEffect(() => {
     if (!user?.id) return; // Ensure user id is present

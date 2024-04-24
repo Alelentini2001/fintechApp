@@ -1127,6 +1127,9 @@ PODS:
   - Firebase/Firestore (10.24.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.24.0)
+  - Firebase/Messaging (10.24.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 10.24.0)
   - Firebase/Storage (10.24.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.24.0)
@@ -1172,6 +1175,20 @@ PODS:
     - gRPC-Core (~> 1.62.0)
     - leveldb-library (~> 1.22)
     - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseInstallations (10.24.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - PromisesObjC (~> 2.1)
+  - FirebaseMessaging (10.24.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleDataTransport (~> 9.3)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/Reachability (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
   - FirebaseSharedSwift (10.24.0)
   - FirebaseStorage (10.24.0):
     - FirebaseAppCheckInterop (~> 10.0)
@@ -1181,6 +1198,10 @@ PODS:
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - fmt (6.2.1)
   - glog (0.3.5)
+  - GoogleDataTransport (9.4.1):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/AppDelegateSwizzler (7.13.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -1201,6 +1222,9 @@ PODS:
     - GoogleUtilities/Privacy
   - GoogleUtilities/Privacy (7.13.0)
   - GoogleUtilities/Reachability (7.13.0):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/UserDefaults (7.13.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - "gRPC-C++ (1.62.5)":
@@ -2391,6 +2415,11 @@ PODS:
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - React-Core
     - RNFBApp
+  - RNFBMessaging (19.2.2):
+    - Firebase/Messaging (= 10.24.0)
+    - FirebaseCoreExtension
+    - React-Core
+    - RNFBApp
   - RNFBStorage (19.2.2):
     - Firebase/Storage (= 10.24.0)
     - React-Core
@@ -2530,6 +2559,7 @@ DEPENDENCIES:
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
+  - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2555,9 +2585,12 @@ SPEC REPOS:
     - FirebaseDatabase
     - FirebaseFirestore
     - FirebaseFirestoreInternal
+    - FirebaseInstallations
+    - FirebaseMessaging
     - FirebaseSharedSwift
     - FirebaseStorage
     - fmt
+    - GoogleDataTransport
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
@@ -2764,6 +2797,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/database"
   RNFBFirestore:
     :path: "../node_modules/@react-native-firebase/firestore"
+  RNFBMessaging:
+    :path: "../node_modules/@react-native-firebase/messaging"
   RNFBStorage:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
@@ -2833,10 +2868,13 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 09752515c6abf792b6f61ca6d0354952a8c1feb9
   FirebaseFirestore: 6df1bc70a56c15921286ff2a3096fa2d350b8823
   FirebaseFirestoreInternal: d9a6e08e9bb4016ce7c0b3544f1cf7abcd7cf26f
+  FirebaseInstallations: 8f581fca6478a50705d2bd2abd66d306e0f5736e
+  FirebaseMessaging: 4d52717dd820707cc4eadec5eb981b4832ec8d5d
   FirebaseSharedSwift: 76e1529c32101d80e4f1ca2fba7c39d59f0a390a
   FirebaseStorage: 03710f9a0e3824d3069ed1128601a3d3a5e7d817
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   "gRPC-C++": e725ef63c4475d7cdb7e2cf16eb0fde84bd9ee51
   gRPC-Core: eee4be35df218649fe66d721a05a7f27a28f069b
@@ -2904,6 +2942,7 @@ SPEC CHECKSUMS:
   RNFBAuth: fbfd567c34579b2a081b9ae5d6f0e33c2f4d1205
   RNFBDatabase: 3d458de0e3b1153490aef69b6447a89deefb09e5
   RNFBFirestore: de8ff36f5f98456b1cf136fb58a3068112bd3975
+  RNFBMessaging: 74754ed198239360950f54f3e3de365fe85db451
   RNFBStorage: f7aa6c0a0cfcfd84606828f4dea8c7f4e221e30b
   RNGestureHandler: 12833709769dde5fdb36ec9d4cdf4d3a1a024122
   RNReanimated: 41963a348e738c496a9b129bba9a9217017cd530

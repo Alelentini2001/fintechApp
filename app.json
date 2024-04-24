@@ -15,6 +15,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "build": {
+      "preview": {
+        "ios": {
+          "simulator": true
+        }
+      },
+      "production": {}
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aleprophet.fintech",
