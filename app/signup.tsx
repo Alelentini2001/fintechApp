@@ -17,6 +17,7 @@ import { useTheme } from "./ThemeContext";
 import { I18n } from "i18n-js";
 import * as Localization from "expo-localization";
 import translations from "@/app/(authenticated)/(tabs)/translations.json";
+import firestore from "@react-native-firebase/firestore";
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
@@ -28,9 +29,35 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [emailSignUp, setEmailSignUp] = useState(false);
+  const [referral, setReferral] = useState("");
+  const [referralValid, setReferralValid] = useState(false);
+  const [referralError, setReferralError] = useState("");
   const keyboardVerticalOffset = Platform.OS === "ios" ? 90 : 0;
   const router = useRouter();
   const { signUp } = useSignUp();
+
+  const validateReferralCode = async () => {
+    const usersRef = firestore().collection("users");
+    const query = usersRef.where("username", "==", referral).limit(1);
+    const queryById = usersRef.where("userId", "==", referral).limit(1);
+
+    try {
+      const [usernameResult, idResult] = await Promise.all([
+        query.get(),
+        queryById.get(),
+      ]);
+      if (!usernameResult.empty || !idResult.empty) {
+        setReferralValid(true);
+        setReferralError("");
+      } else {
+        setReferralValid(false);
+        setReferralError("Invalid referral code. Please check and try again.");
+      }
+    } catch (error) {
+      console.error("Error validating referral code: ", error);
+      setReferralError("Failed to validate referral code.");
+    }
+  };
 
   const onSignup = async () => {
     if (!emailSignUp) {
@@ -42,7 +69,10 @@ const Signup = () => {
         signUp!.preparePhoneNumberVerification();
         router.push({
           pathname: "/verify/[phone]",
-          params: { phone: fullPhoneNumber },
+          params: {
+            phone: fullPhoneNumber,
+            referral: referralValid ? referral : "",
+          },
         });
       } catch (err) {
         console.error("Error signing up:", err);
@@ -55,7 +85,11 @@ const Signup = () => {
         signUp!.prepareEmailAddressVerification();
         router.push({
           pathname: "/verify/[phone]",
-          params: { email: email },
+          params: {
+            phone: "",
+            email: email,
+            referral: referralValid ? referral : "",
+          },
         });
       } catch (err) {
         console.error("Error signing up:", err);
@@ -96,33 +130,141 @@ const Signup = () => {
             : "Enter your phone number. We will send you a confirmation code there"}
         </Text>
         {!emailSignUp ? (
-          <View style={styles.inputContainer}>
+          <>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Country code"
+                placeholderTextColor={Colors.gray}
+                value={countryCode}
+              />
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                placeholder={i18n.t("Mobile number")}
+                placeholderTextColor={Colors.gray}
+                keyboardType="numeric"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+            </View>
             <TextInput
               style={styles.input}
-              placeholder="Country code"
+              placeholder="Referral Code"
+              value={referral}
               placeholderTextColor={Colors.gray}
-              value={countryCode}
+              onChangeText={referralValid === false ? setReferral : undefined} // Disable editing once validated
+              editable={referralValid === false}
             />
-            <TextInput
-              style={[styles.input, { flex: 1 }]}
-              placeholder={i18n.t("Mobile number")}
-              placeholderTextColor={Colors.gray}
-              keyboardType="numeric"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-            />
-          </View>
+            <TouchableOpacity
+              onPress={validateReferralCode}
+              style={[
+                defaultStyles.pillButton,
+                {
+                  flexDirection: "row",
+                  gap: 16,
+                  marginTop: 20,
+                  backgroundColor: referralValid
+                    ? "#43A047"
+                    : colorScheme === "dark"
+                    ? Colors.background
+                    : Colors.dark,
+                },
+              ]}
+              disabled={referral === "" || referralValid !== false}
+            >
+              <Ionicons
+                name={referralValid ? "checkmark-circle" : "person-add"}
+                size={24}
+                color={
+                  referralValid
+                    ? Colors.background
+                    : colorScheme === "dark"
+                    ? Colors.dark
+                    : Colors.background
+                }
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "500",
+                  color:
+                    colorScheme === "dark" ? Colors.dark : Colors.background,
+                }}
+              >
+                {referralValid ? "Referral valid" : "Validate Referral"}
+              </Text>
+            </TouchableOpacity>
+            {referralValid === false && (
+              <Text style={[styles.errorText, { marginTop: 10 }]}>
+                {referralError}
+              </Text>
+            )}
+          </>
         ) : (
-          <View style={styles.inputContainer}>
+          <>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                placeholder="Email"
+                placeholderTextColor={Colors.gray}
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
             <TextInput
-              style={[styles.input, { flex: 1 }]}
-              placeholder="Email"
+              style={styles.input}
+              placeholder="Referral Code"
+              value={referral}
               placeholderTextColor={Colors.gray}
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
+              onChangeText={referralValid === false ? setReferral : undefined} // Disable editing once validated
+              editable={referralValid === false}
             />
-          </View>
+            <TouchableOpacity
+              onPress={validateReferralCode}
+              style={[
+                defaultStyles.pillButton,
+                {
+                  flexDirection: "row",
+                  gap: 16,
+                  marginTop: 20,
+                  backgroundColor: referralValid
+                    ? "#43A047"
+                    : colorScheme === "dark"
+                    ? Colors.background
+                    : Colors.dark,
+                },
+              ]}
+              disabled={referral === "" || referralValid !== false}
+            >
+              <Ionicons
+                name={referralValid ? "checkmark-circle" : "person-add"}
+                size={24}
+                color={
+                  referralValid
+                    ? Colors.background
+                    : colorScheme === "dark"
+                    ? Colors.dark
+                    : Colors.background
+                }
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "500",
+                  color:
+                    colorScheme === "dark" ? Colors.dark : Colors.background,
+                }}
+              >
+                {referralValid ? "Referral valid" : "Validate Referral"}
+              </Text>
+            </TouchableOpacity>
+            {referralValid === false && (
+              <Text style={[styles.errorText, { marginTop: 10 }]}>
+                {referralError}
+              </Text>
+            )}
+          </>
         )}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
           <View
@@ -221,6 +363,9 @@ const styles = StyleSheet.create({
   },
   disabled: {
     backgroundColor: Colors.primaryMuted,
+  },
+  errorText: {
+    color: "red",
   },
 });
 export default Signup;

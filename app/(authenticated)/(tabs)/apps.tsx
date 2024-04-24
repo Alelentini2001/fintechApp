@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Clipboard,
+  Share,
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Currency } from "@/interfaces/crypto";
@@ -44,6 +45,27 @@ const Crypto = ({ t }) => {
 
   const CopyAlertMessage = async (message) => {
     Clipboard.setString(message);
+  };
+
+  const shareReferral = async () => {
+    try {
+      const result = await Share.share({
+        message: `Join Quply today!! Payments has never been easier, Earn while Paying!\nJoin with this code: ${
+          user?.username ? user?.username : user?.id
+        }`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
   };
 
   return (
@@ -337,23 +359,24 @@ const Crypto = ({ t }) => {
           //   "Link Copied",
           //   `www.quply.it/refer/${user?.username ? user?.username : user?.id}`
           // );
-          Alert.alert(
-            "Your Code",
-            `www.quply.it/refer/${user?.username ? user?.username : user?.id}`,
-            [
-              {
-                text: "Copy your referral code",
-                onPress: () =>
-                  CopyAlertMessage(
-                    `www.quply.it/refer/${
-                      user?.username ? user?.username : user?.id
-                    }`
-                  ),
-                style: "cancel",
-              },
-            ],
-            { cancelable: true }
-          );
+          // Alert.alert(
+          //   "Your Code",
+          //   `www.quply.it/refer/${user?.username ? user?.username : user?.id}`,
+          //   [
+          //     {
+          //       text: "Copy your referral code",
+          //       onPress: () =>
+          //         CopyAlertMessage(
+          //           `www.quply.it/refer/${
+          //             user?.username ? user?.username : user?.id
+          //           }`
+          //         ),
+          //       style: "cancel",
+          //     },
+          //   ],
+          //   { cancelable: true }
+          // );
+          shareReferral();
         }}
       >
         <Ionicons

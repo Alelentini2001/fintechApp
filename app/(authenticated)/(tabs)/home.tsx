@@ -38,6 +38,7 @@ const Home = ({ t }) => {
   const {
     balance: balanceWallet,
     runTransaction,
+    clearTransactions,
     transactions: transact,
   } = useBalanceStore();
   const router = useRouter();
@@ -74,7 +75,19 @@ const Home = ({ t }) => {
     const handleTransactionUpdate = async (querySnapshot) => {
       const newFetchedTransactions = [];
       querySnapshot.forEach((doc) => {
-        newFetchedTransactions.push({ id: doc.id, ...doc.data() });
+        let transaction = { id: doc.id, ...doc.data() };
+        // Adjust the transaction amount if the user is the merchant but not the payee
+        if (
+          transaction.merchantId === user?.id &&
+          transaction.payeeId !== user?.id
+        ) {
+          transaction.amount = (
+            parseFloat(transaction.amount) - parseFloat(transaction.fees)
+          )
+            .toFixed(2)
+            .toString();
+        }
+        newFetchedTransactions.push(transaction);
       });
 
       const transactionsWithUserData = await Promise.all(
@@ -120,6 +133,10 @@ const Home = ({ t }) => {
     };
   }, [user?.id]);
 
+  useEffect(() => {
+    clearTransactions();
+  }, []);
+
   const appendUserData = async (transaction) => {
     const userRef = firestore().collection("users");
     let query = userRef.where(
@@ -143,7 +160,19 @@ const Home = ({ t }) => {
   const handleTransactionUpdate = async (querySnapshot) => {
     const fetchedTransactions = [];
     querySnapshot.forEach((doc) => {
-      fetchedTransactions.push({ id: doc.id, ...doc.data() });
+      let transaction = { id: doc.id, ...doc.data() };
+
+      // Check if the user is the merchant and not the payee, then adjust the amount
+      if (
+        transaction.merchantId === user?.id &&
+        transaction.payeeId !== user?.id
+      ) {
+        transaction.amount = (
+          parseFloat(transaction.amount) - parseFloat(transaction.fees)
+        ).toFixed(2);
+      }
+
+      fetchedTransactions.push(transaction);
     });
 
     // Fetch user details for each transaction
@@ -293,7 +322,7 @@ const Home = ({ t }) => {
                   ]}
                 >
                   {/* € {balance < 0 ? -balance.toFixed(2) : balance.toFixed(2)} */}
-                  € {balanceWallet()}
+                  € {balanceWallet().toFixed(2)}
                 </Text>
                 {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>
@@ -871,7 +900,13 @@ const Home = ({ t }) => {
                     colorScheme === "light" ? Colors.dark : Colors.background,
                 }}
               >
-                {parseFloat(transaction.amount).toFixed(2)}€
+                {transaction.payeeId === user?.id
+                  ? transaction.amount
+                  : (
+                      parseFloat(transaction.amount) -
+                      parseFloat(transaction.fees)
+                    ).toFixed(2)}
+                €
               </Text>
             </View>
           ))}

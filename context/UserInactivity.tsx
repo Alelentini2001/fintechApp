@@ -22,7 +22,7 @@ export const UserInactivityProvider = ({ children }: any) => {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [user?.id]);
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
     console.log("🚀 ~ handleAppStateChange ~ nextAppState", nextAppState);

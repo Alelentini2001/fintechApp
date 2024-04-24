@@ -43,7 +43,7 @@ export const useBalanceStore = create<BalanceState>()(
                       if (userId === transaction.payeeId && userId !== transaction.merchantId) {
                           return {
                               ...transaction,
-                              amount: (-parseFloat(transaction.amount)).toString() // Convert the amount to negative
+                              amount: (-parseFloat(transaction.amount)).toString()
                           };
                       }
                       return transaction;

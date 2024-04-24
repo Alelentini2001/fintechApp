@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -42,6 +42,37 @@ const PaymentConfirmationScreen = () => {
   const { balance } = useBalanceStore();
   const router = useRouter();
   const fees = (parseFloat(amount) * 0.005).toFixed(2); // Calculate fees and format to 2 decimal places
+  const [userr, setUserr] = useState({});
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userRef = firestore().collection("users");
+      let query = userRef.where(
+        "email",
+        "==",
+        user?.primaryEmailAddress
+          ? user.primaryEmailAddress.emailAddress
+          : "test"
+      );
+      let queryphone = userRef.where(
+        "phone",
+        "==",
+        user?.primaryPhoneNumber ? user.primaryPhoneNumber.phoneNumber : "test"
+      );
+
+      const snapshot = await query.get();
+      const snapshotPhone = await queryphone.get();
+      if (!snapshot.empty) {
+        const userData = snapshot.docs[0].data();
+        setUserr(userData);
+      } else if (!snapshotPhone.empty) {
+        const userData = snapshotPhone.docs[0].data();
+        setUserr(userData);
+      }
+    };
+    getUser();
+  }, [userr]);
+
   const handleAcceptPayment = async () => {
     if (balance() >= parseFloat(amount)) {
       try {
@@ -65,6 +96,7 @@ const PaymentConfirmationScreen = () => {
               ? user?.primaryPhoneNumber?.phoneNumber
               : "test",
             merchantId: merchantId,
+            referral: user?.referral || "",
             timestamp: firestore.FieldValue.serverTimestamp(),
           });
         //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");

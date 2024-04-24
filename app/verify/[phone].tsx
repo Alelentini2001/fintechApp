@@ -29,10 +29,12 @@ i18n.enableFallback = true;
 const CELL_COUNT = 6;
 
 const PhoneVerify = () => {
-  const { phone, signin, email, edit } = useLocalSearchParams<{
+  const { phone, signin, email, edit, referral } = useLocalSearchParams<{
     phone: string;
     signin: string;
     email: string;
+    edit: string;
+    referral: string;
   }>();
   let colorScheme = useTheme().theme;
   const [code, setCode] = useState("");
@@ -66,10 +68,11 @@ const PhoneVerify = () => {
         await signUp!.attemptPhoneNumberVerification({ code });
         await setActive!({ session: signUp!.createdSessionId });
         await firestore().collection("users").add({
-          id: signUp?.id,
+          userId: signUp?.id,
           email: signUp?.emailAddress,
           phone: signUp?.phoneNumber,
           username: signUp?.username,
+          referrall: referral,
         });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
@@ -96,7 +99,7 @@ const PhoneVerify = () => {
             await setActive({ session: completeSignUp.createdSessionId });
           }
           await firestore().collection("users").add({
-            id: signUp?.id,
+            userId: signUp?.id,
             email: signUp?.emailAddress,
             phone: signUp?.phoneNumber,
             username: signUp?.username,
@@ -208,20 +211,12 @@ const PhoneVerify = () => {
           .catch((error) => {
             console.error("Firebase registration failed:", error);
           });
-        await setDoc(doc(db, "users", res.user.uid), {
-          id: res.user.uid,
-          username: username.toLowerCase(),
-          email: email,
-          avatar: "",
-          fullName,
-          role,
-          genres,
-          instrument,
-          gender,
-          location,
-          signed,
-          languages,
-          date: Date.now(),
+        await firestore().collection("users").add({
+          userId: signUp?.id,
+          email: signUp?.emailAddress,
+          phone: signUp?.phoneNumber,
+          username: signUp?.username,
+          referrall: referral,
         });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));

@@ -58,7 +58,19 @@ const Page = ({ t }) => {
     const handleTransactionUpdate = async (querySnapshot) => {
       const newFetchedTransactions = [];
       querySnapshot.forEach((doc) => {
-        newFetchedTransactions.push({ id: doc.id, ...doc.data() });
+        let transaction = { id: doc.id, ...doc.data() };
+        // Adjust the transaction amount if the user is the merchant but not the payee
+        if (
+          transaction.merchantId === user?.id &&
+          transaction.payeeId !== user?.id
+        ) {
+          transaction.amount = (
+            parseFloat(transaction.amount) - parseFloat(transaction.fees)
+          )
+            .toFixed(2)
+            .toString();
+        }
+        newFetchedTransactions.push(transaction);
       });
 
       const transactionsWithUserData = await Promise.all(
