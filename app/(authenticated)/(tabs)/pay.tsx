@@ -96,7 +96,7 @@ const PaymentConfirmationScreen = () => {
               ? user?.primaryPhoneNumber?.phoneNumber
               : "test",
             merchantId: merchantId,
-            referral: user?.referral || "",
+            referral: userr?.referral || "",
             timestamp: firestore.FieldValue.serverTimestamp(),
           });
         //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");

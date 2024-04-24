@@ -90,7 +90,6 @@ const Signup = () => {
         router.push({
           pathname: "/verify/[phone]",
           params: {
-            phone: "",
             email: email,
             referral: referralValid ? referral : "",
           },
@@ -343,7 +342,16 @@ const Signup = () => {
           ]}
           onPress={onSignup}
         >
-          <Text style={defaultStyles.buttonText}>{i18n.t("Sign Up")}</Text>
+          <Text
+            style={[
+              defaultStyles.buttonText,
+              {
+                color: colorScheme === "dark" ? Colors.dark : Colors.background,
+              },
+            ]}
+          >
+            {i18n.t("Sign Up")}
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

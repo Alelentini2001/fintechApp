@@ -93,7 +93,13 @@ const CustomHeader = () => {
               </Text>
             ) : (
               <Text
-                style={styles.userName}
+                style={[
+                  styles.userName,
+                  {
+                    color:
+                      colorScheme === "light" ? Colors.dark : Colors.background,
+                  },
+                ]}
                 numberOfLines={1} // Restrict to one line
                 ellipsizeMode="tail" // Show ellipsis (...) at the end if the text is too long
               >

@@ -48,7 +48,7 @@ const PhoneVerify = () => {
   });
 
   useEffect(() => {
-    console.log("signin === true", signin === "true");
+    console.log("signin === true", signin === "true", referral);
     if (code.length === 6) {
       console.log("code.length === 6", code.length === 6);
       if (signin === "true") {
@@ -62,18 +62,20 @@ const PhoneVerify = () => {
   const { user } = useUser();
 
   const verifyCode = async () => {
-    console.log(email, phone);
+    console.log(email, phone, referral);
     if (phone !== "" && phone !== "[phone]") {
       try {
         await signUp!.attemptPhoneNumberVerification({ code });
         await setActive!({ session: signUp!.createdSessionId });
-        await firestore().collection("users").add({
-          userId: signUp?.id,
-          email: signUp?.emailAddress,
-          phone: signUp?.phoneNumber,
-          username: signUp?.username?.toLocaleLowerCase(),
-          referrall: referral,
-        });
+        await firestore()
+          .collection("users")
+          .add({
+            userId: signUp?.id,
+            email: signUp?.emailAddress || "",
+            phone: signUp?.phoneNumber,
+            username: signUp?.username?.toLocaleLowerCase() || "",
+            referrall: referral || "",
+          });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {
@@ -98,12 +100,16 @@ const PhoneVerify = () => {
           if (completeSignUp.status === "complete") {
             await setActive({ session: completeSignUp.createdSessionId });
           }
-          await firestore().collection("users").add({
-            userId: signUp?.id,
-            email: signUp?.emailAddress,
-            phone: signUp?.phoneNumber,
-            username: signUp?.username?.toLocaleLowerCase(),
-          });
+          console.log("firebase", signUp.id);
+          await firestore()
+            .collection("users")
+            .add({
+              userId: signUp?.id,
+              email: signUp?.emailAddress,
+              phone: signUp?.phoneNumber || "",
+              referral: referral || "",
+              username: signUp?.username?.toLocaleLowerCase() || "",
+            });
         } else {
           // Normalize the email search to be case-insensitive and trim whitespace
           const normalizedEmail = email.trim().toLowerCase();
@@ -211,13 +217,15 @@ const PhoneVerify = () => {
           .catch((error) => {
             console.error("Firebase registration failed:", error);
           });
-        await firestore().collection("users").add({
-          userId: signUp?.id,
-          email: signUp?.emailAddress,
-          phone: signUp?.phoneNumber,
-          username: signUp?.username?.toLocaleLowerCase(),
-          referrall: referral,
-        });
+        await firestore()
+          .collection("users")
+          .add({
+            userId: signUp?.id,
+            email: signUp?.emailAddress,
+            phone: signUp?.phoneNumber,
+            username: signUp?.username?.toLocaleLowerCase(),
+            referrall: referral || "",
+          });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {
