@@ -39,12 +39,15 @@ const Home = ({ t }) => {
     balance: balanceWallet,
     runTransaction,
     clearTransactions,
+    computeReferralCommission,
     transactions: transact,
+    refer: referral,
   } = useBalanceStore();
   const router = useRouter();
   const [transactions, setTransactions] = useState([]);
   const { user } = useUser();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [transactionsReferral, setTransactionsReferral] = useState([]);
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -112,6 +115,46 @@ const Home = ({ t }) => {
       });
     };
 
+    const handleTransactionUpdateReferral = async (querySnapshot) => {
+      const newFetchedTransactions = [];
+      querySnapshot.forEach((doc) => {
+        let transaction = { id: doc.id, ...doc.data() };
+        // Adjust the transaction amount if the user is the merchant but not the payee
+        if (
+          transaction.merchantId === user?.id &&
+          transaction.payeeId !== user?.id
+        ) {
+          transaction.amount = (
+            parseFloat(transaction.amount) - parseFloat(transaction.fees)
+          )
+            .toFixed(2)
+            .toString();
+        }
+        newFetchedTransactions.push(transaction);
+      });
+
+      const transactionsWithUserData = await Promise.all(
+        newFetchedTransactions.map(async (transaction) => {
+          return appendUserData(transaction);
+        })
+      );
+
+      setTransactionsReferral((prevTransactions) => {
+        const updatedTransactions = [...prevTransactions];
+        transactionsWithUserData.forEach((tx) => {
+          const index = updatedTransactions.findIndex(
+            (item) => item.id === tx.id
+          );
+          if (index !== -1) {
+            updatedTransactions[index] = tx;
+          } else {
+            updatedTransactions.push(tx);
+          }
+        });
+        return updatedTransactions;
+      });
+    };
+
     // Subscribe to changes where the user is the payee
     const unsubscribePayee = transactionRef
       .where("payeeId", "==", user.id)
@@ -125,11 +168,17 @@ const Home = ({ t }) => {
       .onSnapshot(handleTransactionUpdate, (error) => {
         console.error("Error fetching merchant transactions:", error);
       });
+    const unsubscribeReferral = transactionRef
+      .where("referral", "==", user?.username ? user.username : user?.id)
+      .onSnapshot(handleTransactionUpdateReferral, (error) => {
+        console.error("Error fetching merchant transactions:", error);
+      });
 
     // Cleanup function to unsubscribe from listeners
     return () => {
       unsubscribePayee();
       unsubscribeMerchant();
+      unsubscribeReferral();
     };
   }, [user?.id]);
 
@@ -186,12 +235,15 @@ const Home = ({ t }) => {
   };
 
   useEffect(() => {
-    console.log(transactions, balanceWallet());
+    // console.log(transactions, balanceWallet());
     if (transactions.length > 0) {
       runTransaction(transactions, user?.id!);
     }
-    console.log(transactions, balanceWallet());
-  }, [transactions, user?.id]);
+    if (transactionsReferral.length > 0) {
+      computeReferralCommission(transactionsReferral, user?.id!);
+    }
+    // console.log(transactions, balanceWallet());
+  }, [transactions, transactionsReferral, user?.id]);
 
   function updateTransactions(newTransactions) {
     setTransactions((prevTransactions) => {
@@ -580,7 +632,8 @@ const Home = ({ t }) => {
                     },
                   ]}
                 >
-                  € {Math.floor(Math.random() * 100)}
+                  {/* € {Math.floor(Math.random() * 100)} */}€{" "}
+                  {referral().toFixed(3)}
                 </Text>
                 {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>

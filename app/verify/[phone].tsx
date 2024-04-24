@@ -71,7 +71,7 @@ const PhoneVerify = () => {
           userId: signUp?.id,
           email: signUp?.emailAddress,
           phone: signUp?.phoneNumber,
-          username: signUp?.username,
+          username: signUp?.username?.toLocaleLowerCase(),
           referrall: referral,
         });
       } catch (err) {
@@ -102,7 +102,7 @@ const PhoneVerify = () => {
             userId: signUp?.id,
             email: signUp?.emailAddress,
             phone: signUp?.phoneNumber,
-            username: signUp?.username,
+            username: signUp?.username?.toLocaleLowerCase(),
           });
         } else {
           // Normalize the email search to be case-insensitive and trim whitespace
@@ -215,7 +215,7 @@ const PhoneVerify = () => {
           userId: signUp?.id,
           email: signUp?.emailAddress,
           phone: signUp?.phoneNumber,
-          username: signUp?.username,
+          username: signUp?.username?.toLocaleLowerCase(),
           referrall: referral,
         });
       } catch (err) {

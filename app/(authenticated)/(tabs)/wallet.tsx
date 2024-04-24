@@ -20,11 +20,18 @@ import { useRouter } from "expo-router";
 const Wallet = ({ t }) => {
   let colorScheme = useTheme().theme;
   const { user } = useUser();
-  const { balance, runTransaction, transactions: transact } = useBalanceStore();
+  const {
+    balance,
+    runTransaction,
+    computeReferralCommission,
+    refer: referral,
+    transactions: transact,
+  } = useBalanceStore();
 
   const headerHeight = useHeaderHeight();
   const router = useRouter();
   const [transactions, setTransactions] = useState([]);
+  const [transactionsReferral, setTransactionsReferral] = useState([]);
 
   useEffect(() => {
     if (!user?.id) return; // Ensure user id is present
@@ -61,6 +68,46 @@ const Wallet = ({ t }) => {
       });
     };
 
+    const handleTransactionUpdateReferral = async (querySnapshot) => {
+      const newFetchedTransactions = [];
+      querySnapshot.forEach((doc) => {
+        let transaction = { id: doc.id, ...doc.data() };
+        // Adjust the transaction amount if the user is the merchant but not the payee
+        if (
+          transaction.merchantId === user?.id &&
+          transaction.payeeId !== user?.id
+        ) {
+          transaction.amount = (
+            parseFloat(transaction.amount) - parseFloat(transaction.fees)
+          )
+            .toFixed(2)
+            .toString();
+        }
+        newFetchedTransactions.push(transaction);
+      });
+
+      const transactionsWithUserData = await Promise.all(
+        newFetchedTransactions.map(async (transaction) => {
+          return appendUserData(transaction);
+        })
+      );
+
+      setTransactionsReferral((prevTransactions) => {
+        const updatedTransactions = [...prevTransactions];
+        transactionsWithUserData.forEach((tx) => {
+          const index = updatedTransactions.findIndex(
+            (item) => item.id === tx.id
+          );
+          if (index !== -1) {
+            updatedTransactions[index] = tx;
+          } else {
+            updatedTransactions.push(tx);
+          }
+        });
+        return updatedTransactions;
+      });
+    };
+
     // Subscribe to changes where the user is the payee
     const unsubscribePayee = transactionRef
       .where("payeeId", "==", user.id)
@@ -75,10 +122,17 @@ const Wallet = ({ t }) => {
         console.error("Error fetching merchant transactions:", error);
       });
 
+    const unsubscribeReferral = transactionRef
+      .where("referral", "==", user?.username ? user.username : user?.id)
+      .onSnapshot(handleTransactionUpdateReferral, (error) => {
+        console.error("Error fetching merchant transactions:", error);
+      });
+
     // Cleanup function to unsubscribe from listeners
     return () => {
       unsubscribePayee();
       unsubscribeMerchant();
+      unsubscribeReferral();
     };
   }, [user?.id]);
 
@@ -121,9 +175,11 @@ const Wallet = ({ t }) => {
   };
 
   useEffect(() => {
-    console.log(transactions, balance());
     if (transactions.length > 0) {
       runTransaction(transactions, user?.id!);
+    }
+    if (transactionsReferral.length > 0) {
+      computeReferralCommission(transactionsReferral, user?.id!);
     }
   }, [transactions, user?.id]);
 
@@ -389,7 +445,7 @@ const Wallet = ({ t }) => {
                 },
               ]}
             >
-              € {Math.floor(Math.random() * 1000).toFixed(2)}
+              € {referral().toFixed(3)}
             </Text>
             <Text
               style={[
