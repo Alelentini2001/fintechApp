@@ -19,7 +19,7 @@ const Page = () => {
           style={styles.video}
         />
       )}
-      <View style={{ marginTop: 80, padding: 20 }}>
+      <View style={{ marginTop: "15%", padding: 20 }}>
         <Text style={styles.header}>Rediscover Payments with QUPLY!</Text>
       </View>
       <View style={styles.buttons}>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 20,
-    marginBottom: 60,
+    marginBottom: "15%",
   },
 });
 

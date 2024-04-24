@@ -189,7 +189,7 @@ const Login = () => {
             phoneNumber !== "" || email !== ""
               ? styles.enabled
               : styles.disabled,
-            { marginBottom: 20 },
+            { marginBottom: "5%" },
           ]}
           onPress={() => {
             onSignIn(emailSignIn ? SignInType.Email : SignInType.Phone);
@@ -222,7 +222,7 @@ const Login = () => {
             {
               flexDirection: "row",
               gap: 16,
-              marginTop: 20,
+              marginTop: "5%",
               backgroundColor: "#fff",
             },
           ]}
@@ -246,7 +246,7 @@ const Login = () => {
             {
               flexDirection: "row",
               gap: 16,
-              marginTop: 20,
+              marginTop: "5%",
               backgroundColor: "#fff",
             },
           ]}
@@ -285,12 +285,12 @@ const Login = () => {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginVertical: 40,
+    marginVertical: "10%",
     flexDirection: "row",
   },
   input: {
     backgroundColor: Colors.lightGray,
-    padding: 20,
+    padding: "5%",
     borderRadius: 16,
     fontSize: 20,
     marginRight: 10,

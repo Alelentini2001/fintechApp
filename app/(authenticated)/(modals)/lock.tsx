@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -316,11 +317,28 @@ const Lock = () => {
   );
 };
 
+const { width, height } = Dimensions.get("window");
+
+// Function to determine adaptive style based on screen size
+const adaptiveStyle = (size, { small, medium, large }) => {
+  if (size < 350) {
+    return small;
+  } else if (size >= 350 && height ? size < 700 : size < 600) {
+    return medium;
+  } else {
+    return large;
+  }
+};
+
 const styles = StyleSheet.create({
   greeting: {
     fontSize: 24,
     fontWeight: "bold",
-    paddingTop: 80,
+    paddingTop: adaptiveStyle(height, {
+      small: 48,
+      medium: 20,
+      large: 80,
+    }),
     height: "auto",
     alignSelf: "center",
   },
@@ -328,7 +346,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 20,
-    marginVertical: 100,
+    marginVertical: adaptiveStyle(height, {
+      small: 48,
+      medium: 50,
+      large: 100,
+    }),
     alignItems: "center",
   },
   codeEmpty: {

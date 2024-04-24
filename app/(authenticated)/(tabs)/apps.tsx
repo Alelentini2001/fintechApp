@@ -9,6 +9,7 @@ import {
   Alert,
   Clipboard,
   Share,
+  Dimensions,
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Currency } from "@/interfaces/crypto";
@@ -126,7 +127,7 @@ const Crypto = ({ t }) => {
       {/* <RoundBtn icon={"wallet-outline"} text="Wallet" onPress={() => {}} /> */}
       <Text
         style={{
-          marginTop: 30,
+          marginTop: adaptiveStyle(height, { small: 5, medium: 5, large: 30 }),
           marginLeft: 20,
           fontSize: 24,
           fontWeight: "600",
@@ -139,7 +140,11 @@ const Crypto = ({ t }) => {
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          marginTop: 70,
+          marginTop: adaptiveStyle(height, {
+            small: 10,
+            medium: 20,
+            large: 70,
+          }),
           marginLeft: 40,
           marginRight: 40,
         }}
@@ -349,7 +354,7 @@ const Crypto = ({ t }) => {
           justifyContent: "center",
           alignItems: "center",
           alignContent: "center",
-          marginTop: 40,
+          marginTop: adaptiveStyle(height, { small: 5, medium: 15, large: 40 }),
           marginLeft: "auto",
           marginRight: "auto",
           flexDirection: "row",
@@ -395,6 +400,19 @@ const Crypto = ({ t }) => {
       </TouchableOpacity>
     </ScrollView>
   );
+};
+
+const { width, height } = Dimensions.get("window");
+
+// Function to determine adaptive style based on screen size
+const adaptiveStyle = (size, { small, medium, large }) => {
+  if (size < 350) {
+    return small;
+  } else if (size >= 350 && height ? size < 700 : size < 600) {
+    return medium;
+  } else {
+    return large;
+  }
 };
 
 const styles = StyleSheet.create({

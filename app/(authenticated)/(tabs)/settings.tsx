@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Switch,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Colors from "@/constants/Colors";
@@ -71,12 +72,21 @@ const Settings = () => {
   return (
     <ScrollView
       style={{
-        paddingTop: 80,
+        paddingTop: adaptiveStyle(height, { small: 20, medium: 20, large: 80 }),
         backgroundColor:
           colorScheme === "light" ? Colors.background : Colors.dark,
       }}
     >
-      <View style={{ flexDirection: "column" }}>
+      <View
+        style={{
+          flexDirection: "column",
+          paddingBottom: adaptiveStyle(height, {
+            small: 170,
+            medium: 170,
+            large: 0,
+          }),
+        }}
+      >
         <Text
           style={{
             marginTop: 30,
@@ -680,5 +690,18 @@ const Settings = () => {
       </View>
     </ScrollView>
   );
+};
+
+const { width, height } = Dimensions.get("window");
+
+// Function to determine adaptive style based on screen size
+const adaptiveStyle = (size, { small, medium, large }) => {
+  if (size < 350) {
+    return small;
+  } else if (size >= 350 && height ? size < 700 : size < 600) {
+    return medium;
+  } else {
+    return large;
+  }
 };
 export default Settings;

@@ -3,7 +3,7 @@ import React from "react";
 import { MARGIN } from "./Config";
 import Tile from "./Tile";
 import SortableList from "./SortableList";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 
 const tiles = [
   {
@@ -20,11 +20,28 @@ const tiles = [
   },
 ];
 
+const { width, height } = Dimensions.get("window");
+
+// Function to determine adaptive style based on screen size
+const adaptiveStyle = (size, { small, medium, large }) => {
+  if (size < 350) {
+    return small;
+  } else if (size >= 350 && height ? size < 700 : size < 600) {
+    return medium;
+  } else {
+    return large;
+  }
+};
+
 const WidgetList = () => {
   return (
     <View
       style={{
-        paddingHorizontal: 30,
+        paddingHorizontal: adaptiveStyle(height, {
+          small: 10,
+          medium: 10,
+          large: 30,
+        }),
         marginBottom: 80,
       }}
     >

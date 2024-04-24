@@ -9,6 +9,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Dimensions,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import i18n from "./translate";
@@ -16,6 +17,7 @@ import { useTheme } from "@/app/ThemeContext";
 import { useUser } from "@clerk/clerk-expo";
 import firestore, { firebase } from "@react-native-firebase/firestore";
 import { useRouter } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
 
 const Wallet = ({ t }) => {
   let colorScheme = useTheme().theme;
@@ -241,13 +243,15 @@ const Wallet = ({ t }) => {
     setCashback(sumPayeeTransactions * 0.005); // 0.5% of the transactions sum
   }, [transactions, user?.id]);
   return (
-    <View
+    <ScrollView
       style={{
         paddingTop: headerHeight,
         paddingLeft: 10,
         backgroundColor:
           colorScheme === "light" ? Colors.background : Colors.dark,
         height: "100%",
+        alignContent: "center",
+        width: "100%",
       }}
     >
       <Text
@@ -460,26 +464,27 @@ const Wallet = ({ t }) => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity
-          style={[
-            styles.claim,
-            {
-              backgroundColor:
-                colorScheme === "light" ? Colors.dark : Colors.background,
-            },
-          ]}
-        >
-          <Text
-            style={{
-              color: colorScheme === "light" ? Colors.background : Colors.dark,
-              fontSize: 14,
-              fontWeight: "300",
-            }}
-          >
-            {i18n.t("Claim Your Earnings")}
-          </Text>
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={[
+          styles.withdraw,
+          {
+            marginBottom: 20,
+            backgroundColor:
+              colorScheme === "light" ? Colors.dark : Colors.background,
+          },
+        ]}
+      >
+        <Text
+          style={{
+            color: colorScheme === "light" ? Colors.background : Colors.dark,
+            fontSize: 14,
+            fontWeight: "300",
+          }}
+        >
+          {i18n.t("Claim Your Earnings")}
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={[
           styles.withdraw,
@@ -516,6 +521,11 @@ const Wallet = ({ t }) => {
           styles.withdraw,
           {
             marginTop: 20,
+            marginBottom: adaptiveStyle(height, {
+              small: 180,
+              medium: 180,
+              large: 0,
+            }),
             alignItems: "center",
             backgroundColor:
               colorScheme === "light" ? Colors.background : Colors.dark,
@@ -540,8 +550,21 @@ const Wallet = ({ t }) => {
           {i18n.t("Deposit 10€")}
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
+};
+
+const { width, height } = Dimensions.get("window");
+
+// Function to determine adaptive style based on screen size
+const adaptiveStyle = (size, { small, medium, large }) => {
+  if (size < 350) {
+    return small;
+  } else if (size >= 350 && height ? size < 700 : size < 600) {
+    return medium;
+  } else {
+    return large;
+  }
 };
 
 const styles = StyleSheet.create({
@@ -566,10 +589,10 @@ const styles = StyleSheet.create({
   },
   wallet: {
     flexDirection: "column",
-    height: 190,
+    height: 140,
     width: 350,
     borderRadius: 15,
-    marginTop: 20,
+    marginTop: adaptiveStyle(height, { small: 0, medium: 0, large: 20 }),
     marginLeft: 20,
     alignItems: "center",
     alignContent: "center",
@@ -596,7 +619,7 @@ const styles = StyleSheet.create({
     fontWeight: "200",
   },
   claim: {
-    width: "96%",
+    width: "100%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",

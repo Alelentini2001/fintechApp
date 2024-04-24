@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Dimensions,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -358,16 +359,33 @@ const Signup = () => {
   );
 };
 
+const { width, height } = Dimensions.get("window");
+
+// Function to determine adaptive style based on screen size
+const adaptiveStyle = (size, { small, medium, large }) => {
+  if (size < 350) {
+    return small;
+  } else if (size >= 350 && size < 600) {
+    return medium;
+  } else {
+    return large;
+  }
+};
+
 const styles = StyleSheet.create({
   inputContainer: {
-    marginVertical: 40,
+    marginVertical: adaptiveStyle(height, {
+      small: "5%",
+      medium: "5%",
+      large: "5%",
+    }),
     flexDirection: "row",
   },
   input: {
     backgroundColor: Colors.lightGray,
-    padding: 20,
+    padding: adaptiveStyle(width, { small: 15, medium: 20, large: 25 }),
     borderRadius: 16,
-    fontSize: 20,
+    fontSize: adaptiveStyle(width, { small: 16, medium: 20, large: 24 }),
     marginRight: 10,
   },
   enabled: {

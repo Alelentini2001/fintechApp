@@ -144,7 +144,7 @@ const Page = ({ t }) => {
 
     // Fetch user details for each transaction
     const transactionsWithUserData = await Promise.all(
-      fetchedTransactions.map(async (transaction) => {
+      fetchedTransactions?.map(async (transaction) => {
         return appendUserData(transaction);
       })
     );
@@ -189,8 +189,8 @@ const Page = ({ t }) => {
       ? transaction?.merchantFullName
       : transaction?.userFullName
     )
-      .toLowerCase()
-      .includes(searchText.toLowerCase())
+      ?.toLowerCase()
+      .includes(searchText?.toLowerCase())
   );
 
   const handleSort = (key: string) => {
@@ -206,7 +206,7 @@ const Page = ({ t }) => {
           : transaction.userFullName;
 
       // Check if the name contains the search text
-      return nameToCheck.toLowerCase().includes(searchText.toLowerCase());
+      return nameToCheck?.toLowerCase().includes(searchText?.toLowerCase());
     })
     .sort((a, b) => {
       // Convert dates from Firestore Timestamp to JavaScript Date objects
