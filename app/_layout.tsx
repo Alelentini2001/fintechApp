@@ -106,7 +106,7 @@ const InitialLayout = () => {
   if (!loaded || !isLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size={"large"} color={Colors.primary} />
+        <ActivityIndicator size={"large"} color={Colors.dark} />
       </View>
     );
   }
