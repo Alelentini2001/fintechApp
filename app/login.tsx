@@ -176,6 +176,7 @@ const Login = () => {
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder="Email"
+              autoCapitalize="none"
               placeholderTextColor={Colors.gray}
               keyboardType="email-address"
               value={email}

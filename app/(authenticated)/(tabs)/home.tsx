@@ -28,12 +28,16 @@ import { useTheme } from "@/app/ThemeContext";
 import firestore, { firebase } from "@react-native-firebase/firestore";
 import { useUser } from "@clerk/clerk-expo";
 import messaging from "@react-native-firebase/messaging";
-
+import * as walletSdk from "@stellar/typescript-wallet-sdk";
+import * as Random from "expo-crypto";
+import { Buffer } from "buffer"; // Import Buffer from the buffer package
+import CryptoJS from "crypto-js";
 interface CarouselIndicatorProps {
   data: number[];
   selectedIndex: number;
 }
 let colorScheme: string;
+const SECRET_KEY = process.env.SECRET_KEY_ENDECRYPT;
 
 const Home = ({ t }) => {
   colorScheme = useTheme().theme;
@@ -50,6 +54,9 @@ const Home = ({ t }) => {
   const { user } = useUser();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [transactionsReferral, setTransactionsReferral] = useState([]);
+  const [account, setAccount] = useState<[String, String, walletSdk.Keypair]>(
+    []
+  );
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -61,6 +68,46 @@ const Home = ({ t }) => {
   };
 
   const headerHeight = useHeaderHeight();
+
+  const createWallet = async () => {
+    try {
+      // Assuming walletSdk.Wallet.TestNet() correctly initializes a test net wallet
+      let wallet = walletSdk.Wallet.TestNet();
+      let account = wallet.stellar().account();
+
+      // createKeypair might be synchronous based on your original usage
+      const rand = Random.getRandomBytes(32);
+      console.log(rand);
+      const kp = account.createKeypairFromRandom(Buffer.from(rand));
+
+      // Log the accountKeyPair to see the output
+      console.log("Account Key Pair:", kp);
+
+      const secretKeyString = JSON.stringify(kp.secretKey); // Convert to string if necessary
+      console.log("Secret Key:", secretKeyString);
+      console.log(SECRET_KEY);
+
+      const key = CryptoJS.enc.Hex.parse(SECRET_KEY!);
+
+      // Encrypting
+      const encrypted = CryptoJS.AES.encrypt(secretKeyString, key, {
+        mode: CryptoJS.mode.ECB, // Mode is optional and depends on your requirements
+      }).toString();
+      console.log("Encrypted:", encrypted);
+
+      // Decrypting
+      const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+        mode: CryptoJS.mode.ECB,
+      });
+      const originalText = decrypted.toString(CryptoJS.enc.Utf8);
+      console.log("Decrypted:", originalText);
+
+      setAccount([kp.publicKey, kp.secretKey, kp.keypair]);
+    } catch (error) {
+      console.error("Error creating wallet:", error);
+    }
+  };
+
   // const onAddMoney = () => {
   //   runTransaction({
   //     id: Math.random().toString(),
@@ -922,6 +969,9 @@ const Home = ({ t }) => {
       >
         {i18n.t("Transactions")}
       </Text>
+      <TouchableOpacity onPress={createWallet}>
+        <Text>Create Wallet</Text>
+      </TouchableOpacity>
       <View
         style={[
           styles.transactions,

@@ -155,6 +155,7 @@ const Signup = () => {
               style={styles.input}
               placeholder="Referral Code"
               value={referral}
+              autoCapitalize="none"
               placeholderTextColor={Colors.gray}
               onChangeText={referralValid === false ? setReferral : undefined} // Disable editing once validated
               editable={referralValid === false}
@@ -210,6 +211,7 @@ const Signup = () => {
               <TextInput
                 style={[styles.input, { flex: 1 }]}
                 placeholder="Email"
+                autoCapitalize="none"
                 placeholderTextColor={Colors.gray}
                 keyboardType="email-address"
                 value={email}
