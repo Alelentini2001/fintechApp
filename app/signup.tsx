@@ -39,19 +39,19 @@ const Signup = () => {
 
   const validateReferralCode = async () => {
     const usersRef = firestore().collection("users");
-    const query = usersRef
-      .where("username", "==", referral.toLowerCase())
-      .limit(1);
+    // const query = usersRef
+    //   .where("username", "==", referral.toLowerCase())
+    //   .limit(1);
     const queryById = usersRef
       .where("userId", "==", referral.toLowerCase())
       .limit(1);
 
     try {
-      const [usernameResult, idResult] = await Promise.all([
-        query.get(),
+      const [idResult] = await Promise.all([
+        // query.get(),
         queryById.get(),
       ]);
-      if (!usernameResult.empty || !idResult.empty) {
+      if (!idResult.empty) {
         setReferralValid(true);
         setReferralError("");
       } else {
@@ -141,6 +141,7 @@ const Signup = () => {
                 placeholder="Country code"
                 placeholderTextColor={Colors.gray}
                 value={countryCode}
+                onChangeText={setCountryCode}
               />
               <TextInput
                 style={[styles.input, { flex: 1 }]}

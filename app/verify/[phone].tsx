@@ -297,6 +297,29 @@ const PhoneVerify = () => {
           </TouchableOpacity>
         </Link>
       )}
+      {!edit && (
+        <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <Text
+            style={[
+              defaultStyles.textLink,
+              {
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+                fontSize: 12,
+              },
+            ]}
+          >
+            By registering you accept the
+          </Text>
+          <Link href={"/terms"} asChild>
+            <TouchableOpacity>
+              <Text style={[defaultStyles.textLink, { fontSize: 12 }]}>
+                Terms and Conditions of Quply
+              </Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      )}
     </View>
   );
 };

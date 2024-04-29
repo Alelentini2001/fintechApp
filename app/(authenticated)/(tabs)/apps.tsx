@@ -51,9 +51,7 @@ const Crypto = ({ t }) => {
   const shareReferral = async () => {
     try {
       const result = await Share.share({
-        message: `Join Quply today!! Payments has never been easier, Earn while Paying!\nJoin with this code: ${
-          user?.username ? user?.username : user?.id
-        }`,
+        message: `Join Quply today!! Payments has never been easier, Earn while Paying!\nJoin with this code: ${user?.id}`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

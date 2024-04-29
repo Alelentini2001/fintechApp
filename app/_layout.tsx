@@ -257,6 +257,20 @@ const InitialLayout = () => {
           },
         }}
       />
+      <Stack.Screen
+        name="terms"
+        options={{
+          title: "Terms and Conditions",
+          presentation: "modal",
+          headerStyle: {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+          headerTitleStyle: {
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          },
+        }}
+      />
     </Stack>
   );
 };
