@@ -390,7 +390,7 @@ const Home = ({ t }) => {
     const destinationPublicKey =
       "GCOMM5MLU35QNAYXAXAIBIINDHDJVIPJJ5DVHDTAFKBWCEMUILDLJN55";
     const amountLumens = 100; // Amount of lumens to send
-    const memoText = "Test Transaction";
+    const memoText = "Test the test";
 
     try {
       const result = await createTransactionXDR(

@@ -383,6 +383,7 @@ const Page = () => {
                 <TextInput
                   placeholder="Username"
                   value={username || ""}
+                  autoCapitalize="none"
                   onChangeText={setUsername}
                   style={[styles.inputField]}
                 />
