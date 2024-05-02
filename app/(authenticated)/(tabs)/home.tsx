@@ -401,7 +401,7 @@ const Home = ({ t }) => {
         memoText
       );
       console.log(result);
-      setTransactionResult(result);
+      setTransactionResult(result.memo);
     } catch (err) {
       console.error("Failed to create transaction:", err);
       setError("Failed to process transaction. Check console for details.");
