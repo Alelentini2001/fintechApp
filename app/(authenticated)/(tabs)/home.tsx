@@ -389,7 +389,7 @@ const Home = ({ t }) => {
     const sourceSeed = privateKey;
     const destinationPublicKey =
       "GCOMM5MLU35QNAYXAXAIBIINDHDJVIPJJ5DVHDTAFKBWCEMUILDLJN55";
-    const amountLumens = 10; // Amount of lumens to send
+    const amountLumens = 100; // Amount of lumens to send
     const memoText = "Test Transaction";
 
     try {

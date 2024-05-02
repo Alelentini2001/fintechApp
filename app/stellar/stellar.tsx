@@ -141,25 +141,27 @@ export async function createTransactionXDR(
     throw new Error("Unable to fetch account details");
   }
 
-  console.log("=> Source account is", sourceAccount);
+  // console.log("=> Source account is", sourceAccount);
 
   const operation = Operation.createAccount({
     destination: destinationPublicKey,
     startingBalance: amountLumens.toString(),
+    source: sourcePublicKey,
   });
 
   console.log("=> Building transaction");
-
+  // console.log((amountLumens * 0.005 * 100000).toString());
   const transaction = new StellarSdk.TransactionBuilder(account, {
     timebounds: await server.fetchTimebounds(100),
     networkPassphrase: StellarSdk.Networks.TESTNET,
-    fee: fee.toString(),
+    fee: (amountLumens * 0.005 * 100000).toString(),
   })
     .addOperation(
       StellarSdk.Operation.payment({
         destination: destinationPublicKey,
         asset: StellarSdk.Asset.native(),
         amount: amountLumens.toString(),
+        source: sourcePublicKey,
       })
     )
     .addMemo(Memo.text(memoText))
@@ -168,16 +170,14 @@ export async function createTransactionXDR(
   const transactiona = new StellarSdk.TransactionBuilder(account, {
     timebounds: await server.fetchTimebounds(100),
     networkPassphrase: StellarSdk.Networks.TESTNET,
-    fee: fee.toString(),
+    fee: (amountLumens * 0.005 * 100000).toString(),
   })
     .addOperation(operation)
     .addMemo(Memo.text(memoText))
     .build();
 
-  console.log(Keypair.fromSecret(sourceSecretKey));
-
   const source = Keypair.fromSecret(sourceSecretKey);
-  console.log(source);
+
   try {
     transaction.sign(source);
 
@@ -188,7 +188,7 @@ export async function createTransactionXDR(
       return result;
     } catch (error) {
       console.log("=> ERROR:", error);
-      throw new Error("Failed to submit transaction");
+      throw new Error("Failed to submit transaction 1");
     }
   } catch (err) {
     try {
@@ -205,7 +205,7 @@ export async function createTransactionXDR(
       }
     } catch (err) {
       console.log("=> ERROR:", error);
-      throw new Error("Failed to submit transaction");
+      throw new Error("Failed to submit transaction 2");
     }
   }
 }
