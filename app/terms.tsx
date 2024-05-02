@@ -14,54 +14,8 @@ import {
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { useTheme } from "./ThemeContext";
 
-const Friends = () => {
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [searchText, setSearchText] = useState<string>("");
-  const [sortKey, setSortKey] = useState<boolean>(false); // Default sort by date
+const Terms = () => {
   let colorScheme = useTheme().theme;
-  useEffect(() => {
-    const generateTransactions = () => {
-      const unsortedTransactions = Array.from({ length: 18 }, () => ({
-        id: faker.number.int(),
-        avatar: faker.image.avatar(),
-        name: faker.person.fullName(),
-        date: new Date(faker.date.recent().toISOString()), // Change to Date object for easier comparison
-        price: parseFloat((Math.random() * 100).toFixed(2)), // Generate random prices
-      }));
-      unsortedTransactions.push({
-        id: "ale",
-        avatar: faker.image.avatar(),
-        name: "Alessandro Lentini",
-        date: new Date(),
-        price: -3.25,
-      });
-      // Sorting the transactions by date
-      return unsortedTransactions.sort((a, b) => b.date - a.date); // Descending order
-    };
-    setTransactions(generateTransactions());
-  }, []);
-
-  const filteredTransactions = transactions.filter((transaction) =>
-    transaction.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  const handleSort = (key: boolean) => {
-    setSortKey(key);
-  };
-
-  const sortedTransactions = transactions
-    .sort((a, b) => {
-      if (sortKey) {
-        //up
-        return a.name.localeCompare(b.name);
-      } else {
-        //down
-        return b.name.localeCompare(a.name);
-      }
-    })
-    .filter((transaction) =>
-      transaction.name.toLowerCase().includes(searchText.toLowerCase())
-    );
 
   return (
     <ScrollView
@@ -73,143 +27,76 @@ const Friends = () => {
         },
       ]}
     >
-      <View style={{ flexDirection: "row", padding: 5, gap: 10 }}>
-        <View
-          style={[
-            styles.searchSelection,
-            {
-              backgroundColor:
-                colorScheme === "light" ? Colors.background : Colors.dark,
-              borderWidth: 0.5,
-              borderColor:
-                colorScheme === "dark" ? Colors.background : Colors.dark,
-            },
-          ]}
-        >
-          <Ionicons
-            name="search"
-            size={20}
-            color={colorScheme === "dark" ? Colors.background : Colors.dark}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={[
-              styles.input,
-              {
-                color: colorScheme === "dark" ? Colors.background : Colors.dark,
-              },
-            ]}
-            placeholder="Search"
-            placeholderTextColor={
-              colorScheme === "dark" ? Colors.background : Colors.dark
-            }
-            onChangeText={setSearchText}
-            value={searchText}
-          />
-        </View>
-
-        {/* <View style={styles.circle}>
-          <Ionicons name="filter-outline" size={24} color={"white"} />
-          
-        </View> */}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <View
-              style={[
-                styles.circle,
-                {
-                  backgroundColor:
-                    colorScheme === "dark" ? Colors.background : Colors.dark,
-                },
-              ]}
-            >
-              <Ionicons
-                name="filter-outline"
-                size={24}
-                color={
-                  colorScheme === "light" ? Colors.background : Colors.dark
-                }
-              />
-            </View>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item key="name" onSelect={() => handleSort(!sortKey)}>
-              <DropdownMenu.ItemTitle>Name</DropdownMenu.ItemTitle>
-              <DropdownMenu.ItemIcon
-                ios={{
-                  name: !sortKey ? "chevron.up" : "chevron.down",
-                  pointSize: 24,
-                }}
-              />
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </View>
-      <View
-        style={{ flexDirection: "column", marginTop: 10, marginBottom: 100 }}
+      <Text
+        style={[
+          styles.text,
+          { color: colorScheme === "light" ? Colors.dark : Colors.background },
+        ]}
       >
-        {sortedTransactions.map((transaction) => (
-          <View
-            key={transaction.id}
-            style={{
-              flexDirection: "row",
-              marginTop: 20,
-              alignItems: "center",
-            }}
-          >
-            <View
-              style={[styles.circle, { overflow: "hidden", marginRight: 10 }]}
-            >
-              <Image
-                source={{ uri: transaction.avatar }}
-                style={{ width: "100%", height: "100%", borderRadius: 30 }}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "column",
-                justifyContent: "flex-start",
-              }}
-            >
-              <Text
-                style={[
-                  styles.name,
-                  {
-                    color:
-                      colorScheme === "dark" ? Colors.background : Colors.dark,
-                  },
-                ]}
-              >
-                {transaction.name}
-              </Text>
-              {/* <Text style={[styles.date, { color: Colors.dark }]}>
-                {transaction.date.toUTCString()}
-              </Text> */}
-            </View>
-            <View style={{ flex: 1 }} />
-            <TouchableOpacity
-              style={{
-                width: 80,
-                height: 40,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor:
-                  colorScheme === "dark" ? Colors.background : Colors.dark,
-                borderRadius: 20,
-              }}
-            >
-              <Text
-                style={{
-                  color:
-                    colorScheme === "light" ? Colors.background : Colors.dark,
-                }}
-              >
-                Pay
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
+        <Text style={styles.title}>Terms and Conditions</Text>
+        {"\n\n"}
+        Welcome to Our Application. By accessing or using our service, you agree
+        to be bound by these terms. If you disagree with any part of the terms,
+        then you may not access the service. {"\n\n"}
+        1. Intellectual Property {"\n"}
+        The content, arrangement and layout of this site, including, but not
+        limited to, the trademarks, photos, logos, text, and other intellectual
+        property contained herein, are the property of [Your Company Name],
+        except as otherwise noted. {"\n\n"}
+        2. Use License {"\n"}
+        Permission is granted to temporarily download one copy of the materials
+        (information or software) on Our Application's website for personal,
+        non-commercial transitory viewing only. {"\n\n"}
+        3. If you download or print a copy of the materials (information or
+        software), you must keep intact all copyright and other proprietary
+        notices. {"\n\n"}
+        4. You may not modify, copy, distribute, transmit, display, perform,
+        reproduce, publish, license, create derivative works from, or in any way
+        exploit in any way any of the material on Our Application's website or
+        the information or software contained therein, except as permitted by
+        applicable law. {"\n\n"}
+        5. The materials on Our Application's website are provided on an 'as is'
+        basis. Our Application makes no warranties, expressed or implied, and
+        hereby disclaims and negates all other warranties, including without
+        limitation, implied warranties or conditions of merchantability, fitness
+        for a particular purpose, or non-infringement of intellectual property
+        or other violation of rights. {"\n\n"}
+        Further, Our Application does not warrant or make any representations
+        regarding the accuracy, reliability, or currency of the information or
+        software contained on Our Application's website, or otherwise relating
+        to such information or software. {"\n\n"}
+        6. Our Application may contain links to third-party websites or services
+        that are not owned or controlled by Our Application. Our Application has
+        no control over, and assumes no responsibility for, the content, privacy
+        policies, or practices of any third-party websites or services. You
+        further acknowledge and agree that Our Application shall not be
+        responsible or liable, directly or indirectly, for any damage or loss
+        caused or alleged to be caused by or in connection with use of or
+        reliance on any such content, goods or services available on or through
+        any such websites or services.
+        {"\n\n"}
+        {/* More terms can be added similarly */}
+      </Text>
+      {/* <TouchableOpacity
+        style={[
+          styles.button,
+          {
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+            borderColor:
+              colorScheme === "light" ? Colors.dark : Colors.background,
+          },
+        ]}
+        onPress={() => console.log("Accepted Terms")} // Replace with actual navigation or action
+      >
+        <Text
+          style={{
+            color: colorScheme === "light" ? Colors.dark : Colors.background,
+          }}
+        >
+          Accept and Close
+        </Text>
+      </TouchableOpacity> */}
     </ScrollView>
   );
 };
@@ -221,37 +108,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 
-  searchSelection: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: Colors.lightGray,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
+  text: {
+    fontSize: 16,
+    lineHeight: 24,
   },
-  searchIcon: {
-    padding: 10,
+  title: {
+    fontWeight: "bold",
+    fontSize: 20,
+    marginBottom: 10,
   },
-  input: {
-    flex: 1,
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingBottom: 10,
-    paddingLeft: 0,
-    color: Colors.dark,
-  },
-  circle: {
-    width: 44,
-    height: 44,
-    borderRadius: 70,
-    marginRight: 0,
-    backgroundColor: Colors.dark,
-    justifyContent: "center",
+  button: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 1,
     alignItems: "center",
   },
-  name: { fontSize: 14, fontWeight: "400" },
-  date: { fontSize: 10, fontWeight: "400" },
-  price: { marginRight: 20, fontSize: 16, fontWeight: "600" },
 });
 
-export default Friends;
+export default Terms;

@@ -32,12 +32,15 @@ import * as walletSdk from "@stellar/typescript-wallet-sdk";
 import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
+import { createTransactionXDR, getAccount } from "@/app/stellar/stellar";
+
+const SECRET_KEY = process.env.SECRET_KEY_ENDECRYPT;
+
 interface CarouselIndicatorProps {
   data: number[];
   selectedIndex: number;
 }
 let colorScheme: string;
-const SECRET_KEY = process.env.SECRET_KEY_ENDECRYPT;
 
 const Home = ({ t }) => {
   colorScheme = useTheme().theme;
@@ -54,9 +57,6 @@ const Home = ({ t }) => {
   const { user } = useUser();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [transactionsReferral, setTransactionsReferral] = useState([]);
-  const [account, setAccount] = useState<[String, String, walletSdk.Keypair]>(
-    []
-  );
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -68,45 +68,6 @@ const Home = ({ t }) => {
   };
 
   const headerHeight = useHeaderHeight();
-
-  const createWallet = async () => {
-    try {
-      // Assuming walletSdk.Wallet.TestNet() correctly initializes a test net wallet
-      let wallet = walletSdk.Wallet.TestNet();
-      let account = wallet.stellar().account();
-
-      // createKeypair might be synchronous based on your original usage
-      const rand = Random.getRandomBytes(32);
-      console.log(rand);
-      const kp = account.createKeypairFromRandom(Buffer.from(rand));
-
-      // Log the accountKeyPair to see the output
-      console.log("Account Key Pair:", kp);
-
-      const secretKeyString = JSON.stringify(kp.secretKey); // Convert to string if necessary
-      console.log("Secret Key:", secretKeyString);
-      console.log(SECRET_KEY);
-
-      const key = CryptoJS.enc.Hex.parse(SECRET_KEY!);
-
-      // Encrypting
-      const encrypted = CryptoJS.AES.encrypt(secretKeyString, key, {
-        mode: CryptoJS.mode.ECB, // Mode is optional and depends on your requirements
-      }).toString();
-      console.log("Encrypted:", encrypted);
-
-      // Decrypting
-      const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
-        mode: CryptoJS.mode.ECB,
-      });
-      const originalText = decrypted.toString(CryptoJS.enc.Utf8);
-      console.log("Decrypted:", originalText);
-
-      setAccount([kp.publicKey, kp.secretKey, kp.keypair]);
-    } catch (error) {
-      console.error("Error creating wallet:", error);
-    }
-  };
 
   // const onAddMoney = () => {
   //   runTransaction({
@@ -348,6 +309,103 @@ const Home = ({ t }) => {
       );
       return [...prevTransactions, ...filteredNewTransactions];
     });
+  }
+
+  const [userr, setUserr] = useState({});
+  const [wallet, setWallet] = useState({
+    publicKey: "",
+    secretKey: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [walletDetails, setWalletDetails] = useState("0");
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userRef = firestore().collection("users");
+      let query = userRef.where(
+        "email",
+        "==",
+        user?.primaryEmailAddress
+          ? user.primaryEmailAddress.emailAddress
+          : "test"
+      );
+      let queryphone = userRef.where(
+        "phone",
+        "==",
+        user?.primaryPhoneNumber ? user.primaryPhoneNumber.phoneNumber : "test"
+      );
+
+      const snapshot = await query.get();
+      const snapshotPhone = await queryphone.get();
+      if (!snapshot.empty) {
+        const userData = snapshot.docs[0].data();
+        setUserr(userData);
+      } else if (!snapshotPhone.empty) {
+        const userData = snapshotPhone.docs[0].data();
+        setUserr(userData);
+      }
+    };
+    getUser();
+  }, [userr]);
+
+  const fetchDetails = async () => {
+    setLoading(true);
+    try {
+      const data = await getAccount(userr?.pubKey);
+      console.log(userr?.pubKey);
+      console.log("data", data.balances[0].balance);
+
+      if (data) {
+        setWalletDetails(
+          parseFloat(data.balances[0].balance).toFixed(1).toString()
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching wallet details:", error);
+      // Handle the error here, such as displaying a message to the user or logging it
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // fetch wallet details only when `wallet` or `userr?.pubKey` changes
+  useEffect(() => {
+    console.log("CIao");
+    fetchDetails();
+    console.log("CIao2");
+  }, [wallet, userr?.pubKey]);
+
+  const [transactionResult, setTransactionResult] = useState(null);
+  const [error, setError] = useState("");
+
+  async function transaction() {
+    const key = CryptoJS.enc.Hex.parse(process.env.SECRET_KEY_ENDECRYPT!);
+    // Decrypting
+    const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+      mode: CryptoJS.mode.ECB,
+    });
+    const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+
+    const sourceSeed = privateKey;
+    const destinationPublicKey =
+      "GCOMM5MLU35QNAYXAXAIBIINDHDJVIPJJ5DVHDTAFKBWCEMUILDLJN55";
+    const amountLumens = 10; // Amount of lumens to send
+    const memoText = "Test Transaction";
+
+    try {
+      const result = await createTransactionXDR(
+        sourceSeed,
+        userr?.pubKey,
+        destinationPublicKey,
+        amountLumens,
+        memoText
+      );
+      console.log(result);
+      setTransactionResult(result);
+    } catch (err) {
+      console.error("Failed to create transaction:", err);
+      setError("Failed to process transaction. Check console for details.");
+    }
   }
 
   // useEffect(() => {
@@ -969,9 +1027,46 @@ const Home = ({ t }) => {
       >
         {i18n.t("Transactions")}
       </Text>
-      <TouchableOpacity onPress={createWallet}>
-        <Text>Create Wallet</Text>
+      {transactionResult ? (
+        <View>
+          <Text>Transaction Result</Text>
+          <Text>{JSON.stringify(transactionResult, null, 2)}</Text>
+        </View>
+      ) : error ? (
+        <Text>Error: {error}</Text>
+      ) : (
+        <Text>Transaction is being processed...</Text>
+      )}
+      <TouchableOpacity
+        onPress={async () => {
+          // const data = await createWallet();
+          // setLoading(true);
+          // console.log(true);
+          // console.log(data);
+          // if (data?.source_account) {
+          //   console.log(wallet);
+          //   setWallet({
+          //     ...wallet,
+          //     publicKey: data.source_account,
+          //     secretKey: data.secretKey,
+          //   });
+          //   console.log(wallet);
+          // }
+          // console.log(false);
+
+          // setLoading(false);
+          console.log("A");
+          await transaction();
+          console.log("B");
+        }}
+        disabled={loading}
+      >
+        <Text>Press Me</Text>
       </TouchableOpacity>
+      {wallet?.publicKey && <Text>{wallet?.publicKey}</Text>}
+      {wallet?.secretKey && <Text>{wallet?.secretKey}</Text>}
+      <Text>Your Balance: {walletDetails} XLM</Text>
+      <Text>Wallet Address: {userr?.pubKey}</Text>
       <View
         style={[
           styles.transactions,

@@ -21,12 +21,18 @@ import translations from "@/app/(authenticated)/(tabs)/translations.json";
 import { useTheme } from "../ThemeContext";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import * as walletSdk from "@stellar/typescript-wallet-sdk";
+import * as Random from "expo-crypto";
+import { Buffer } from "buffer"; // Import Buffer from the buffer package
+import CryptoJS from "crypto-js";
+import { getInitialFunds } from "../stellar/stellar";
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
 i18n.enableFallback = true;
 
 const CELL_COUNT = 6;
+const SECRET_KEY = process.env.SECRET_KEY_ENDECRYPT;
 
 const PhoneVerify = () => {
   const { phone, signin, email, edit, referral } = useLocalSearchParams<{
@@ -38,6 +44,9 @@ const PhoneVerify = () => {
   }>();
   let colorScheme = useTheme().theme;
   const [code, setCode] = useState("");
+  const [account, setAccount] = useState<[String, String, walletSdk.Keypair]>(
+    []
+  );
   const { signIn } = useSignIn();
   const { signUp, setActive } = useSignUp();
   console.log(email, signin);
@@ -46,6 +55,28 @@ const PhoneVerify = () => {
     value: code,
     setValue: setCode,
   });
+
+  const createWallet = async () => {
+    try {
+      let wallet = walletSdk.Wallet.TestNet();
+      let account = wallet.stellar().account();
+      const rand = Random.getRandomBytes(32);
+      const kp = account.createKeypairFromRandom(Buffer.from(rand));
+
+      const secretKeyString = JSON.stringify(kp.secretKey);
+      const key = CryptoJS.enc.Hex.parse(SECRET_KEY!);
+      const encrypted = CryptoJS.AES.encrypt(secretKeyString, key, {
+        mode: CryptoJS.mode.ECB,
+      }).toString();
+
+      console.log("Encrypted:", encrypted);
+
+      return [kp.publicKey, encrypted]; // Return the details instead of setting state
+    } catch (error) {
+      console.error("Error creating wallet:", error);
+      return [null, null, null]; // Return nulls in case of an error
+    }
+  };
 
   useEffect(() => {
     console.log("signin === true", signin === "true", referral);
@@ -63,6 +94,8 @@ const PhoneVerify = () => {
 
   const verifyCode = async () => {
     console.log(email, phone, referral);
+    const [publicKey, encryptedPrivateKey] = await createWallet();
+    await getInitialFunds(publicKey!);
     if (phone !== "" && phone !== "[phone]") {
       try {
         await signUp!.attemptPhoneNumberVerification({ code });
@@ -75,6 +108,8 @@ const PhoneVerify = () => {
             phone: signUp?.phoneNumber,
             username: signUp?.username?.toLocaleLowerCase() || "",
             referrall: referral || "",
+            pubKey: publicKey || "",
+            privKey: encryptedPrivateKey || "",
           });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
@@ -109,6 +144,8 @@ const PhoneVerify = () => {
               phone: signUp?.phoneNumber || "",
               referral: referral || "",
               username: signUp?.username?.toLocaleLowerCase() || "",
+              pubKey: publicKey || "",
+              privKey: encryptedPrivateKey || "",
             });
         } else {
           // Normalize the email search to be case-insensitive and trim whitespace
@@ -217,15 +254,15 @@ const PhoneVerify = () => {
           .catch((error) => {
             console.error("Firebase registration failed:", error);
           });
-        await firestore()
-          .collection("users")
-          .add({
-            userId: signUp?.id,
-            email: signUp?.emailAddress,
-            phone: signUp?.phoneNumber,
-            username: signUp?.username?.toLocaleLowerCase(),
-            referrall: referral || "",
-          });
+        // await firestore()
+        //   .collection("users")
+        //   .add({
+        //     userId: signUp?.id,
+        //     email: signUp?.emailAddress,
+        //     phone: signUp?.phoneNumber,
+        //     username: signUp?.username?.toLocaleLowerCase(),
+        //     referrall: referral || "",
+        //   });
       } catch (err) {
         console.log("error", JSON.stringify(err, null, 2));
         if (isClerkAPIResponseError(err)) {

@@ -15,6 +15,7 @@ import { UserInactivityProvider } from "@/context/UserInactivity";
 import { LogBox } from "react-native";
 import i18n from "./(authenticated)/(tabs)/translate";
 import { ThemeProvider, useTheme } from "./ThemeContext";
+import "@/shim";
 LogBox.ignoreAllLogs(); // Ignore log notification by message
 
 const queryClient = new QueryClient();
