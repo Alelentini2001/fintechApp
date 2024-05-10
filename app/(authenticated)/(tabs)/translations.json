@@ -90,7 +90,8 @@
         "Already have an account? Log In" : "Already have an account? Log In",
         "Sign Up" : "Sign Up",
         "Earnings": "Earnings",
-        "Deposit 10€": "Deposit 10€"
+        "Deposit 10€": "Deposit 10€",
+        "Missions": "Missions"
 
     },
     "it": {
@@ -182,7 +183,8 @@
         "Sign Up" : "Registrati",
         "What is the purpose of the request?" : "Qual'è la causa della richiesta?",
         "Earnings" : "Guadagni",
-        "Deposit 10€" : "Deposita 10€"
+        "Deposit 10€" : "Deposita 10€",
+        "Missions": "Missioni"
     },
     "es": {
       "Balance": "Saldo",
@@ -273,6 +275,7 @@
         "Sign Up" : "Regístrate",
         "What is the purpose of the request?" : "¿Qué es la causa de la solicitud?",
         "Earnings" : "Ganancias",
-        "Deposit 10€" : "Depositar 10€"
+        "Deposit 10€" : "Depositar 10€",
+        "Missions": "Misiones"
     }
 }

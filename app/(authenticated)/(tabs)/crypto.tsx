@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Currency } from "@/interfaces/crypto";

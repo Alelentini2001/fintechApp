@@ -116,7 +116,7 @@ const Layout = () => {
           style={{ height: iconSize, width: iconSize, tintColor: color }}
         />
         <Text style={{ color }}>
-          {i18n.t(routeName.charAt(0).toUpperCase() + routeName.slice(1))}
+          {i18n.t(routeName.charAt(0).toUpperCase() + routeName?.slice(1))}
         </Text>
       </TouchableOpacity>
     );

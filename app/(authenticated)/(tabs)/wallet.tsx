@@ -18,6 +18,12 @@ import { useUser } from "@clerk/clerk-expo";
 import firestore, { firebase } from "@react-native-firebase/firestore";
 import { useRouter } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
+import {
+  getAccount,
+  getInitialFunds,
+  swapXLMtoUSDC,
+} from "@/app/stellar/stellar";
+import CryptoJS from "crypto-js";
 
 const Wallet = ({ t }) => {
   let colorScheme = useTheme().theme;
@@ -185,7 +191,107 @@ const Wallet = ({ t }) => {
     }
   }, [transactions, user?.id]);
 
+  const [userr, setUserr] = useState({});
+  const [wallet, setWallet] = useState({
+    publicKey: "",
+    secretKey: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [walletDetails, setWalletDetails] = useState([]);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userRef = firestore().collection("users");
+      let query = userRef.where(
+        "email",
+        "==",
+        user?.primaryEmailAddress
+          ? user.primaryEmailAddress.emailAddress
+          : "test"
+      );
+      let queryphone = userRef.where(
+        "phone",
+        "==",
+        user?.primaryPhoneNumber ? user.primaryPhoneNumber.phoneNumber : "test"
+      );
+
+      const snapshot = await query.get();
+      const snapshotPhone = await queryphone.get();
+      if (!snapshot.empty) {
+        const userData = snapshot.docs[0].data();
+        setUserr(userData);
+      } else if (!snapshotPhone.empty) {
+        const userData = snapshotPhone.docs[0].data();
+        setUserr(userData);
+      }
+    };
+    getUser();
+  }, [setUserr]);
+
+  // fetch wallet details only when `wallet` or `userr?.pubKey` changes
+  useEffect(() => {
+    const fetchDetails = async () => {
+      setLoading(true);
+      try {
+        if (userr) {
+          const data = await getAccount(userr?.pubKey);
+          if (userr) {
+            console.log(userr?.pubKey);
+            console.log(data.balances);
+            console.log("data", data.balances[0].balance);
+
+            setWalletDetails(data.balances);
+          } else {
+            setWalletDetails([]);
+            throw new Error("Error getting the user");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+        // Handle the error here, such as displaying a message to the user or logging it
+      } finally {
+        setLoading(false);
+      }
+    };
+    console.log("CIao");
+    fetchDetails();
+    console.log("CIao2");
+  }, [setWalletDetails, userr]);
+
   const depositI0euro = async () => {
+    console.log("INTITIAL FUNDS");
+    await getInitialFunds(userr?.pubKey);
+    console.log("INTITIAL FUNDS DONE");
+
+    console.log(process.env.SECRET_KEY_ENDECRYPT);
+
+    const key = CryptoJS.enc.Hex.parse(process.env.SECRET_KEY_ENDECRYPT!);
+    // Decrypting
+    const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+      mode: CryptoJS.mode.ECB,
+    });
+    const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+
+    const sourceSeed = privateKey;
+    console.log(sourceSeed);
+    const sourceSecretKeyy = sourceSeed.replace('"', ""); // Only for signing the transaction
+    const sourceSecretKey = sourceSecretKeyy.replace('"', "");
+    console.log("GET ACCOUNT");
+
+    const data = await getAccount(userr?.pubKey);
+    console.log("GET ACCOUNT DONE");
+
+    const nativeBalanceIndex = data.balances.findIndex(
+      (balance) => balance.asset_type === "native"
+    );
+    const balance = data.balances[nativeBalanceIndex].balance;
+    console.log(balance);
+
+    await swapXLMtoUSDC(
+      userr?.pubKey,
+      parseFloat(parseFloat(balance) > 120 ? 120 : balance) - 1,
+      sourceSecretKey
+    );
     try {
       await firestore().collection("transactions").add({
         amount: "10",
@@ -330,7 +436,18 @@ const Wallet = ({ t }) => {
                 },
               ]}
             >
-              € {balance().toFixed(2)}
+              €{" "}
+              {walletDetails
+                ? parseFloat(
+                    walletDetails[
+                      walletDetails
+                        ? walletDetails.findIndex(
+                            (balance) => balance?.asset_code === "USDC"
+                          )
+                        : 0
+                    ]?.balance
+                  )
+                : balance().toFixed(2)}
             </Text>
           </View>
         </View>

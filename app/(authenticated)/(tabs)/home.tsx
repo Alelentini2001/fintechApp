@@ -32,7 +32,15 @@ import * as walletSdk from "@stellar/typescript-wallet-sdk";
 import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
-import { createTransactionXDR, getAccount } from "@/app/stellar/stellar";
+import {
+  authorizeTrustline,
+  createTransactionXDR,
+  getAccount,
+  swapXLMtoUSDC,
+} from "@/app/stellar/stellar";
+import { Server } from "@stellar/stellar-sdk/lib/horizon";
+import React from "react";
+const StellarSdk = require("stellar-sdk");
 
 const SECRET_KEY = process.env.SECRET_KEY_ENDECRYPT;
 
@@ -59,7 +67,7 @@ const Home = ({ t }) => {
   const [transactionsReferral, setTransactionsReferral] = useState([]);
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems.length > 0) {
+    if (viewableItems?.length > 0) {
       setSelectedIndex(viewableItems[0].index || 0);
     }
   }).current;
@@ -292,10 +300,10 @@ const Home = ({ t }) => {
 
   useEffect(() => {
     // console.log(transactions, balanceWallet());
-    if (transactions.length > 0) {
+    if (transactions?.length > 0) {
       runTransaction(transactions, user?.id!);
     }
-    if (transactionsReferral.length > 0) {
+    if (transactionsReferral?.length > 0) {
       computeReferralCommission(transactionsReferral, user?.id!);
     }
     // console.log(transactions, balanceWallet());
@@ -317,7 +325,7 @@ const Home = ({ t }) => {
     secretKey: "",
   });
   const [loading, setLoading] = useState(false);
-  const [walletDetails, setWalletDetails] = useState("0");
+  const [walletDetails, setWalletDetails] = useState([]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -346,34 +354,37 @@ const Home = ({ t }) => {
       }
     };
     getUser();
-  }, [userr]);
-
-  const fetchDetails = async () => {
-    setLoading(true);
-    try {
-      const data = await getAccount(userr?.pubKey);
-      console.log(userr?.pubKey);
-      console.log("data", data.balances[0].balance);
-
-      if (data) {
-        setWalletDetails(
-          parseFloat(data.balances[0].balance).toFixed(1).toString()
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching wallet details:", error);
-      // Handle the error here, such as displaying a message to the user or logging it
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [setUserr]);
 
   // fetch wallet details only when `wallet` or `userr?.pubKey` changes
   useEffect(() => {
+    const fetchDetails = async () => {
+      setLoading(true);
+      try {
+        if (userr) {
+          const data = await getAccount(userr?.pubKey);
+          if (userr) {
+            console.log(userr?.pubKey);
+            console.log(data.balances);
+            console.log("data", data.balances[0].balance);
+
+            setWalletDetails(data.balances);
+          } else {
+            setWalletDetails([]);
+            throw new Error("Error getting the user");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+        // Handle the error here, such as displaying a message to the user or logging it
+      } finally {
+        setLoading(false);
+      }
+    };
     console.log("CIao");
     fetchDetails();
     console.log("CIao2");
-  }, [wallet, userr?.pubKey]);
+  }, [setWalletDetails, userr]);
 
   const [transactionResult, setTransactionResult] = useState(null);
   const [error, setError] = useState("");
@@ -388,23 +399,49 @@ const Home = ({ t }) => {
 
     const sourceSeed = privateKey;
     const destinationPublicKey =
-      "GCOMM5MLU35QNAYXAXAIBIINDHDJVIPJJ5DVHDTAFKBWCEMUILDLJN55";
-    const amountLumens = 100; // Amount of lumens to send
-    const memoText = "Test the test";
+      "GAUEBS2NHK3CEIVOS2MIV4VYXTF25ZS63GLGQDYM7MZDLYHNNL4PCFYI";
+    const amountLumens = 500; // Amount of lumens to send
+    const memoText = "Test";
 
     try {
-      const result = await createTransactionXDR(
-        sourceSeed,
-        userr?.pubKey,
-        destinationPublicKey,
-        amountLumens,
-        memoText
+      console.log("D");
+      const sourceSecretKeyy = sourceSeed.replace('"', ""); // Only for signing the transaction
+      const sourceSecretKey = sourceSecretKeyy.replace('"', "");
+
+      await authorizeTrustline(
+        sourceSecretKey,
+        "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
       );
-      console.log(result);
-      setTransactionResult(result.memo);
+      // await swapXLMtoUSDC(
+      //   userr.pubKey,
+      //   parseFloat(walletDetails[2].balance) - 100,
+      //   sourceSecretKey
+      // );
+      console.log("E");
+      // const result = await createTransactionXDR(
+      //   sourceSeed,
+      //   userr?.pubKey,
+      //   destinationPublicKey,
+      //   amountLumens,
+      //   memoText
+      // );
+      // console.log(result);
+      // setTransactionResult(result.memo);
     } catch (err) {
       console.error("Failed to create transaction:", err);
       setError("Failed to process transaction. Check console for details.");
+    }
+    //await swapXLMtoUSDC(userr?.pubKey, 100, sourceSeed);
+    const data = await getAccount(userr?.pubKey);
+    if (userr) {
+      console.log(userr?.pubKey);
+      console.log(data.balances);
+      console.log("data", data.balances[0].balance);
+
+      setWalletDetails(data.balances);
+    } else {
+      setWalletDetails([]);
+      throw new Error("Error getting the user");
     }
   }
 
@@ -527,7 +564,18 @@ const Home = ({ t }) => {
                   ]}
                 >
                   {/* € {balance < 0 ? -balance.toFixed(2) : balance.toFixed(2)} */}
-                  € {balanceWallet().toFixed(2)}
+                  €{" "}
+                  {walletDetails && walletDetails?.length > 0
+                    ? walletDetails
+                        .map((detail) => {
+                          if (detail.asset_code === "USDC") {
+                            return parseFloat(detail.balance).toFixed(2);
+                          }
+                          return null;
+                        })
+                        .filter((balance) => balance !== null)[0] ||
+                      balanceWallet().toFixed(2)
+                    : balanceWallet().toFixed(2)}
                 </Text>
                 {/* <Text style={styles.balance}>{balance}</Text> */}
               </View>
@@ -1037,6 +1085,7 @@ const Home = ({ t }) => {
       ) : (
         <Text>Transaction is being processed...</Text>
       )}
+
       <TouchableOpacity
         onPress={async () => {
           // const data = await createWallet();
@@ -1065,7 +1114,13 @@ const Home = ({ t }) => {
       </TouchableOpacity>
       {wallet?.publicKey && <Text>{wallet?.publicKey}</Text>}
       {wallet?.secretKey && <Text>{wallet?.secretKey}</Text>}
-      <Text>Your Balance: {walletDetails} XLM</Text>
+      {walletDetails.map((asset) => {
+        return (
+          <Text key={asset.asset_code}>
+            {asset.balance} {asset.asset_code ? asset.asset_code : "XLM"}
+          </Text>
+        );
+      })}
       <Text>Wallet Address: {userr?.pubKey}</Text>
       <View
         style={[
@@ -1076,7 +1131,7 @@ const Home = ({ t }) => {
           },
         ]}
       >
-        {transactions.length === 0 && (
+        {transactions?.length === 0 && (
           <Text style={{ padding: 14, color: Colors.gray }}>
             {i18n.t("No transactions yet")}
           </Text>

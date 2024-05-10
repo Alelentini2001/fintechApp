@@ -15,6 +15,7 @@ import QRCodeStyled from "react-native-qrcode-styled";
 import Colors from "@/constants/Colors";
 import { useUser } from "@clerk/clerk-expo";
 import { useTheme } from "@/app/ThemeContext";
+import firestore, { firebase } from "@react-native-firebase/firestore";
 
 const QrCode = ({ t }) => {
   let colorScheme = useTheme().theme;
@@ -29,30 +30,67 @@ const QrCode = ({ t }) => {
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const { user } = useUser();
 
+  const [userr, setUserr] = useState({});
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userRef = firestore().collection("users");
+      let query = userRef.where(
+        "email",
+        "==",
+        user?.primaryEmailAddress
+          ? user.primaryEmailAddress.emailAddress
+          : "test"
+      );
+      let queryphone = userRef.where(
+        "phone",
+        "==",
+        user?.primaryPhoneNumber ? user.primaryPhoneNumber.phoneNumber : "test"
+      );
+
+      const snapshot = await query.get();
+      const snapshotPhone = await queryphone.get();
+      if (!snapshot.empty) {
+        const userData = snapshot.docs[0].data();
+        setUserr(userData);
+      } else if (!snapshotPhone.empty) {
+        const userData = snapshotPhone.docs[0].data();
+        setUserr(userData);
+      }
+    };
+    getUser();
+  }, [setUserr]);
+
   const generateQRCode = () => {
     setIsLoading(true);
-    const amountt = parseFloat(amount).toFixed(2);
-    const qrCodeData = {
-      amount: amountt,
-      reference,
-      merchantUsername: user?.username,
-      merchantId: user?.id,
-      merchantFullName: user?.fullName,
-      merchantEmail: user?.primaryEmailAddress?.emailAddress.toString(),
-      merchantPhone: user?.primaryPhoneNumber?.phoneNumber,
-    };
+    if (userr) {
+      const amountt = parseFloat(amount).toFixed(2);
+      const qrCodeData = {
+        amount: amountt,
+        reference,
+        merchantUsername: user?.username,
+        merchantId: user?.id,
+        merchantFullName: user?.fullName,
+        merchantEmail: user?.primaryEmailAddress?.emailAddress.toString(),
+        merchantPhone: user?.primaryPhoneNumber?.phoneNumber,
+        merchantDestination: userr?.pubKey,
+      };
 
-    const qrCodeParams = new URLSearchParams(qrCodeData).toString();
-    const qrCodeURL = `${qrCodeParams}`;
+      const qrCodeParams = new URLSearchParams(qrCodeData).toString();
+      const qrCodeURL = `${qrCodeParams}`;
 
-    // Typically, you'd use a backend service or a URL shortener API here
-    setQrCodeUrl(qrCodeURL);
-    setIsLoading(false);
+      // Typically, you'd use a backend service or a URL shortener API here
+      setQrCodeUrl(qrCodeURL);
+
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
   };
 
   useEffect(() => {
     generateQRCode();
-  }, []);
+  }, [userr]);
 
   return (
     <View
@@ -218,9 +256,9 @@ const QrCode = ({ t }) => {
                   fontWeight: "bold",
                 }}
               >
-                {parseFloat(amount).toFixed(2).slice(0, -3)}
+                {parseFloat(amount)?.toFixed(2)?.slice(0, -3)}
                 <Text style={{ fontSize: 20, color: "gray" }}>
-                  {parseFloat(amount).toFixed(2).slice(-3)}
+                  {parseFloat(amount)?.toFixed(2)?.slice(-3)}
                 </Text>
               </Text>
             </View>

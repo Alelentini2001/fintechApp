@@ -47,6 +47,7 @@ const Scan = ({ t }) => {
   });
 
   const handleBarCodeScanned = (data: string) => {
+    console.log(data);
     if (data.split("&")[0].split("=")[0].match("amount")) {
       // const parsedData = JSON.parse(data);
       // router.replace("/(authenticated)/(tabs)/pay", {
