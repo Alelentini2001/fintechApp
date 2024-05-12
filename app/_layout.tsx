@@ -6,7 +6,7 @@ import { useFonts } from "expo-font";
 import { Link, Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SecureStore from "expo-secure-store";
@@ -16,6 +16,8 @@ import { LogBox } from "react-native";
 import i18n from "./(authenticated)/(tabs)/translate";
 import { ThemeProvider, useTheme } from "./ThemeContext";
 import "@/shim";
+import LottieView from "lottie-react-native";
+import React from "react";
 LogBox.ignoreAllLogs(); // Ignore log notification by message
 
 const queryClient = new QueryClient();
@@ -61,7 +63,7 @@ const InitialLayout = () => {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
-
+  const [loading, setLoading] = useState(true);
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -76,38 +78,63 @@ const InitialLayout = () => {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...Ionicons.font,
   });
+
   useEffect(() => {
-    if (!isLoaded) return;
+    setLoading(true);
 
-    const inAuthGroup = segments[0] === "(authenticated)";
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500); // 5000 milliseconds = 5 seconds
 
-    if (isSignedIn && !inAuthGroup && router) {
-      //router.replace("/(authenticated)/(tabs)/crypto");
-      router.replace("/(authenticated)/(modals)/lock");
-    } else if (!isSignedIn && router) {
-      router.replace("/");
-    }
-  }, [isSignedIn]);
+    // Clean up the timer when the component unmounts or the effect runs again
+    return () => clearTimeout(timer);
+  }, []);
+
   // useEffect(() => {
-  //   async function prepare() {
-  //     await SplashScreen.preventAutoHideAsync();
-  //     if (fontsLoaded && isLoaded) {
-  //       SplashScreen.hideAsync();
-  //       if (isSignedIn && segments[0] !== "(authenticated)") {
-  //         router.replace("/(authenticated)/(modals)/lock");
-  //       } else if (!isSignedIn) {
-  //         router.replace("/");
-  //       }
-  //     }
+  //   if (!isLoaded) return;
+
+  //   const inAuthGroup = segments[0] === "(authenticated)";
+
+  //   if (isSignedIn && !inAuthGroup && router) {
+
+  //     //router.replace("/(authenticated)/(tabs)/crypto");
+  //     router.replace("/(authenticated)/(modals)/lock");
+  //   } else if (!isSignedIn && router) {
+  //     router.replace("/");
   //   }
+  // }, [isSignedIn, isLoaded]);
+  useEffect(() => {
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+      if (fontsLoaded && isLoaded) {
+        SplashScreen.hideAsync();
+        if (isSignedIn && segments[0] !== "(authenticated)") {
+          router.replace("/(authenticated)/(modals)/lock");
+        } else if (!isSignedIn) {
+          router.replace("/");
+        }
+      }
+    }
 
-  //   prepare();
-  // }, [fontsLoaded, isLoaded, isSignedIn, segments]);
+    prepare();
+  }, [fontsLoaded, isLoaded, isSignedIn, segments, loading]);
+  const animation = useRef(null);
 
-  if (!loaded || !isLoaded) {
+  if (!loaded || !isLoaded || loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size={"large"} color={Colors.dark} />
+        {/* <ActivityIndicator size={"large"} color={Colors.dark} /> */}
+
+        <LottieView
+          autoPlay
+          ref={animation}
+          style={{
+            width: 200,
+            height: 200,
+            backgroundColor: "#fffff",
+          }}
+          source={require("@/assets/images/logo.json")}
+        />
       </View>
     );
   }

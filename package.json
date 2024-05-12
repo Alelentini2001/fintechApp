@@ -66,6 +66,7 @@
     "firebase": "^10.11.0",
     "https-browserify": "~0.0.0",
     "i18n-js": "^4.4.3",
+    "lottie-react-native": "^6.7.2",
     "process": "^0.11.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
