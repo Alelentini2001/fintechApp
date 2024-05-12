@@ -25,7 +25,7 @@ import * as walletSdk from "@stellar/typescript-wallet-sdk";
 import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
-import { authorizeTrustline } from "../stellar/stellar";
+import { authorizeTrustline, getInitialFunds } from "../stellar/stellar";
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
@@ -70,6 +70,7 @@ const PhoneVerify = () => {
       }).toString();
 
       console.log("Encrypted:", encrypted);
+      await getInitialFunds(kp.publicKey);
       await authorizeTrustline(
         kp.secretKey,
         "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
