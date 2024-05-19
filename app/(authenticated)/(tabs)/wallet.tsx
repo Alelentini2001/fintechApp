@@ -24,7 +24,7 @@ import {
   createAccount,
   runDeposit,
   runDepositWatcher,
-  runWithdraw,
+  runWithdrawal,
   runWithdrawWatcher,
   getAccount,
   getInitialFunds,
@@ -299,7 +299,7 @@ const Wallet = () => {
       const sourceSecretKey = sourceSecretKeyy.replace('"', "");
       const kp = SigningKeypair.fromSecret(sourceSecretKey);
 
-      const url = await runWithdraw(kp, clientSecret);
+      const url = await runWithdrawal(kp, clientSecret);
       setWithdrawUrl(url);
       runWithdrawWatcher();
     } catch (error) {
@@ -345,7 +345,30 @@ const Wallet = () => {
   }
 
   if (withdrawUrl) {
-    return <WebView source={{ uri: withdrawUrl }} />;
+    return (
+      <>
+        <WebView
+          source={{ uri: withdrawUrl }}
+          style={{ marginTop: 100, marginBottom: 50 }}
+        />
+        <TouchableOpacity
+          style={{
+            backgroundColor: "black",
+            padding: 10,
+            borderRadius: 5,
+            position: "absolute",
+            top: 150,
+            right: 20,
+            zIndex: 999,
+          }}
+          onPress={() => {
+            setWithdrawUrl("");
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16 }}>X</Text>
+        </TouchableOpacity>
+      </>
+    );
   }
 
   return (
@@ -630,23 +653,6 @@ const Wallet = () => {
           {i18n.t("Withdraw Balance")}
         </Text>
       </TouchableOpacity>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Client Domain"
-          value={clientDomain}
-          autoCapitalize="none"
-          onChangeText={setClientDomain}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Client Secret"
-          value={clientSecret}
-          secureTextEntry
-          autoCapitalize="none"
-          onChangeText={setClientSecret}
-        />
-      </View>
       <TouchableOpacity
         onPress={deposit10Euro}
         style={[
@@ -679,7 +685,7 @@ const Wallet = () => {
             fontWeight: "300",
           }}
         >
-          {i18n.t("Deposit 10€")}
+          {i18n.t("Deposit")}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -714,7 +720,7 @@ const Wallet = () => {
             fontWeight: "300",
           }}
         >
-          {i18n.t("Withdraw 10€")}
+          {i18n.t("Withdraw")}
         </Text>
       </TouchableOpacity>
     </ScrollView>

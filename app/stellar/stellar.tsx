@@ -592,6 +592,43 @@ async function initiateDeposit(
   }
 }
 
+async function initiateWithdrawal(
+  authToken: string,
+  assetCode: string,
+  amount: string,
+  destinationAccount: string
+) {
+  const withdrawalEndpoint =
+    "https://testanchor.stellar.org/sep24/transactions/withdraw/interactive"; // Ensure this is correct
+
+  try {
+    const response = await axios.post(
+      withdrawalEndpoint,
+      {
+        asset_code: assetCode,
+        amount: amount,
+        account: destinationAccount,
+        memo_type: "text",
+        memo: "test-memo",
+        lang: "en",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    console.log("Withdrawal initiated:", response.data);
+    return response.data.url;
+  } catch (error) {
+    console.error(
+      "Error initiating withdrawal:",
+      error.response?.data?.error || error.message
+    );
+    throw error;
+  }
+}
+
 export const runDeposit = async (
   kp: SigningKeypair,
   clientSecret: string
@@ -660,28 +697,45 @@ export const runDepositWatcher = () => {
   stop = resp.stop;
 };
 
-export const runWithdraw = async (
+export const runWithdrawal = async (
   kp: SigningKeypair,
   clientSecret: string
 ): Promise<string> => {
-  const auth = await anchor.sep10();
-  const sourceSecretKeyy = clientSecret.replace('"', ""); // Only for signing the transaction
-  const sourceSecretKey = sourceSecretKeyy.replace('"', "");
-  authToken = await auth.authenticate({
-    accountKp: kp,
-    clientDomain: "demo-wallet-server.stellar.org",
-    walletSigner: getWalletSigner(sourceSecretKey),
-  });
+  console.log("\ncreating withdrawal ...");
+  const sourceSecretKey = clientSecret.replace(/"/g, ""); // Only for signing the transaction
+  console.log("\nsourceSecretKey ...", sourceSecretKey);
 
-  const resp = await anchor.sep24().withdraw({
-    assetCode: asset.code,
-    authToken,
-    lang: "en-US",
-    withdrawalAccount: kp.publicKey,
-    extraFields: { amount: "10" },
-  });
+  const keypair = Keypair.fromSecret(sourceSecretKey);
+  console.log("\nkeypair ...", keypair);
 
-  return resp.url!;
+  const accountKp = new AccountKeypair(keypair);
+  console.log("\nanchor ...");
+
+  let authToken;
+  try {
+    authToken = await authenticate(keypair.publicKey(), keypair.secret());
+  } catch (err) {
+    console.log("\nerror ...", err);
+    throw err; // Re-throw the error to handle it in the calling context
+  }
+
+  console.log("\nstep3 ...");
+
+  try {
+    const withdrawalUrl = await initiateWithdrawal(
+      authToken,
+      assetCode,
+      "10",
+      kp.publicKey
+    );
+    console.log("Open url:\n", withdrawalUrl);
+
+    // Start watching for the withdrawal transaction
+    return withdrawalUrl;
+  } catch (err) {
+    console.log("Error initiating withdrawal:", err);
+    throw err;
+  }
 };
 
 export const runWithdrawWatcher = () => {
