@@ -1111,7 +1111,7 @@ const Home = ({ t }) => {
       >
         {i18n.t("Transactions")}
       </Text>
-      {transactionResult ? (
+      {/* {transactionResult ? (
         <View>
           <Text>Transaction Result</Text>
           <Text>{JSON.stringify(transactionResult, null, 2)}</Text>
@@ -1157,7 +1157,7 @@ const Home = ({ t }) => {
           </Text>
         );
       })}
-      <Text>Wallet Address: {userr?.pubKey}</Text>
+      <Text>Wallet Address: {userr?.pubKey}</Text> */}
       <View
         style={[
           styles.transactions,

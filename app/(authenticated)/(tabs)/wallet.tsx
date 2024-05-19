@@ -671,7 +671,7 @@ const Wallet = () => {
         ]}
       >
         <Ionicons
-          name="logo-euro"
+          name="arrow-down-circle-outline"
           size={22}
           style={{
             marginRight: 10,
@@ -706,7 +706,7 @@ const Wallet = () => {
         ]}
       >
         <Ionicons
-          name="logo-euro"
+          name="arrow-down-circle-outline"
           size={22}
           style={{
             marginRight: 10,

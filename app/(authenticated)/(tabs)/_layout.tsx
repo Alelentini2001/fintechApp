@@ -35,7 +35,6 @@ import QrCode from "./qrCode";
 import { useTheme } from "@/app/ThemeContext";
 import PaymentConfirmationScreen from "./pay";
 import TransactionListener from "./awaitTransaction";
-import WebViewScreen from "./webView";
 
 const Slider = ({ colorScheme }) => {
   //   const onPressStakeholder = () => {
@@ -174,11 +173,6 @@ const Layout = () => {
         component={() => <TransactionListener t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CENTER"
       /> */}
-      <CurvedBottomBarExpo.Screen
-        name="web"
-        component={() => <WebViewScreen route={""} />}
-        position="CENTER"
-      />
 
       {/* <CurvedBottomBarExpo.Screen
         name="invest"
