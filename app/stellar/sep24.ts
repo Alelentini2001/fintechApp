@@ -1,7 +1,6 @@
 // import axios from "axios";
 // import readline from "readline";
 // import path from "path";
-
 // import {
 //   walletSdk,
 //   Anchor,
@@ -123,7 +122,7 @@
 // export const runDepositWatcher = (anchor: Anchor) => {
 //   console.log("\nstarting watcher ...");
 
-//   const stop: Types.WatcherStopFunction;
+//   let stop: Types.WatcherStopFunction;
 //   const onMessage = (m: Types.AnchorTransaction) => {
 //     console.log({ m });
 //     if (m.status === Types.TransactionStatus.completed) {
@@ -188,7 +187,7 @@
 // export const runWithdrawWatcher = (anchor, kp) => {
 //   console.log("\nstarting watcher ...");
 
-//   const stop;
+//   let stop: () => void;
 //   const onMessage = (m) => {
 //     console.log({ m });
 

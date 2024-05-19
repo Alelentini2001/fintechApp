@@ -4,12 +4,12 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     plugins: [
       "react-native-reanimated/plugin",
-      [
-        "inline-dotenv",
-        {
-          path: ".env", // Specify the path to your .env file if not in the root
-        },
-      ],
+      // [
+      //   "inline-dotenv",
+      //   {
+      //     path: ".env", // Specify the path to your .env file if not in the root
+      //   },
+      // ],
     ],
   };
 };

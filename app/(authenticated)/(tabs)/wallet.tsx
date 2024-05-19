@@ -1,6 +1,3 @@
-import Colors from "@/constants/Colors";
-import { useBalanceStore } from "@/store/balanceStore";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -10,24 +7,42 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  ScrollView,
+  TextInput,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
-import i18n from "./translate";
 import { useTheme } from "@/app/ThemeContext";
 import { useUser } from "@clerk/clerk-expo";
-import firestore, { firebase } from "@react-native-firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import { useRouter } from "expo-router";
-import { ScrollView } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
+import { useBalanceStore } from "@/store/balanceStore";
+import i18n from "./translate";
+import { WebView } from "react-native-webview";
 import {
+  createAccount,
+  runDeposit,
+  runDepositWatcher,
+  runWithdraw,
+  runWithdrawWatcher,
   getAccount,
   getInitialFunds,
   swapXLMtoUSDC,
 } from "@/app/stellar/stellar";
+import {
+  Keypair,
+  SigningKeypair,
+  walletSdk,
+} from "@stellar/typescript-wallet-sdk";
 import CryptoJS from "crypto-js";
 
-const Wallet = ({ t }) => {
-  let colorScheme = useTheme().theme;
+const Wallet = () => {
   const { user } = useUser();
+  const headerHeight = useHeaderHeight();
+  const router = useRouter();
+  const { theme } = useTheme();
+  const colorScheme = theme;
   const {
     balance,
     runTransaction,
@@ -36,18 +51,74 @@ const Wallet = ({ t }) => {
     transactions: transact,
   } = useBalanceStore();
 
-  const headerHeight = useHeaderHeight();
-  const router = useRouter();
   const [transactions, setTransactions] = useState([]);
   const [transactionsReferral, setTransactionsReferral] = useState([]);
+  const [walletDetails, setWalletDetails] = useState([]);
+  const [wallet, setWallet] = useState({
+    publicKey: "",
+    secretKey: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [userr, setUserr] = useState({});
+  const [cashback, setCashback] = useState(0);
+  const [depositUrl, setDepositUrl] = useState<string | null>(null);
+  const [withdrawUrl, setWithdrawUrl] = useState<string | null>(null);
+  const [clientDomain, setClientDomain] = useState<string>("");
+  const [clientSecret, setClientSecret] = useState<string>("ASDASDSADS");
 
   useEffect(() => {
-    if (!user?.id) return; // Ensure user id is present
+    const fetchUser = async () => {
+      const userRef = firestore().collection("users");
+      let query = userRef.where(
+        "email",
+        "==",
+        user?.primaryEmailAddress
+          ? user.primaryEmailAddress.emailAddress
+          : "test"
+      );
+      let queryphone = userRef.where(
+        "phone",
+        "==",
+        user?.primaryPhoneNumber ? user.primaryPhoneNumber.phoneNumber : "test"
+      );
 
-    // References to Firestore collections
+      const snapshot = await query.get();
+      const snapshotPhone = await queryphone.get();
+      if (!snapshot.empty) {
+        const userData = snapshot.docs[0].data();
+        setUserr(userData);
+      } else if (!snapshotPhone.empty) {
+        const userData = snapshotPhone.docs[0].data();
+        setUserr(userData);
+      }
+    };
+    fetchUser();
+  }, [setUserr]);
+
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      setLoading(true);
+      try {
+        if (userr) {
+          const data = await getAccount(userr?.pubKey);
+          if (userr) {
+            setWalletDetails(data.balances);
+          } else {
+            setWalletDetails([]);
+            throw new Error("Error getting the user");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWalletDetails();
+  }, [userr]);
+
+  useEffect(() => {
     const transactionRef = firestore().collection("transactions");
-
-    // Function to handle the new snapshot data
     const handleTransactionUpdate = async (querySnapshot) => {
       const newFetchedTransactions = [];
       querySnapshot.forEach((doc) => {
@@ -80,7 +151,6 @@ const Wallet = ({ t }) => {
       const newFetchedTransactions = [];
       querySnapshot.forEach((doc) => {
         let transaction = { id: doc.id, ...doc.data() };
-        // Adjust the transaction amount if the user is the merchant but not the payee
         if (
           transaction.merchantId === user?.id &&
           transaction.payeeId !== user?.id
@@ -116,14 +186,12 @@ const Wallet = ({ t }) => {
       });
     };
 
-    // Subscribe to changes where the user is the payee
     const unsubscribePayee = transactionRef
       .where("payeeId", "==", user.id)
       .onSnapshot(handleTransactionUpdate, (error) => {
         console.error("Error fetching payee transactions:", error);
       });
 
-    // Subscribe to changes where the user is the merchant
     const unsubscribeMerchant = transactionRef
       .where("merchantId", "==", user.id)
       .onSnapshot(handleTransactionUpdate, (error) => {
@@ -136,13 +204,21 @@ const Wallet = ({ t }) => {
         console.error("Error fetching merchant transactions:", error);
       });
 
-    // Cleanup function to unsubscribe from listeners
     return () => {
       unsubscribePayee();
       unsubscribeMerchant();
       unsubscribeReferral();
     };
   }, [user?.id]);
+
+  useEffect(() => {
+    if (transactions.length > 0) {
+      runTransaction(transactions, user?.id!);
+    }
+    if (transactionsReferral.length > 0) {
+      computeReferralCommission(transactionsReferral, user?.id!);
+    }
+  }, [transactions, transactionsReferral, user?.id]);
 
   const appendUserData = async (transaction) => {
     const userRef = firestore().collection("users");
@@ -164,181 +240,73 @@ const Wallet = ({ t }) => {
     return transaction;
   };
 
-  const handleTransactionUpdate = async (querySnapshot) => {
-    const fetchedTransactions = [];
-    querySnapshot.forEach((doc) => {
-      fetchedTransactions.push({ id: doc.id, ...doc.data() });
-    });
-
-    // Fetch user details for each transaction
-    const transactionsWithUserData = await Promise.all(
-      fetchedTransactions.map(async (transaction) => {
-        return appendUserData(transaction);
-      })
-    );
-
-    setTransactions((transact) => {
-      return [...transact, transactionsWithUserData];
-    });
-  };
-
   useEffect(() => {
-    if (transactions.length > 0) {
-      runTransaction(transactions, user?.id!);
-    }
-    if (transactionsReferral.length > 0) {
-      computeReferralCommission(transactionsReferral, user?.id!);
-    }
-  }, [transactions, user?.id]);
-
-  const [userr, setUserr] = useState({});
-  const [wallet, setWallet] = useState({
-    publicKey: "",
-    secretKey: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [walletDetails, setWalletDetails] = useState([]);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const userRef = firestore().collection("users");
-      let query = userRef.where(
-        "email",
-        "==",
-        user?.primaryEmailAddress
-          ? user.primaryEmailAddress.emailAddress
-          : "test"
-      );
-      let queryphone = userRef.where(
-        "phone",
-        "==",
-        user?.primaryPhoneNumber ? user.primaryPhoneNumber.phoneNumber : "test"
-      );
-
-      const snapshot = await query.get();
-      const snapshotPhone = await queryphone.get();
-      if (!snapshot.empty) {
-        const userData = snapshot.docs[0].data();
-        setUserr(userData);
-      } else if (!snapshotPhone.empty) {
-        const userData = snapshotPhone.docs[0].data();
-        setUserr(userData);
-      }
-    };
-    getUser();
-  }, [setUserr]);
-
-  // fetch wallet details only when `wallet` or `userr?.pubKey` changes
-  useEffect(() => {
-    const fetchDetails = async () => {
-      setLoading(true);
-      try {
-        if (userr) {
-          const data = await getAccount(userr?.pubKey);
-          if (userr) {
-            console.log(userr?.pubKey);
-            console.log(data.balances);
-            console.log("data", data.balances[0].balance);
-
-            setWalletDetails(data.balances);
-          } else {
-            setWalletDetails([]);
-            throw new Error("Error getting the user");
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching wallet details:", error);
-        // Handle the error here, such as displaying a message to the user or logging it
-      } finally {
-        setLoading(false);
-      }
-    };
-    console.log("CIao");
-    fetchDetails();
-    console.log("CIao2");
-  }, [setWalletDetails, userr]);
-
-  const depositI0euro = async () => {
-    console.log("INTITIAL FUNDS");
-    await getInitialFunds(userr?.pubKey);
-    console.log("INTITIAL FUNDS DONE");
-
-    console.log(process.env.SECRET_KEY_ENDECRYPT);
-
-    const key = CryptoJS.enc.Hex.parse(process.env.SECRET_KEY_ENDECRYPT!);
-    // Decrypting
-    const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
-      mode: CryptoJS.mode.ECB,
-    });
-    const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
-
-    const sourceSeed = privateKey;
-    console.log(sourceSeed);
-    const sourceSecretKeyy = sourceSeed.replace('"', ""); // Only for signing the transaction
-    const sourceSecretKey = sourceSecretKeyy.replace('"', "");
-    console.log("GET ACCOUNT");
-
-    const data = await getAccount(userr?.pubKey);
-    console.log("GET ACCOUNT DONE");
-
-    const nativeBalanceIndex = data.balances.findIndex(
-      (balance) => balance.asset_type === "native"
-    );
-    const balance = data.balances[nativeBalanceIndex].balance;
-    console.log(balance);
-
-    await swapXLMtoUSDC(
-      userr?.pubKey,
-      parseFloat(parseFloat(balance) > 120 ? 120 : balance) - 1,
-      sourceSecretKey
-    );
-    try {
-      await firestore().collection("transactions").add({
-        amount: "10",
-        fees: "",
-        reference: "deposit",
-        payeeUsername: "",
-        merchantUsername: "",
-        merchantFullName: "",
-        merchantEmail: "",
-        merchantPhone: "",
-        userFullName: "",
-        payeeId: user?.id,
-        payeeEmail: "",
-        payeePhoneNumber: "",
-        merchantId: user?.id,
-        timestamp: firestore.FieldValue.serverTimestamp(),
-      });
-      runTransaction(transactions, user?.id!);
-      //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
-      Alert.alert(
-        "Deposit Successful",
-        "Your deposit has been processed successfully",
-        [
-          {
-            text: "Check your homepage",
-            onPress: () => {
-              router.push("/(authenticated)/(tabs)/home");
-            },
-            style: "cancel",
-          },
-        ],
-        { cancelable: true }
-      );
-    } catch (error) {
-      console.error("Error saving transaction: ", error);
-      if (error.errors) {
-        error.errors.forEach((err) => {
-          console.error(err.code, err.message);
+    const secrettt = async () => {
+      if (process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT) {
+        const key = CryptoJS.enc.Hex.parse(
+          process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+        );
+        // Decrypting
+        const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+          mode: CryptoJS.mode.ECB,
         });
+        const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+
+        setClientSecret(privateKey);
+        console.log(privateKey);
       }
-      Alert.alert("Error", "There was a problem processing your deposit.");
+    };
+    secrettt();
+  }, [userr?.privKey]);
+
+  const deposit10Euro = async () => {
+    try {
+      const key = CryptoJS.enc.Hex.parse(
+        process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+      );
+      // Decrypting
+      const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+        mode: CryptoJS.mode.ECB,
+      });
+      const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+
+      const sourceSeed = privateKey;
+      const sourceSecretKeyy = sourceSeed.replace('"', ""); // Only for signing the transaction
+      const sourceSecretKey = sourceSecretKeyy.replace('"', "");
+      const kp = SigningKeypair.fromSecret(sourceSecretKey);
+      console.log(kp, clientSecret);
+      const url = await runDeposit(kp, clientSecret);
+      setDepositUrl(url);
+      runDepositWatcher();
+    } catch (error) {
+      console.error("Error initiating deposit:", error);
     }
   };
 
-  const [cashback, setCashback] = useState(0);
+  const withdraw10Euro = async () => {
+    try {
+      const key = CryptoJS.enc.Hex.parse(
+        process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+      );
+      // Decrypting
+      const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+        mode: CryptoJS.mode.ECB,
+      });
+      const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
 
-  // Calculate cashback whenever transactions update
+      const sourceSeed = privateKey;
+      const sourceSecretKeyy = sourceSeed.replace('"', ""); // Only for signing the transaction
+      const sourceSecretKey = sourceSecretKeyy.replace('"', "");
+      const kp = SigningKeypair.fromSecret(sourceSecretKey);
+
+      const url = await runWithdraw(kp, clientSecret);
+      setWithdrawUrl(url);
+      runWithdrawWatcher();
+    } catch (error) {
+      console.error("Error initiating withdrawal:", error);
+    }
+  };
+
   useEffect(() => {
     const sumPayeeTransactions = transactions.reduce((acc, curr) => {
       if (curr.payeeId === user?.id && curr.merchantId !== user?.id) {
@@ -348,6 +316,38 @@ const Wallet = ({ t }) => {
     }, 0);
     setCashback(sumPayeeTransactions * 0.005); // 0.5% of the transactions sum
   }, [transactions, user?.id]);
+
+  if (depositUrl) {
+    return (
+      <>
+        <WebView
+          source={{ uri: depositUrl }}
+          style={{ marginTop: 100, marginBottom: 50 }}
+        />
+        <TouchableOpacity
+          style={{
+            backgroundColor: "black",
+            padding: 10,
+            borderRadius: 5,
+            position: "absolute",
+            top: 150,
+            right: 20,
+            zIndex: 999,
+          }}
+          onPress={() => {
+            setDepositUrl("");
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16 }}>X</Text>
+        </TouchableOpacity>
+      </>
+    );
+  }
+
+  if (withdrawUrl) {
+    return <WebView source={{ uri: withdrawUrl }} />;
+  }
+
   return (
     <ScrollView
       style={{
@@ -630,10 +630,25 @@ const Wallet = ({ t }) => {
           {i18n.t("Withdraw Balance")}
         </Text>
       </TouchableOpacity>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Client Domain"
+          value={clientDomain}
+          autoCapitalize="none"
+          onChangeText={setClientDomain}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Client Secret"
+          value={clientSecret}
+          secureTextEntry
+          autoCapitalize="none"
+          onChangeText={setClientSecret}
+        />
+      </View>
       <TouchableOpacity
-        onPress={() => {
-          depositI0euro();
-        }}
+        onPress={deposit10Euro}
         style={[
           styles.withdraw,
           {
@@ -667,14 +682,48 @@ const Wallet = ({ t }) => {
           {i18n.t("Deposit 10€")}
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={withdraw10Euro}
+        style={[
+          styles.withdraw,
+          {
+            marginTop: 20,
+            marginBottom: adaptiveStyle(height, {
+              small: 300,
+              medium: 300,
+              large: 300,
+            }),
+            alignItems: "center",
+            backgroundColor:
+              colorScheme === "light" ? Colors.background : Colors.dark,
+          },
+        ]}
+      >
+        <Ionicons
+          name="logo-euro"
+          size={22}
+          style={{
+            marginRight: 10,
+            color: colorScheme === "dark" ? Colors.background : Colors.dark,
+          }}
+        />
+        <Text
+          style={{
+            color: colorScheme === "light" ? Colors.dark : Colors.background,
+            fontSize: 14,
+            fontWeight: "300",
+          }}
+        >
+          {i18n.t("Withdraw 10€")}
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const { width, height } = Dimensions.get("window");
 
-// Function to determine adaptive style based on screen size
-const adaptiveStyle = (size, { small, medium, large }) => {
+const adaptiveStyle = (size: number, { small, medium, large }) => {
   if (size < 350) {
     return small;
   } else if (size >= 350 && height ? size < 700 : size < 600) {
@@ -752,6 +801,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
+  },
+  inputContainer: {
+    margin: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: Colors.lightGray,
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 10,
+    borderRadius: 5,
   },
 });
 

@@ -1,7 +1,12 @@
 import {
   AccountKeypair,
+  Anchor,
+  DefaultSigner,
+  IssuedAssetId,
   SigningKeypair,
+  Types,
   Wallet,
+  WalletSigner,
 } from "@stellar/typescript-wallet-sdk";
 import axios from "axios";
 import { walletSdk } from "@stellar/typescript-wallet-sdk";
@@ -18,7 +23,27 @@ import {
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { Server } from "@stellar/stellar-sdk/lib/horizon";
+import { Transaction } from "@stellar/stellar-base";
 //const StellarSdk = require("@stellar/stellar-sdk");
+
+interface WalletSigner {
+  signWithClientAccount: ({
+    transaction,
+    accountKp,
+  }: {
+    transaction: Transaction;
+    accountKp: { keypair: Keypair };
+  }) => Transaction;
+  signWithDomainAccount: ({
+    transactionXDR,
+    networkPassphrase,
+    accountKp,
+  }: {
+    transactionXDR: string;
+    networkPassphrase: string;
+    accountKp: { keypair: Keypair };
+  }) => Promise<Transaction>;
+}
 
 export async function getAccount(publicKey: string) {
   const horizonUrl = "https://horizon-testnet.stellar.org";
@@ -148,34 +173,62 @@ export async function createTransactionXDR(
 
   const operation = Operation.createAccount({
     destination: destinationPublicKey,
-    startingBalance: amountLumens.toString(),
+    startingBalance: (
+      parseFloat(amountLumens) -
+      parseFloat(amountLumens) * 0.005
+    ).toString(),
     source: sourcePublicKey,
+  });
+  const operation2 = StellarSdk.Operation.payment({
+    destination: "GDT36CKLBCIQUHJPAHSAYCGQW5CHLIGIRRCQ2R7B5ERRCR2DGV7ADO7Z", //Address of Fee receiver
+    asset: usdcAsset,
+    amount: (parseFloat(amountLumens) * 0.005).toString(),
   });
 
   console.log("=> Building transaction");
+  console.log(parseFloat(amountLumens) - parseFloat(amountLumens) * 0.005);
   // console.log((amountLumens * 0.005 * 100000).toString());
   const transaction = new StellarSdk.TransactionBuilder(account, {
     timebounds: await server.fetchTimebounds(100),
     networkPassphrase: StellarSdk.Networks.TESTNET,
-    fee: (amountLumens * 0.005 * 100000).toString(),
+    fee: (100).toString(),
   })
     .addOperation(
       StellarSdk.Operation.payment({
         destination: destinationPublicKey,
         asset: usdcAsset,
-        amount: amountLumens.toString(),
+        amount: (
+          parseFloat(amountLumens) -
+          parseFloat(amountLumens) * 0.005
+        ).toString(),
         source: sourcePublicKey,
+      })
+    )
+    .addOperation(
+      StellarSdk.Operation.payment({
+        destination: "GDT36CKLBCIQUHJPAHSAYCGQW5CHLIGIRRCQ2R7B5ERRCR2DGV7ADO7Z", //Address of Fee receiver
+        asset: usdcAsset,
+        amount: (parseFloat(amountLumens) * 0.005).toString(),
       })
     )
     .addMemo(Memo.text(memoText))
     .build();
 
+  console.log(transaction);
+
   const transactiona = new StellarSdk.TransactionBuilder(account, {
     timebounds: await server.fetchTimebounds(100),
     networkPassphrase: StellarSdk.Networks.TESTNET,
-    fee: (amountLumens * 0.005 * 100000).toString(),
+    fee: (100).toString(),
   })
     .addOperation(operation)
+    .addOperation(
+      StellarSdk.Operation.payment({
+        destination: "GDT36CKLBCIQUHJPAHSAYCGQW5CHLIGIRRCQ2R7B5ERRCR2DGV7ADO7Z", //Address of Fee receiver
+        asset: usdcAsset,
+        amount: (parseFloat(amountLumens) * 0.005).toString(),
+      })
+    )
     .addMemo(Memo.text(memoText))
     .build();
 
@@ -386,3 +439,308 @@ export async function swapXLMtoUSDC(publicKey, amountToSwap, secretKey) {
     console.error("Error swapping XLM for USDC:", error.response.data);
   }
 }
+
+const anchorDomain = "https://testanchor.stellar.org/";
+const assetCode = process.env.ASSET_CODE || "USDC";
+const assetIssuer =
+  process.env.ASSET_ISSUER ||
+  "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5";
+const runMainnet = process.env.RUN_MAINNET || false;
+
+let wallet = Wallet.TestNet();
+const stellar = wallet.stellar();
+const anchor = wallet.anchor({ homeDomain: anchorDomain });
+const account = stellar.account();
+let kp: SigningKeypair;
+const asset = new IssuedAssetId(assetCode, assetIssuer);
+let authToken: Types.AuthToken;
+let kpp: Keypair;
+
+async function fetchChallengeTransaction(account: string): Promise<string> {
+  const response = await axios.get(
+    `https://testanchor.stellar.org/auth?account=${account}`
+  );
+  return response.data.transaction;
+}
+
+// Sign the challenge transaction
+function signChallengeTransaction(
+  transactionXDR: string,
+  secretKey: string
+): string {
+  const keypair = StellarSdk.Keypair.fromSecret(secretKey);
+  const transaction = new StellarSdk.Transaction(
+    transactionXDR,
+    StellarSdk.Networks.TESTNET
+  );
+  transaction.sign(keypair);
+  return transaction.toXDR();
+}
+
+// Submit the signed transaction
+async function submitSignedTransaction(signedTransactionXDR: string) {
+  const response = await axios.post("https://testanchor.stellar.org/auth", {
+    transaction: signedTransactionXDR,
+  });
+  return response.data.token;
+}
+
+// Main function
+async function authenticate(account: string, secretKey: string) {
+  try {
+    // Step 1: Fetch the challenge transaction
+    const challengeTransactionXDR = await fetchChallengeTransaction(account);
+    console.log("Challenge transaction:", challengeTransactionXDR);
+
+    // Step 2: Sign the challenge transaction
+    const signedTransactionXDR = signChallengeTransaction(
+      challengeTransactionXDR,
+      secretKey
+    );
+    console.log("Signed transaction:", signedTransactionXDR);
+
+    // Step 3: Submit the signed transaction
+    const token = await submitSignedTransaction(signedTransactionXDR);
+    console.log("Authentication token:", token);
+
+    return token;
+  } catch (error) {
+    console.error("Error during authentication:", error);
+    throw error;
+  }
+}
+const demoWalletSigner: WalletSigner = {
+  signWithClientAccount: ({ transaction, accountKp }) => {
+    console.log("\nsigning ...", accountKp);
+    transaction.sign(accountKp.keypair);
+    console.log("\ntransaction", transaction);
+    console.log("\nmemo", transaction.memo);
+    console.log("\nsource", transaction.source);
+    console.log("\nsource2", transaction._source);
+
+    return transaction;
+  },
+  signWithDomainAccount: async ({
+    transactionXDR,
+    networkPassphrase,
+    accountKp,
+  }) => {
+    console.log("\nAAAA ...", transactionXDR, networkPassphrase, accountKp);
+    try {
+      console.log("Received transactionXDR:", transactionXDR);
+      console.log("Received networkPassphrase:", networkPassphrase);
+
+      const response = await axios.post(
+        "https://demo-wallet-server.stellar.org/sign",
+        { transactionXDR, networkPassphrase }
+      );
+      console.log("\nResponse from demo wallet server:", response);
+
+      if (!response.data || !response.data.transactionXDR) {
+        throw new Error("Invalid response from demo wallet server");
+      }
+      console.log(
+        "\nSigned transactionXDR from server:",
+        response.data.transactionXDR
+      );
+
+      const signedTransaction = TransactionBuilder.fromXDR(
+        response.data.transactionXDR,
+        networkPassphrase
+      ) as Transaction;
+      console.log("\nParsed signed transaction:", signedTransaction);
+
+      return signedTransaction;
+    } catch (error) {
+      console.error("Error during domain account signing:", error);
+      throw error;
+    }
+  },
+};
+async function initiateDeposit(
+  authToken: string,
+  assetCode: string,
+  amount: string,
+  destinationAccount: string
+) {
+  try {
+    const response = await axios.post(
+      "https://testanchor.stellar.org/sep24/transactions/deposit/interactive",
+      {
+        asset_code: assetCode,
+        amount: amount,
+        account: destinationAccount,
+        memo_type: "text",
+        memo: "test-memo",
+        lang: "en",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    console.log("Deposit initiated:", response.data);
+    return response.data.url;
+  } catch (error) {
+    console.error(
+      "Error initiating deposit:",
+      error.response?.data?.error || error.message
+    );
+    throw error;
+  }
+}
+
+export const runDeposit = async (
+  kp: SigningKeypair,
+  clientSecret: string
+): Promise<string> => {
+  console.log("\ncreating deposit ...");
+  const sourceSecretKeyy = clientSecret.replace('"', ""); // Only for signing the transaction
+  const sourceSecretKey = sourceSecretKeyy.replace('"', "");
+  console.log("\nsourceSecretKey ...", sourceSecretKey);
+
+  const keyp = Keypair.fromSecret(sourceSecretKey);
+  console.log("\nkeypair ...", keyp);
+
+  const accountKp = new AccountKeypair(keyp);
+  const sep10 = await anchor.sep10();
+  console.log("\nanchor ...");
+
+  let authToken;
+  try {
+    authToken = await authenticate(keyp.publicKey(), keyp.secret());
+  } catch (err) {
+    console.log("\nerror ...", err);
+    throw err; // Re-throw the error to handle it in the calling context
+  }
+
+  console.log("\nstep3 ...");
+
+  try {
+    console.log("\nasdas", asset.code, keyp.publicKey());
+    const depositUrl = await initiateDeposit(
+      authToken,
+      asset.code,
+      "10",
+      keyp.publicKey()
+    );
+    console.log("Open url:\n", depositUrl);
+    return depositUrl;
+  } catch (err) {
+    console.log("Error initiating deposit:", err);
+    throw err;
+  }
+};
+
+export const runDepositWatcher = () => {
+  let stop: Types.WatcherStopFunction;
+  const onMessage = (m: Types.AnchorTransaction) => {
+    if (m.status === Types.TransactionStatus.completed) {
+      stop();
+    }
+  };
+
+  const onError = (error: Types.AnchorTransaction | Error) => {
+    console.error({ error });
+  };
+  console.log("\nCiaooo");
+  const watcher = anchor.sep24().watcher();
+  const resp = watcher.watchAllTransactions({
+    authToken,
+    assetCode: asset.code,
+    onMessage,
+    onError,
+    timeout: 5000,
+    lang: "en-US",
+  });
+  console.log("\nResp: ", resp);
+
+  stop = resp.stop;
+};
+
+export const runWithdraw = async (
+  kp: SigningKeypair,
+  clientSecret: string
+): Promise<string> => {
+  const auth = await anchor.sep10();
+  const sourceSecretKeyy = clientSecret.replace('"', ""); // Only for signing the transaction
+  const sourceSecretKey = sourceSecretKeyy.replace('"', "");
+  authToken = await auth.authenticate({
+    accountKp: kp,
+    clientDomain: "demo-wallet-server.stellar.org",
+    walletSigner: getWalletSigner(sourceSecretKey),
+  });
+
+  const resp = await anchor.sep24().withdraw({
+    assetCode: asset.code,
+    authToken,
+    lang: "en-US",
+    withdrawalAccount: kp.publicKey,
+    extraFields: { amount: "10" },
+  });
+
+  return resp.url!;
+};
+
+export const runWithdrawWatcher = () => {
+  let stop: Types.WatcherStopFunction;
+
+  const onMessage = (m: Types.AnchorTransaction) => {
+    if (m.status === Types.TransactionStatus.pending_user_transfer_start) {
+      sendWithdrawalTransaction(m);
+    }
+    if (m.status === Types.TransactionStatus.completed) {
+      stop();
+    }
+  };
+
+  const onError = (e: Types.AnchorTransaction | Error) => {
+    console.error({ e });
+  };
+
+  const watcher = anchor.sep24().watcher();
+  const resp = watcher.watchAllTransactions({
+    authToken,
+    assetCode: asset.code,
+    onMessage,
+    onError,
+    timeout: 5000,
+    lang: "en-US",
+  });
+
+  stop = resp.stop;
+};
+
+const sendWithdrawalTransaction = async (
+  withdrawalTxn: Types.AnchorTransaction
+) => {
+  const txBuilder = await stellar.transaction({
+    sourceAddress: kp,
+    baseFee: 1000,
+  });
+  const tx = txBuilder
+    .transferWithdrawalTransaction(withdrawalTxn, asset)
+    .build();
+  kp.sign(tx);
+  await stellar.submitTransaction(tx);
+};
+
+const getWalletSigner = (clientSecret: string) => {
+  const walletSigner = DefaultSigner;
+  console.log("\nsecret ...", clientSecret);
+  walletSigner.signWithDomainAccount = async ({
+    transactionXDR,
+    networkPassphrase,
+  }: Types.SignWithDomainAccountParams): Promise<StellarSdk.Transaction> => {
+    const signer = SigningKeypair.fromSecret(clientSecret);
+    const transaction = TransactionBuilder.fromXDR(
+      transactionXDR,
+      networkPassphrase
+    ) as StellarSdk.Transaction;
+    signer.sign(transaction);
+    return transaction;
+  };
+  return walletSigner;
+};

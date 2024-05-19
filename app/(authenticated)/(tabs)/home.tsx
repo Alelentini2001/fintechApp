@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   useColorScheme,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect, useRef, useState } from "react";
@@ -40,9 +41,11 @@ import {
 } from "@/app/stellar/stellar";
 import { Server } from "@stellar/stellar-sdk/lib/horizon";
 import React from "react";
+import LottieView from "lottie-react-native";
+
 const StellarSdk = require("stellar-sdk");
 
-const SECRET_KEY = process.env.SECRET_KEY_ENDECRYPT;
+const SECRET_KEY = process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT;
 
 interface CarouselIndicatorProps {
   data: number[];
@@ -327,6 +330,18 @@ const Home = ({ t }) => {
   const [loading, setLoading] = useState(false);
   const [walletDetails, setWalletDetails] = useState([]);
 
+  const [showLoader, setShowLoader] = useState(false);
+
+  const handleScroll = ({ nativeEvent }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+    if (contentOffset.y <= -100) {
+      setShowLoader(true);
+      setTimeout(() => {
+        setShowLoader(false);
+      }, 2000);
+    }
+  };
+
   useEffect(() => {
     const getUser = async () => {
       const userRef = firestore().collection("users");
@@ -390,7 +405,9 @@ const Home = ({ t }) => {
   const [error, setError] = useState("");
 
   async function transaction() {
-    const key = CryptoJS.enc.Hex.parse(process.env.SECRET_KEY_ENDECRYPT!);
+    const key = CryptoJS.enc.Hex.parse(
+      process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+    );
     // Decrypting
     const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
       mode: CryptoJS.mode.ECB,
@@ -885,6 +902,8 @@ const Home = ({ t }) => {
     }
   };
 
+  const animation = useRef(null);
+
   return (
     <ScrollView
       style={{
@@ -894,6 +913,8 @@ const Home = ({ t }) => {
       contentContainerStyle={{
         paddingTop: headerHeight,
       }}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
     >
       {/* <View
         style={[
@@ -954,6 +975,21 @@ const Home = ({ t }) => {
           </View>
         </View>
       </View> */}
+      {showLoader && (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          {/* <ActivityIndicator size="large" color={Colors.primary} /> */}
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: "#fffff",
+            }}
+            source={require("@/assets/images/logo.json")}
+          />
+        </View>
+      )}
       <FlatList
         data={[0, 1, 2]}
         renderItem={({ index }) => (

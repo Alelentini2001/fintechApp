@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import { useBalanceStore } from "@/store/balanceStore";
 import { createTransactionXDR, getAccount } from "@/app/stellar/stellar";
 import CryptoJS from "crypto-js";
+import LottieView from "lottie-react-native";
 
 const PaymentConfirmationScreen = () => {
   let colorScheme = useTheme().theme;
@@ -118,46 +119,52 @@ const PaymentConfirmationScreen = () => {
   const [error, setError] = useState("");
 
   async function transaction(destination) {
-    console.log(process.env.SECRET_KEY_ENDECRYPT, userr?.privKey);
-    const key = CryptoJS.enc.Hex.parse(process.env.SECRET_KEY_ENDECRYPT!);
-    // Decrypting
-    const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
-      mode: CryptoJS.mode.ECB,
-    });
-    const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
-    console.log("START");
-    const sourceSeed = privateKey;
-    const destinationPublicKey =
-      "GAUEBS2NHK3CEIVOS2MIV4VYXTF25ZS63GLGQDYM7MZDLYHNNL4PCFYI";
-    const amountLumens = 500; // Amount of lumens to send
-    const memoText = "Test";
-    console.log(destination);
-
     try {
-      const result = await createTransactionXDR(
-        sourceSeed,
-        userr?.pubKey,
-        destination,
-        amount,
-        reference
+      console.log(process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT, userr?.privKey);
+      const key = CryptoJS.enc.Hex.parse(
+        process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
       );
-      console.log(result);
-      setTransactionResult(result.memo);
-    } catch (err) {
-      console.error("Failed to create transaction:", err);
-      setError("Failed to process transaction. Check console for details.");
-    }
-    //await swapXLMtoUSDC(userr?.pubKey, 100, sourceSeed);
-    const data = await getAccount(userr?.pubKey);
-    if (userr) {
-      console.log(userr?.pubKey);
-      console.log(data.balances);
-      console.log("data", data.balances[0].balance);
+      // Decrypting
+      const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+        mode: CryptoJS.mode.ECB,
+      });
+      const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+      console.log("START");
+      const sourceSeed = privateKey;
+      const destinationPublicKey =
+        "GAUEBS2NHK3CEIVOS2MIV4VYXTF25ZS63GLGQDYM7MZDLYHNNL4PCFYI";
+      const amountLumens = 500; // Amount of lumens to send
+      const memoText = "Test";
+      console.log(destination);
 
-      setWalletDetails(data.balances);
-    } else {
-      setWalletDetails([]);
-      throw new Error("Error getting the user");
+      try {
+        const result = await createTransactionXDR(
+          sourceSeed,
+          userr?.pubKey,
+          destination,
+          amount,
+          reference
+        );
+        console.log(result);
+        setTransactionResult(result.memo);
+      } catch (err) {
+        console.error("Failed to create transaction:", err);
+        setError("Failed to process transaction. Check console for details.");
+      }
+      //await swapXLMtoUSDC(userr?.pubKey, 100, sourceSeed);
+      const data = await getAccount(userr?.pubKey);
+      if (userr) {
+        console.log(userr?.pubKey);
+        console.log(data.balances);
+        console.log("data", data.balances[0].balance);
+
+        setWalletDetails(data.balances);
+      } else {
+        setWalletDetails([]);
+        throw new Error("Error getting the user");
+      }
+    } catch (err) {
+      throw new Error("Error during the transaction");
     }
   }
 
@@ -176,59 +183,61 @@ const PaymentConfirmationScreen = () => {
     if (parseFloat(usdcBalance) >= parseFloat(amount)) {
       try {
         await transaction(merchantDestination);
-      } catch (error) {
-        throw new Error("Error during the transaction");
-      }
-      try {
-        await firestore()
-          .collection("transactions")
-          .add({
-            amount: amount,
-            fees: fees,
-            reference: reference,
-            payeeUsername: user?.username || "",
-            merchantUsername: merchantUsername,
-            merchantFullName: merchantFullName,
-            merchantEmail: merchantEmail,
-            merchantPhone: merchantPhone,
-            userFullName: user?.fullName,
-            payeeId: user?.id || "",
-            merchantPubKey: merchantDestination,
-            payeeEmail: user?.primaryEmailAddress
-              ? user?.primaryEmailAddress?.emailAddress
-              : "test",
-            payeePhoneNumber: user?.primaryPhoneNumber
-              ? user?.primaryPhoneNumber?.phoneNumber
-              : "test",
-            merchantId: merchantId,
-            referral: userr?.referral || "",
-            timestamp: firestore.FieldValue.serverTimestamp(),
-          });
-        //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
-        Alert.alert(
-          "Payment Successful",
-          "Your payment has been processed successfully",
-          [
-            {
-              text: "Check your payments",
-              onPress: () => {
-                if (router) {
-                  router.push("/(authenticated)/(tabs)/home");
-                }
+        try {
+          await firestore()
+            .collection("transactions")
+            .add({
+              amount: amount,
+              fees: fees,
+              reference: reference,
+              payeeUsername: user?.username || "",
+              merchantUsername: merchantUsername,
+              merchantFullName: merchantFullName,
+              merchantEmail: merchantEmail,
+              merchantPhone: merchantPhone,
+              userFullName: user?.fullName,
+              payeeId: user?.id || "",
+              merchantPubKey: merchantDestination,
+              payeeEmail: user?.primaryEmailAddress
+                ? user?.primaryEmailAddress?.emailAddress
+                : "test",
+              payeePhoneNumber: user?.primaryPhoneNumber
+                ? user?.primaryPhoneNumber?.phoneNumber
+                : "test",
+              merchantId: merchantId,
+              referral: userr?.referral || "",
+              timestamp: firestore.FieldValue.serverTimestamp(),
+            });
+          //   Alert.alert("Payment Successful", "Your payment has been processed successfully.");
+          Alert.alert(
+            "Payment Successful",
+            "Your payment has been processed successfully",
+            [
+              {
+                text: "Check your payments",
+                onPress: () => {
+                  if (router) {
+                    router.push("/(authenticated)/(tabs)/home");
+                  }
+                },
+                style: "cancel",
               },
-              style: "cancel",
-            },
-          ],
-          { cancelable: true }
-        );
-      } catch (error) {
-        console.error("Error saving transaction: ", error);
-        if (error.errors) {
-          error.errors.forEach((err) => {
-            console.error(err.code, err.message);
-          });
+            ],
+            { cancelable: true }
+          );
+        } catch (error) {
+          console.error("Error saving transaction: ", error);
+          if (error.errors) {
+            error.errors.forEach((err) => {
+              console.error(err.code, err.message);
+            });
+          }
+          Alert.alert("Error", "There was a problem processing your payment.");
         }
+      } catch (error) {
         Alert.alert("Error", "There was a problem processing your payment.");
+
+        throw new Error("Error during the transaction");
       }
     } else {
       Alert.alert(
@@ -238,6 +247,7 @@ const PaymentConfirmationScreen = () => {
     }
     setLoading(false);
   };
+  const animation = useRef(null);
 
   return (
     <View
@@ -257,6 +267,15 @@ const PaymentConfirmationScreen = () => {
         }}
       >
         Amount: €{amount}
+      </Text>
+      <Text
+        style={{
+          fontSize: 22,
+          fontWeight: "400",
+          color: colorScheme === "light" ? Colors.dark : Colors.background,
+        }}
+      >
+        He will receive: €{parseFloat(amount) - parseFloat(amount) * 0.005}
       </Text>
       <Text
         style={{
@@ -285,8 +304,27 @@ const PaymentConfirmationScreen = () => {
       >
         {loading ? (
           <>
-            <ActivityIndicator size="small" color={Colors.primary} />
-            <Text>Loading...</Text>
+            <ActivityIndicator
+              size="small"
+              color={colorScheme === "dark" ? Colors.dark : Colors.background}
+            />
+            {/* <LottieView
+              autoPlay
+              ref={animation}
+              style={{
+                width: 50,
+                height: 50,
+                backgroundColor: "#fffff",
+              }}
+              source={require("@/assets/images/logo.json")}
+            /> */}
+            <Text
+              style={{
+                color: colorScheme === "dark" ? Colors.dark : Colors.background,
+              }}
+            >
+              Loading...
+            </Text>
           </>
         ) : (
           <>
