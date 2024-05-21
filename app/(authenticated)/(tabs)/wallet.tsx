@@ -656,7 +656,7 @@ const Wallet = () => {
           {i18n.t("Claim Your Earnings")}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[
           styles.withdraw,
           {
@@ -683,7 +683,7 @@ const Wallet = () => {
         >
           {i18n.t("Withdraw Balance")}
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         onPress={deposit10Euro}
         style={[
@@ -705,6 +705,7 @@ const Wallet = () => {
           <>
             <ActivityIndicator
               size="small"
+              style={{ marginRight: 3 }}
               color={colorScheme === "light" ? Colors.dark : Colors.background}
             />
             <Text
@@ -760,6 +761,7 @@ const Wallet = () => {
           <>
             <ActivityIndicator
               size="small"
+              style={{ marginRight: 3 }}
               color={colorScheme === "light" ? Colors.dark : Colors.background}
             />
             <Text
@@ -773,12 +775,14 @@ const Wallet = () => {
           </>
         ) : (
           <>
-            <Ionicons
-              name="arrow-up-circle-outline"
-              size={22}
+            <Image
+              source={require("@/assets/images/sendIcon.png")}
               style={{
                 marginRight: 10,
-                color: colorScheme === "dark" ? Colors.background : Colors.dark,
+                width: 20,
+                height: 20,
+                tintColor:
+                  colorScheme === "dark" ? Colors.background : Colors.dark,
               }}
             />
             <Text
@@ -789,7 +793,7 @@ const Wallet = () => {
                 fontWeight: "300",
               }}
             >
-              {i18n.t("Withdraw")}
+              {i18n.t("Withdraw Balance")}
             </Text>
           </>
         )}

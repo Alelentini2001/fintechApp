@@ -256,6 +256,7 @@ const Crypto = ({ t }) => {
         <TouchableOpacity
           onPress={() => {
             console.log("Pressed Discounts");
+            router.navigate("/(authenticated)/(tabs)/discounts");
           }}
         >
           <View

@@ -35,6 +35,7 @@ import QrCode from "./qrCode";
 import { useTheme } from "@/app/ThemeContext";
 import PaymentConfirmationScreen from "./pay";
 import TransactionListener from "./awaitTransaction";
+import Discounts from "./discounts";
 
 const Slider = ({ colorScheme }) => {
   //   const onPressStakeholder = () => {
@@ -166,6 +167,11 @@ const Layout = () => {
       <CurvedBottomBarExpo.Screen
         name="pay"
         component={() => <PaymentConfirmationScreen t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
+        position="CENTER"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="discounts"
+        component={() => <Discounts t={i18n.t.bind(i18n)} />} // Ensuring `t` is bound to `i18n`
         position="CENTER"
       />
       {/* <CurvedBottomBarExpo.Screen
