@@ -98,25 +98,25 @@ const Wallet = () => {
     fetchUser();
   }, [setUserr]);
 
-  useEffect(() => {
-    const fetchWalletDetails = async () => {
-      setLoading(true);
-      try {
+  const fetchWalletDetails = async () => {
+    setLoading(true);
+    try {
+      if (userr) {
+        const data = await getAccount(userr?.pubKey);
         if (userr) {
-          const data = await getAccount(userr?.pubKey);
-          if (userr) {
-            setWalletDetails(data.balances);
-          } else {
-            setWalletDetails([]);
-            throw new Error("Error getting the user");
-          }
+          setWalletDetails(data.balances);
+        } else {
+          setWalletDetails([]);
+          throw new Error("Error getting the user");
         }
-      } catch (error) {
-        console.error("Error fetching wallet details:", error);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching wallet details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchWalletDetails();
   }, [userr]);
 
@@ -352,6 +352,9 @@ const Wallet = () => {
             }}
             onPress={() => {
               setDepositUrl("");
+              setTimeout(() => {
+                fetchWalletDetails();
+              }, 3000);
             }}
           >
             <Text style={{ color: "white", fontSize: 16 }}>X</Text>
@@ -387,6 +390,9 @@ const Wallet = () => {
             }}
             onPress={() => {
               setWithdrawUrl("");
+              setTimeout(() => {
+                fetchWalletDetails();
+              }, 3000);
             }}
           >
             <Text style={{ color: "white", fontSize: 16 }}>X</Text>
