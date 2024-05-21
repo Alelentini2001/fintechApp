@@ -24,6 +24,7 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { Server } from "@stellar/stellar-sdk/lib/horizon";
 import { Transaction } from "@stellar/stellar-base";
+import { WithdrawTransaction } from "@stellar/typescript-wallet-sdk/lib/walletSdk/Types";
 //const StellarSdk = require("@stellar/stellar-sdk");
 
 interface WalletSigner {
@@ -560,7 +561,6 @@ const demoWalletSigner: WalletSigner = {
 async function initiateDeposit(
   authToken: string,
   assetCode: string,
-  amount: string,
   destinationAccount: string
 ) {
   try {
@@ -568,7 +568,6 @@ async function initiateDeposit(
       "https://testanchor.stellar.org/sep24/transactions/deposit/interactive",
       {
         asset_code: assetCode,
-        amount: amount,
         account: destinationAccount,
         memo_type: "text",
         memo: "test-memo",
@@ -595,7 +594,6 @@ async function initiateDeposit(
 async function initiateWithdrawal(
   authToken: string,
   assetCode: string,
-  amount: string,
   destinationAccount: string
 ) {
   const withdrawalEndpoint =
@@ -606,7 +604,6 @@ async function initiateWithdrawal(
       withdrawalEndpoint,
       {
         asset_code: assetCode,
-        amount: amount,
         account: destinationAccount,
         memo_type: "text",
         memo: "test-memo",
@@ -660,7 +657,6 @@ export const runDeposit = async (
     const depositUrl = await initiateDeposit(
       authToken,
       asset.code,
-      "10",
       keyp.publicKey()
     );
     console.log("Open url:\n", depositUrl);
@@ -725,7 +721,6 @@ export const runWithdrawal = async (
     const withdrawalUrl = await initiateWithdrawal(
       authToken,
       assetCode,
-      "10",
       kp.publicKey
     );
     console.log("Open url:\n", withdrawalUrl);
@@ -768,11 +763,11 @@ export const runWithdrawWatcher = () => {
 };
 
 const sendWithdrawalTransaction = async (
-  withdrawalTxn: Types.AnchorTransaction
+  withdrawalTxn: WithdrawTransaction
 ) => {
   const txBuilder = await stellar.transaction({
     sourceAddress: kp,
-    baseFee: 1000,
+    baseFee: 100,
   });
   const tx = txBuilder
     .transferWithdrawalTransaction(withdrawalTxn, asset)

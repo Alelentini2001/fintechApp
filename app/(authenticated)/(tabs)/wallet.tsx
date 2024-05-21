@@ -9,6 +9,7 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useTheme } from "@/app/ThemeContext";
@@ -65,6 +66,8 @@ const Wallet = () => {
   const [withdrawUrl, setWithdrawUrl] = useState<string | null>(null);
   const [clientDomain, setClientDomain] = useState<string>("");
   const [clientSecret, setClientSecret] = useState<string>("ASDASDSADS");
+  const [urlLoading, setUrlLoading] = useState<boolean>(false);
+  const [urlLoadingDeposit, setUrlLoadingDeposit] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -261,6 +264,7 @@ const Wallet = () => {
 
   const deposit10Euro = async () => {
     try {
+      setUrlLoadingDeposit(true);
       const key = CryptoJS.enc.Hex.parse(
         process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
       );
@@ -278,13 +282,16 @@ const Wallet = () => {
       const url = await runDeposit(kp, clientSecret);
       setDepositUrl(url);
       runDepositWatcher();
+      setUrlLoadingDeposit(false);
     } catch (error) {
       console.error("Error initiating deposit:", error);
+      setUrlLoadingDeposit(false);
     }
   };
 
   const withdraw10Euro = async () => {
     try {
+      setUrlLoading(true);
       const key = CryptoJS.enc.Hex.parse(
         process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
       );
@@ -302,8 +309,10 @@ const Wallet = () => {
       const url = await runWithdrawal(kp, clientSecret);
       setWithdrawUrl(url);
       runWithdrawWatcher();
+      setUrlLoading(false);
     } catch (error) {
       console.error("Error initiating withdrawal:", error);
+      setUrlLoading(false);
     }
   };
 
@@ -316,30 +325,38 @@ const Wallet = () => {
     }, 0);
     setCashback(sumPayeeTransactions * 0.005); // 0.5% of the transactions sum
   }, [transactions, user?.id]);
-
+  const [closeWeb, setCloseWeb] = useState<boolean>(false);
   if (depositUrl) {
     return (
       <>
         <WebView
           source={{ uri: depositUrl }}
+          onNavigationStateChange={(sor) => {
+            setCloseWeb(false);
+            if (sor.title === "Polaris Transaction Information") {
+              setCloseWeb(true);
+            }
+          }}
           style={{ marginTop: 100, marginBottom: 50 }}
         />
-        <TouchableOpacity
-          style={{
-            backgroundColor: "black",
-            padding: 10,
-            borderRadius: 5,
-            position: "absolute",
-            top: 150,
-            right: 20,
-            zIndex: 999,
-          }}
-          onPress={() => {
-            setDepositUrl("");
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 16 }}>X</Text>
-        </TouchableOpacity>
+        {closeWeb && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: "black",
+              padding: 10,
+              borderRadius: 5,
+              position: "absolute",
+              top: 150,
+              right: 20,
+              zIndex: 999,
+            }}
+            onPress={() => {
+              setDepositUrl("");
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 16 }}>X</Text>
+          </TouchableOpacity>
+        )}
       </>
     );
   }
@@ -349,24 +366,32 @@ const Wallet = () => {
       <>
         <WebView
           source={{ uri: withdrawUrl }}
+          onNavigationStateChange={(sor) => {
+            setCloseWeb(false);
+            if (sor.title === "Polaris Transaction Information") {
+              setCloseWeb(true);
+            }
+          }}
           style={{ marginTop: 100, marginBottom: 50 }}
         />
-        <TouchableOpacity
-          style={{
-            backgroundColor: "black",
-            padding: 10,
-            borderRadius: 5,
-            position: "absolute",
-            top: 150,
-            right: 20,
-            zIndex: 999,
-          }}
-          onPress={() => {
-            setWithdrawUrl("");
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 16 }}>X</Text>
-        </TouchableOpacity>
+        {closeWeb && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: "black",
+              padding: 10,
+              borderRadius: 5,
+              position: "absolute",
+              top: 150,
+              right: 20,
+              zIndex: 999,
+            }}
+            onPress={() => {
+              setWithdrawUrl("");
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 16 }}>X</Text>
+          </TouchableOpacity>
+        )}
       </>
     );
   }
@@ -670,23 +695,43 @@ const Wallet = () => {
           },
         ]}
       >
-        <Ionicons
-          name="arrow-down-circle-outline"
-          size={22}
-          style={{
-            marginRight: 10,
-            color: colorScheme === "dark" ? Colors.background : Colors.dark,
-          }}
-        />
-        <Text
-          style={{
-            color: colorScheme === "light" ? Colors.dark : Colors.background,
-            fontSize: 14,
-            fontWeight: "300",
-          }}
-        >
-          {i18n.t("Deposit")}
-        </Text>
+        {urlLoadingDeposit ? (
+          <>
+            <ActivityIndicator
+              size="small"
+              color={colorScheme === "light" ? Colors.dark : Colors.background}
+            />
+            <Text
+              style={{
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              }}
+            >
+              Loading...
+            </Text>
+          </>
+        ) : (
+          <>
+            <Ionicons
+              name="arrow-down-circle-outline"
+              size={22}
+              style={{
+                marginRight: 10,
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
+              }}
+            />
+            <Text
+              style={{
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+                fontSize: 14,
+                fontWeight: "300",
+              }}
+            >
+              {i18n.t("Deposit")}
+            </Text>
+          </>
+        )}
       </TouchableOpacity>
       <TouchableOpacity
         onPress={withdraw10Euro}
@@ -705,23 +750,43 @@ const Wallet = () => {
           },
         ]}
       >
-        <Ionicons
-          name="arrow-down-circle-outline"
-          size={22}
-          style={{
-            marginRight: 10,
-            color: colorScheme === "dark" ? Colors.background : Colors.dark,
-          }}
-        />
-        <Text
-          style={{
-            color: colorScheme === "light" ? Colors.dark : Colors.background,
-            fontSize: 14,
-            fontWeight: "300",
-          }}
-        >
-          {i18n.t("Withdraw")}
-        </Text>
+        {urlLoading ? (
+          <>
+            <ActivityIndicator
+              size="small"
+              color={colorScheme === "light" ? Colors.dark : Colors.background}
+            />
+            <Text
+              style={{
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+              }}
+            >
+              Loading...
+            </Text>
+          </>
+        ) : (
+          <>
+            <Ionicons
+              name="arrow-up-circle-outline"
+              size={22}
+              style={{
+                marginRight: 10,
+                color: colorScheme === "dark" ? Colors.background : Colors.dark,
+              }}
+            />
+            <Text
+              style={{
+                color:
+                  colorScheme === "light" ? Colors.dark : Colors.background,
+                fontSize: 14,
+                fontWeight: "300",
+              }}
+            >
+              {i18n.t("Withdraw")}
+            </Text>
+          </>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
