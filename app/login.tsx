@@ -18,6 +18,7 @@ import { useTheme } from "./ThemeContext";
 import { I18n } from "i18n-js";
 import * as Localization from "expo-localization";
 import translations from "@/app/(authenticated)/(tabs)/translations.json";
+import React from "react";
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
@@ -159,8 +160,10 @@ const Login = () => {
             <TextInput
               style={styles.input}
               placeholder="Country code"
+              keyboardType="phone-pad"
               placeholderTextColor={Colors.gray}
               value={countryCode}
+              onChangeText={setCountryCode}
             />
             <TextInput
               style={[styles.input, { flex: 1 }]}

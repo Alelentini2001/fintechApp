@@ -428,7 +428,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5E3Y786UY7;
+				DEVELOPMENT_TEAM = 95PVJ73AJT;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -448,7 +448,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.aleprophet.fintech;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aleprophet.quply;
 				PRODUCT_NAME = QUPLY;
 				SWIFT_OBJC_BRIDGING_HEADER = "fintech/fintech-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -468,7 +468,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5E3Y786UY7;
+				DEVELOPMENT_TEAM = 95PVJ73AJT;
 				INFOPLIST_FILE = fintech/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = QUPLY;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
@@ -483,7 +483,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.aleprophet.fintech;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aleprophet.quply;
 				PRODUCT_NAME = QUPLY;
 				SWIFT_OBJC_BRIDGING_HEADER = "fintech/fintech-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -561,10 +561,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -632,10 +629,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
