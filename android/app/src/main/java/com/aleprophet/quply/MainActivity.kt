@@ -1,4 +1,4 @@
-package com.aleprophet.fintech
+package com.aleprophet.quply
 
 import android.os.Build
 import android.os.Bundle

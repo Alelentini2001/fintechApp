@@ -21,7 +21,8 @@ import React from "react";
 LogBox.ignoreAllLogs(); // Ignore log notification by message
 
 const queryClient = new QueryClient();
-const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const CLERK_PUBLISHABLE_KEY =
+  "pk_test_Y29tcGxldGUtc2hpbmVyLTMuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
 // Cache the Clerk JWT
 const tokenCache = {
