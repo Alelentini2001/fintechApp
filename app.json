@@ -2,7 +2,7 @@
   "expo": {
     "name": "QUPLY",
     "slug": "QUPLY",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -16,12 +16,11 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aleprophet.quply",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID.",
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
@@ -116,6 +115,10 @@
       "eas": {
         "projectId": "5765a9c6-e77c-4e7c-a75b-4127d0b82c8b"
       }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/5765a9c6-e77c-4e7c-a75b-4127d0b82c8b"
     }
   }
 }
