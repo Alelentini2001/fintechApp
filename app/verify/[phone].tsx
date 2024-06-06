@@ -26,6 +26,7 @@ import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
 import { authorizeTrustline, getInitialFunds } from "../stellar/stellar";
+import React from "react";
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
@@ -139,7 +140,6 @@ const PhoneVerify = () => {
           if (completeSignUp.status === "complete") {
             await setActive({ session: completeSignUp.createdSessionId });
           }
-          console.log("firebase", signUp.id);
           await firestore()
             .collection("users")
             .add({

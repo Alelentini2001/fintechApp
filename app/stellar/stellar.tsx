@@ -6,7 +6,6 @@ import {
   SigningKeypair,
   Types,
   Wallet,
-  WalletSigner,
 } from "@stellar/typescript-wallet-sdk";
 import axios from "axios";
 import { walletSdk } from "@stellar/typescript-wallet-sdk";
@@ -517,7 +516,6 @@ const demoWalletSigner: WalletSigner = {
     console.log("\ntransaction", transaction);
     console.log("\nmemo", transaction.memo);
     console.log("\nsource", transaction.source);
-    console.log("\nsource2", transaction._source);
 
     return transaction;
   },

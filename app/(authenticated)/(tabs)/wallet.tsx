@@ -245,20 +245,19 @@ const Wallet = () => {
 
   useEffect(() => {
     const secrettt = async () => {
-      if (process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT) {
-        const key = CryptoJS.enc.Hex.parse(
-          process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
-        );
-        // Decrypting
-        const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
-          mode: CryptoJS.mode.ECB,
-        });
-        const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+      const key = CryptoJS.enc.Hex.parse(
+        "34e2800cde54fb848e48d24a90ef3a2904b9acfaa289f28bcc73ae3fb688aec91028b7624b8ae3341e553092827014b9a756667c204f0928ef64ee56f1cb99dc"!
+      );
+      // Decrypting
+      const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
+        mode: CryptoJS.mode.ECB,
+      });
+      const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
 
-        setClientSecret(privateKey);
-        console.log(privateKey);
-      }
+      setClientSecret(privateKey);
+      console.log(privateKey);
     };
+
     secrettt();
   }, [userr?.privKey]);
 
@@ -266,7 +265,7 @@ const Wallet = () => {
     try {
       setUrlLoadingDeposit(true);
       const key = CryptoJS.enc.Hex.parse(
-        process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+        "34e2800cde54fb848e48d24a90ef3a2904b9acfaa289f28bcc73ae3fb688aec91028b7624b8ae3341e553092827014b9a756667c204f0928ef64ee56f1cb99dc"!
       );
       // Decrypting
       const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
@@ -293,7 +292,7 @@ const Wallet = () => {
     try {
       setUrlLoading(true);
       const key = CryptoJS.enc.Hex.parse(
-        process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+        "34e2800cde54fb848e48d24a90ef3a2904b9acfaa289f28bcc73ae3fb688aec91028b7624b8ae3341e553092827014b9a756667c204f0928ef64ee56f1cb99dc"!
       );
       // Decrypting
       const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
