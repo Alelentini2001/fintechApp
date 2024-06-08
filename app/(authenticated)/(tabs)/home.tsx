@@ -353,7 +353,12 @@ const Home = ({ t }) => {
     useEffect(() => {
         const saveTokenToUser = async () => {
             // If expoPushToken exists, save it to the user's account in Firestore
-            if (expoPushToken && user && !userr?.expoPushToken) {
+            if (
+                expoPushToken &&
+                user &&
+                !userr?.expoPushToken &&
+                userr?.expoPushToken !== expoPushToken
+            ) {
                 try {
                     // Update the user document in Firestore with the expoPushToken
                     const userRef = await firestore()
