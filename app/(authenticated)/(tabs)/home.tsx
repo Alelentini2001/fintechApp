@@ -20,6 +20,7 @@ import {
     Alert,
     ActivityIndicator,
     Platform,
+    Linking,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useEffect, useRef, useState } from "react";
@@ -49,7 +50,8 @@ import { usePushNotifications } from "@/app/notifications";
 
 const StellarSdk = require("stellar-sdk");
 
-const SECRET_KEY = process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT;
+const SECRET_KEY =
+    "34e2800cde54fb848e48d24a90ef3a2904b9acfaa289f28bcc73ae3fb688aec91028b7624b8ae3341e553092827014b9a756667c204f0928ef64ee56f1cb99dc";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -353,6 +355,7 @@ const Home = ({ t }) => {
     useEffect(() => {
         const saveTokenToUser = async () => {
             // If expoPushToken exists, save it to the user's account in Firestore
+            console.log(user?.id);
             if (
                 expoPushToken &&
                 user &&
@@ -360,10 +363,12 @@ const Home = ({ t }) => {
                 userr?.expoPushToken !== expoPushToken
             ) {
                 try {
+                    const userId = user?.id.replace("sua_", "user_");
+
                     // Update the user document in Firestore with the expoPushToken
                     const userRef = await firestore()
                         .collection("users")
-                        .where("userId", "<=", user?.id.toString())
+                        .where("userId", "<=", userId)
                         .get();
 
                     if (!userRef.empty) {
@@ -390,6 +395,101 @@ const Home = ({ t }) => {
 
         saveTokenToUser();
     }, [expoPushToken, user?.id, userr]);
+
+    useEffect(() => {
+        const updateUserDocument = async () => {
+            // Check if user and userr exist and userr.userId starts with "sua_"
+            if (user && userr && userr.userId.startsWith("sua")) {
+                try {
+                    // Fetch the user document from Firestore
+                    const userRef = await firestore()
+                        .collection("users")
+                        .where("userId", "==", userr.userId)
+                        .get();
+
+                    // Check if the user document exists
+                    if (!userRef.empty) {
+                        // Update the user document with the new userId
+                        userRef.forEach(async (doc) => {
+                            await doc.ref.update({
+                                userId: user.id, // Update the userId to the original value
+                            });
+                        });
+
+                        console.log("UserId Updated");
+                    } else {
+                        console.log("User document not found in Firestore");
+                    }
+                } catch (error) {
+                    console.error(
+                        "Error updating user document with new userId:",
+                        error
+                    );
+                }
+            }
+        };
+
+        // Call updateUserDocument whenever user?.id or userr changes
+        updateUserDocument();
+    }, [user?.id, userr]);
+
+    const [isMounted, setIsMounted] = useState(true);
+
+    useEffect(() => {
+        const handleDeepLink = async (event) => {
+            const { url } = event;
+            console.log("url", url);
+            if (url && user) {
+                try {
+                    // Parse the deep link URL and extract parameters
+                    const parsedUrl = new URL(url);
+                    const params = parsedUrl.searchParams;
+
+                    // Extract the encrypted data parameter
+                    const encryptedData = params.get("data");
+                    if (encryptedData) {
+                        // Decrypt the data
+                        const bytes = CryptoJS.AES.decrypt(
+                            decodeURIComponent(encryptedData),
+                            "34e2800cde54fb848e48d24a90ef3a2904b9acfaa289f28bcc73ae3fb688aec91028b7624b8ae3341e553092827014b9a756667c204f0928ef64ee56f1cb99dc"
+                        );
+                        const decryptedData = JSON.parse(
+                            bytes.toString(CryptoJS.enc.Utf8)
+                        );
+                        console.log(decryptedData);
+
+                        // Navigate the user to the payment confirmation page with decrypted data
+                        router.replace({
+                            pathname: "/(authenticated)/(tabs)/pay",
+                            params: {
+                                paymentData: decryptedData,
+                            },
+                        });
+                    } else {
+                        console.error("No data parameter found in the URL");
+                    }
+                } catch (error) {
+                    console.error("Error handling deep link:", error);
+                }
+            }
+        };
+
+        Linking.addEventListener("url", handleDeepLink);
+
+        // Check if app was launched from a deep link
+        Linking.getInitialURL()
+            .then((url) => {
+                if (url) {
+                    handleDeepLink({ url });
+                }
+            })
+            .catch((err) => console.error("An error occurred", err));
+
+        // Cleanup the event listener
+        return () => {
+            Linking.removeAllListeners("url");
+        };
+    }, [user, router]);
 
     useEffect(() => {
         if (!user?.id) return; // Ensure user id is present
@@ -640,10 +740,10 @@ const Home = ({ t }) => {
                     const data = await getAccount(userr?.pubKey);
                     if (userr) {
                         console.log(userr?.pubKey);
-                        console.log(data.balances);
-                        console.log("data", data.balances[0].balance);
+                        console.log(data?.balances);
+                        console.log("data", data?.balances[0].balance);
 
-                        setWalletDetails(data.balances);
+                        setWalletDetails(data?.balances);
                     } else {
                         setWalletDetails([]);
                         throw new Error("Error getting the user");
@@ -659,14 +759,14 @@ const Home = ({ t }) => {
         console.log("CIao");
         fetchDetails();
         console.log("CIao2");
-    }, [setWalletDetails, userr]);
+    }, [userr, setWalletDetails]);
 
     const [transactionResult, setTransactionResult] = useState(null);
     const [error, setError] = useState("");
 
     async function transaction() {
         const key = CryptoJS.enc.Hex.parse(
-            process.env.EXPO_PUBLIC_SECRET_KEY_ENDECRYPT!
+            "34e2800cde54fb848e48d24a90ef3a2904b9acfaa289f28bcc73ae3fb688aec91028b7624b8ae3341e553092827014b9a756667c204f0928ef64ee56f1cb99dc"!
         );
         // Decrypting
         const decrypted = CryptoJS.AES.decrypt(userr?.privKey, key, {
