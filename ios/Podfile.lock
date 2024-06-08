@@ -961,9 +961,9 @@ PODS:
   - DoubleConversion (1.1.6)
   - EASClient (0.11.2):
     - ExpoModulesCore
-  - EXApplication (5.8.3):
+  - EXApplication (5.8.4):
     - ExpoModulesCore
-  - EXAV (13.10.5):
+  - EXAV (13.10.6):
     - ExpoModulesCore
     - ReactCommon/turbomodule/core
   - EXConstants (15.4.5):
@@ -976,17 +976,21 @@ PODS:
   - EXJSONUtils (0.12.3)
   - EXManifests (0.13.2):
     - ExpoModulesCore
-  - Expo (50.0.15):
+  - EXNotifications (0.27.7):
     - ExpoModulesCore
-  - expo-dev-client (3.3.11):
+  - EXPermissions (14.4.0):
+    - ExpoModulesCore
+  - Expo (50.0.19):
+    - ExpoModulesCore
+  - expo-dev-client (3.3.12):
     - EXManifests
     - expo-dev-launcher
     - expo-dev-menu
     - expo-dev-menu-interface
     - EXUpdatesInterface
-  - expo-dev-launcher (3.6.9):
+  - expo-dev-launcher (3.6.10):
     - EXManifests
-    - expo-dev-launcher/Main (= 3.6.9)
+    - expo-dev-launcher/Main (= 3.6.10)
     - expo-dev-menu
     - expo-dev-menu-interface
     - ExpoModulesCore
@@ -995,7 +999,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-launcher/Main (3.6.9):
+  - expo-dev-launcher/Main (3.6.10):
     - EXManifests
     - expo-dev-launcher/Unsafe
     - expo-dev-menu
@@ -1006,7 +1010,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-launcher/Unsafe (3.6.9):
+  - expo-dev-launcher/Unsafe (3.6.10):
     - EXManifests
     - expo-dev-menu
     - expo-dev-menu-interface
@@ -1055,13 +1059,15 @@ PODS:
     - ExpoModulesCore
   - ExpoCrypto (12.8.1):
     - ExpoModulesCore
+  - ExpoDevice (5.9.4):
+    - ExpoModulesCore
   - ExpoDynamicAppIcon (1.2.0):
     - ExpoModulesCore
-  - ExpoFileSystem (16.0.8):
+  - ExpoFileSystem (16.0.9):
     - ExpoModulesCore
   - ExpoHaptics (12.8.1):
     - ExpoModulesCore
-  - ExpoHead (3.4.8):
+  - ExpoHead (3.4.10):
     - ExpoModulesCore
   - ExpoImage (1.10.6):
     - ExpoModulesCore
@@ -1088,17 +1094,17 @@ PODS:
     - ExpoModulesCore
   - ExpoSecureStore (12.8.1):
     - ExpoModulesCore
-  - ExpoSystemUI (2.9.3):
+  - ExpoSystemUI (2.9.4):
     - ExpoModulesCore
   - ExpoWebBrowser (12.8.2):
     - ExpoModulesCore
-  - EXSplashScreen (0.26.4):
+  - EXSplashScreen (0.26.5):
     - ExpoModulesCore
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - EXStructuredHeaders (3.7.2)
-  - EXUpdates (0.24.12):
+  - EXUpdates (0.24.13):
     - EASClient
     - EXManifests
     - ExpoModulesCore
@@ -1135,7 +1141,7 @@ PODS:
   - Firebase/Storage (10.24.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.24.0)
-  - FirebaseAppCheckInterop (10.24.0)
+  - FirebaseAppCheckInterop (10.27.0)
   - FirebaseAuth (10.24.0):
     - FirebaseAppCheckInterop (~> 10.17)
     - FirebaseCore (~> 10.0)
@@ -1143,14 +1149,14 @@ PODS:
     - GoogleUtilities/Environment (~> 7.8)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
     - RecaptchaInterop (~> 100.0)
-  - FirebaseAuthInterop (10.24.0)
+  - FirebaseAuthInterop (10.27.0)
   - FirebaseCore (10.24.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.12)
     - GoogleUtilities/Logger (~> 7.12)
-  - FirebaseCoreExtension (10.24.0):
+  - FirebaseCoreExtension (10.27.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.24.0):
+  - FirebaseCoreInternal (10.27.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
   - FirebaseDatabase (10.24.0):
     - FirebaseAppCheckInterop (~> 10.17)
@@ -1177,7 +1183,7 @@ PODS:
     - gRPC-Core (~> 1.62.0)
     - leveldb-library (~> 1.22)
     - nanopb (< 2.30911.0, >= 2.30908.0)
-  - FirebaseInstallations (10.24.0):
+  - FirebaseInstallations (10.27.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
@@ -1191,7 +1197,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30911.0, >= 2.30908.0)
-  - FirebaseSharedSwift (10.24.0)
+  - FirebaseSharedSwift (10.27.0)
   - FirebaseStorage (10.24.0):
     - FirebaseAppCheckInterop (~> 10.0)
     - FirebaseAuthInterop (~> 10.0)
@@ -1204,29 +1210,29 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.13.0):
+  - GoogleUtilities/AppDelegateSwizzler (7.13.3):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Environment (7.13.0):
+  - GoogleUtilities/Environment (7.13.3):
     - GoogleUtilities/Privacy
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.13.0):
+  - GoogleUtilities/Logger (7.13.3):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Network (7.13.0):
+  - GoogleUtilities/Network (7.13.3):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Privacy
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.13.0)":
+  - "GoogleUtilities/NSData+zlib (7.13.3)":
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (7.13.0)
-  - GoogleUtilities/Reachability (7.13.0):
+  - GoogleUtilities/Privacy (7.13.3)
+  - GoogleUtilities/Reachability (7.13.3):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GoogleUtilities/UserDefaults (7.13.0):
+  - GoogleUtilities/UserDefaults (7.13.3):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - "gRPC-C++ (1.62.5)":
@@ -1334,15 +1340,15 @@ PODS:
   - libwebp/sharpyuv (1.3.2)
   - libwebp/webp (1.3.2):
     - libwebp/sharpyuv
-  - lottie-ios (4.4.1)
-  - lottie-react-native (6.7.2):
+  - lottie-ios (4.3.4)
+  - lottie-react-native (6.5.1):
     - glog
-    - lottie-ios (= 4.4.1)
+    - lottie-ios (~> 4.3.3)
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - MMKV (1.3.4):
-    - MMKVCore (~> 1.3.4)
-  - MMKVCore (1.3.4)
+  - MMKV (1.3.5):
+    - MMKVCore (~> 1.3.5)
+  - MMKVCore (1.3.5)
   - nanopb (2.30909.1):
     - nanopb/decode (= 2.30909.1)
     - nanopb/encode (= 2.30909.1)
@@ -1376,7 +1382,7 @@ PODS:
     - FBLazyVector (= 0.73.6)
     - RCTRequired (= 0.73.6)
     - React-Core (= 0.73.6)
-  - ReachabilitySwift (5.2.2)
+  - ReachabilitySwift (5.2.3)
   - React (0.73.6):
     - React-Core (= 0.73.6)
     - React-Core/DevSupport (= 0.73.6)
@@ -2230,7 +2236,7 @@ PODS:
     - React-Core
   - react-native-safe-area-context (4.8.2):
     - React-Core
-  - react-native-webview (13.10.2):
+  - react-native-webview (13.6.4):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -2492,6 +2498,8 @@ DEPENDENCIES:
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
   - EXManifests (from `../node_modules/expo-manifests/ios`)
+  - EXNotifications (from `../node_modules/expo-notifications/ios`)
+  - EXPermissions (from `../node_modules/expo-permissions/ios`)
   - Expo (from `../node_modules/expo`)
   - expo-dev-client (from `../node_modules/expo-dev-client/ios`)
   - expo-dev-launcher (from `../node_modules/expo-dev-launcher`)
@@ -2501,6 +2509,7 @@ DEPENDENCIES:
   - ExpoCamera (from `../node_modules/expo-camera/ios`)
   - ExpoClipboard (from `../node_modules/expo-clipboard/ios`)
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
+  - ExpoDevice (from `../node_modules/expo-device/ios`)
   - ExpoDynamicAppIcon (from `../node_modules/expo-dynamic-app-icon/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
@@ -2658,6 +2667,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-json-utils/ios"
   EXManifests:
     :path: "../node_modules/expo-manifests/ios"
+  EXNotifications:
+    :path: "../node_modules/expo-notifications/ios"
+  EXPermissions:
+    :path: "../node_modules/expo-permissions/ios"
   Expo:
     :path: "../node_modules/expo"
   expo-dev-client:
@@ -2676,6 +2689,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-clipboard/ios"
   ExpoCrypto:
     :path: "../node_modules/expo-crypto/ios"
+  ExpoDevice:
+    :path: "../node_modules/expo-device/ios"
   ExpoDynamicAppIcon:
     :path: "../node_modules/expo-dynamic-app-icon/ios"
   ExpoFileSystem:
@@ -2855,26 +2870,29 @@ SPEC CHECKSUMS:
   DGSwiftUtilities: 9be88816a2057f125bc8fac3da6aca3ae89c1eec
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   EASClient: a42ee8bf36c93b3128352faf2ae49405ab4f80bd
-  EXApplication: 137189a3f149b4e8e546884629392c3efc94cbd3
-  EXAV: 07e50f934907fa8274dd06fbcd20ee4b9478c619
+  EXApplication: 16bcea16789221bd566e64b5ea2608cf7756b005
+  EXAV: e4f6137431ddc4cb025895046bfefa9612025c35
   EXConstants: 988aa430ca0f76b43cd46b66e7fae3287f9cc2fc
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
   EXJSONUtils: 5c42959e87be238b045ef37cc5268b16a6c0ad4a
   EXManifests: 5e8c29f36c716af768a4ea47ec05e1b89ab93091
-  Expo: 0f04015e4254c8b7c74f3c4b2facdfd0b62152b0
-  expo-dev-client: 29a32387346fe7b6d2a57918fae985bc48bfe9a2
-  expo-dev-launcher: 957d62f7ec983d02091c97fca9ac73c115b54f77
+  EXNotifications: 1c117bf042bd05a5b1a1ffd06f4c36ff9921ed2b
+  EXPermissions: 51c6115893689c3e9787f4819aa67ceeae601038
+  Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
+  expo-dev-client: f22fdebdb8760bc22f660b7c0cb1dd58d80005c0
+  expo-dev-launcher: 11c184a2dca65f9bd6dc575a73a554b7be589d1d
   expo-dev-menu: 68ea53d923996e27b20ce02b51cc820fc2327a83
   expo-dev-menu-interface: 7ba029c9d1a82ac22b9b584c00514860b060553e
   ExpoBlur: e832d874bd94afc0645daddbd3162ec1ce172080
   ExpoCamera: f3f157db67e5a491e1104a2c0018c240242936e7
   ExpoClipboard: b597982124f067ff9f5b89093eb3d97898d5d877
   ExpoCrypto: b6428f48599c007676dc81a9b5f72c07e62fdccc
+  ExpoDevice: 97307196d8cab694e245752b8a7afacc35c14e03
   ExpoDynamicAppIcon: b0f96e53d0bf00412bbe97da0cfc15b8c94a54ce
-  ExpoFileSystem: eecaf6796aed0f4dd20042dc2ca2cac6c4bc1185
+  ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
   ExpoHaptics: 28a771b630353cd6e8dcf1b1e3e693e38ad7c3c3
-  ExpoHead: 8224345e80abcf4c97b31c99805dd5a3c8d3404d
+  ExpoHead: 89ffd324e60520751c2c285233fe45e875c91874
   ExpoImage: 8cf2d51de3d03b7e984e9b0ba8f19c0c22057001
   ExpoImagePicker: 66970181d1c838f444e5e1f81b804ab2d5ff49bd
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
@@ -2883,32 +2901,32 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 370096473359f5f6aade0871400d063333747719
   ExpoRandom: f0cd58e154e463d913462f3b445870b12d1c2f12
   ExpoSecureStore: c84ae37d1c36f38524d289c67c3a2e3fc56f1108
-  ExpoSystemUI: 40e222dd9d52222fe1bce389724ac52e662158dc
+  ExpoSystemUI: 735278045c1a28de0018a300bb5abb3f9090652b
   ExpoWebBrowser: e31c97230ea93b51a2a74c6c2381b0d4fca5698c
-  EXSplashScreen: 6bd596128cd52fac91997ebc64f3d394c843a8f9
+  EXSplashScreen: 0fabdcf746d29e7f8b8969879cb09125cdd365d2
   EXStructuredHeaders: 5b0f47259db047dc1fdfa84752e292c2bfa68ecd
-  EXUpdates: 17e26679a93e626b0ae3ebbff966cd7021413a0a
+  EXUpdates: 4aa99ef9610e0d6fbf80d7f2b3f169b527f24a1d
   EXUpdatesInterface: 3e444e2093e25b7ca0999a7d8c16e8392dee70c3
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 9f2b8b243131565335437dba74923a8d3015e780
   Firebase: 91fefd38712feb9186ea8996af6cbdef41473442
-  FirebaseAppCheckInterop: fecc08c89936c8acb1428d8088313aabedb348e4
+  FirebaseAppCheckInterop: 0dd062c9926a76332ca5711dbed6f1a9ac540b54
   FirebaseAuth: 711d01cccefaf10035b3090a92956d0dd4f99088
-  FirebaseAuthInterop: 29336ab84df12fc0f340ba5fe58d3e5811a4192d
+  FirebaseAuthInterop: 0344acef098654eaf59f6add4c93254349bc5de4
   FirebaseCore: 11dc8a16dfb7c5e3c3f45ba0e191a33ac4f50894
-  FirebaseCoreExtension: af5fd85e817ea9d19f9a2659a376cf9cf99f03c0
-  FirebaseCoreInternal: bcb5acffd4ea05e12a783ecf835f2210ce3dc6af
+  FirebaseCoreExtension: 4ec89dd0c6de93d6becde32122d68b7c35f6bf5d
+  FirebaseCoreInternal: 4b297a2d56063dbea2c1d0d04222d44a8d058862
   FirebaseDatabase: 09752515c6abf792b6f61ca6d0354952a8c1feb9
   FirebaseFirestore: 6df1bc70a56c15921286ff2a3096fa2d350b8823
   FirebaseFirestoreInternal: d9a6e08e9bb4016ce7c0b3544f1cf7abcd7cf26f
-  FirebaseInstallations: 8f581fca6478a50705d2bd2abd66d306e0f5736e
+  FirebaseInstallations: 766dabca09fd94aef922538aaf144cc4a6fb6869
   FirebaseMessaging: 4d52717dd820707cc4eadec5eb981b4832ec8d5d
-  FirebaseSharedSwift: 76e1529c32101d80e4f1ca2fba7c39d59f0a390a
+  FirebaseSharedSwift: a03fe7a59ee646fef71099a887f774fe25d745b8
   FirebaseStorage: 03710f9a0e3824d3069ed1128601a3d3a5e7d817
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
-  GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
+  GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   "gRPC-C++": e725ef63c4475d7cdb7e2cf16eb0fde84bd9ee51
   gRPC-Core: eee4be35df218649fe66d721a05a7f27a28f069b
   GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
@@ -2919,16 +2937,16 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libvmaf: 27f523f1e63c694d14d534cd0fddd2fab0ae8711
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
-  lottie-ios: e047b1d2e6239b787cc5e9755b988869cf190494
-  lottie-react-native: a2ca7702b9754a5a53b20b0b0ae29f7bad6800be
-  MMKV: ed58ad794b3f88c24d604a5b74f3fba17fcbaf74
-  MMKVCore: a67a1cede26175c413176f404a7cedec43f96a0b
+  lottie-ios: 3d98679b41fa6fd6aff2352b3953dbd3df8a397e
+  lottie-react-native: 8b5721400977e2dde148ca23efcf48e668940dbc
+  MMKV: 506311d0494023c2f7e0b62cc1f31b7370fa3cfb
+  MMKVCore: 9e2e5fd529b64a9fe15f1a7afb3d73b2e27b4db9
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
   RCTRequired: ca1d7414aba0b27efcfa2ccd37637edb1ab77d96
   RCTTypeSafety: 678e344fb976ff98343ca61dc62e151f3a042292
-  ReachabilitySwift: 2128f3a8c9107e1ad33574c6e58e8285d460b149
+  ReachabilitySwift: 7f151ff156cea1481a8411701195ac6a984f4979
   React: e296bcebb489deaad87326067204eb74145934ab
   React-callinvoker: d0b7015973fa6ccb592bb0363f6bc2164238ab8c
   React-Codegen: 627cd02719674bfc5612f2f8394b4da2bf03a7b2
@@ -2950,7 +2968,7 @@ SPEC CHECKSUMS:
   react-native-mmkv: c405cc720dbdd8b1330b1bcf064196ca8cbb5a7c
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
-  react-native-webview: dcb15d8207983ba2e1f9248d5ebc16f52a31a5c7
+  react-native-webview: ad868affda04ff2b204de83546193bc0325a8280
   React-nativeconfig: e700ac3ec3d66329076bd2c2787a204411815d43
   React-NativeModulesApple: f7fa541118d195ac850ca2ea460f338152ced167
   React-perflogger: 5f49905de275bac07ac7ea7f575a70611fa988f2
@@ -2996,6 +3014,6 @@ SPEC CHECKSUMS:
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: 72c0d5eee9535ea29a52c0aa1f1163a97cef0859
+PODFILE CHECKSUM: 85dac15b1573ca399db65da5795cfa65f5827219
 
 COCOAPODS: 1.14.3
