@@ -4,14 +4,17 @@
   },
   "build": {
     "development": {
+      "channel": "development",
       "ios": {"image": "latest"},
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+      "channel": "preview",
       "distribution": "internal"
     },
     "production": {
+      "channel": "production",
       "ios": {
         "buildConfiguration": "Release",
         "image": "latest"
