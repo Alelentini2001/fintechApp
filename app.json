@@ -5,7 +5,7 @@
     "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "QUPLY",
+    "scheme": "quply",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
