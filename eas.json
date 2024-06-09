@@ -11,7 +11,12 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "ios": {
+        "buildConfiguration": "Release",
+        "image": "latest"
+      }
+    }
   },
   "submit": {
     "production": {}

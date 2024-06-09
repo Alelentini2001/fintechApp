@@ -17,12 +17,12 @@
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F95F5FBBE478767C8B22AB69 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7220A0757FC42D049D83938F /* PrivacyInfo.xcprivacy */; };
-		EBFB274EA87E41729FB7BF66 /* default-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D9BC71AC2195479DB6599B70 /* default-Icon-60x60@2x.png */; };
-		0DEE03679B324AB2A1122FF7 /* default-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = AEA0001FAC984774841117FA /* default-Icon-60x60@3x.png */; };
-		7B1316B6B76A4701A71E525B /* dark-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5BA9251FDA240E98654E53F /* dark-Icon-60x60@2x.png */; };
-		5DB422BCCCDE4495878CB57E /* dark-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F9B964A989744447AA1DAB56 /* dark-Icon-60x60@3x.png */; };
-		58BF889B06A14F97A5CA7143 /* vivid-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C95C09E213249E39372C271 /* vivid-Icon-60x60@2x.png */; };
-		F196257F416A46BD98B585BC /* vivid-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53A1EEFF1C5B49979DD766AE /* vivid-Icon-60x60@3x.png */; };
+		7E7F2F38772444E79EFD9795 /* default-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 06EF445790E542B38A3EBAA7 /* default-Icon-60x60@2x.png */; };
+		572B96C0F25F4D89ADABA8BD /* default-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A63FABE9EBF74C4EBF22EA9B /* default-Icon-60x60@3x.png */; };
+		8AAEC2D9C7464A40B0014E7A /* dark-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A7A93A7A4EC34F229478690A /* dark-Icon-60x60@2x.png */; };
+		D51231419C974C8987AD4AF8 /* dark-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C8A6E389D09D4839A3C0CC09 /* dark-Icon-60x60@3x.png */; };
+		AF7D22F4F544408AB3997326 /* vivid-Icon-60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ABDE61E119244F43988B25FE /* vivid-Icon-60x60@2x.png */; };
+		95B462DC92EB4B5ABD4675B6 /* vivid-Icon-60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9561A6914CBD4D1F9145A054 /* vivid-Icon-60x60@3x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,12 +43,12 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-fintech/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		FAD7710E228CB6C26C288C94 /* Pods_fintech.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_fintech.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D9BC71AC2195479DB6599B70 /* default-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "default-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		AEA0001FAC984774841117FA /* default-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "default-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		C5BA9251FDA240E98654E53F /* dark-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "dark-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F9B964A989744447AA1DAB56 /* dark-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "dark-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		1C95C09E213249E39372C271 /* vivid-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "vivid-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		53A1EEFF1C5B49979DD766AE /* vivid-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "vivid-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		06EF445790E542B38A3EBAA7 /* default-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "default-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A63FABE9EBF74C4EBF22EA9B /* default-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "default-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/default-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A7A93A7A4EC34F229478690A /* dark-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "dark-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C8A6E389D09D4839A3C0CC09 /* dark-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "dark-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/dark-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		ABDE61E119244F43988B25FE /* vivid-Icon-60x60@2x.png */ = {isa = PBXFileReference; name = "vivid-Icon-60x60@2x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9561A6914CBD4D1F9145A054 /* vivid-Icon-60x60@3x.png */ = {isa = PBXFileReference; name = "vivid-Icon-60x60@3x.png"; path = "fintech/DynamicAppIcons/vivid-Icon-60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,12 +141,12 @@
 		CC3EFA0E34D540D0A8C5364F /* DynamicAppIcons */ = {
 			isa = PBXGroup;
 			children = (
-				D9BC71AC2195479DB6599B70 /* default-Icon-60x60@2x.png */,
-				AEA0001FAC984774841117FA /* default-Icon-60x60@3x.png */,
-				C5BA9251FDA240E98654E53F /* dark-Icon-60x60@2x.png */,
-				F9B964A989744447AA1DAB56 /* dark-Icon-60x60@3x.png */,
-				1C95C09E213249E39372C271 /* vivid-Icon-60x60@2x.png */,
-				53A1EEFF1C5B49979DD766AE /* vivid-Icon-60x60@3x.png */,
+				06EF445790E542B38A3EBAA7 /* default-Icon-60x60@2x.png */,
+				A63FABE9EBF74C4EBF22EA9B /* default-Icon-60x60@3x.png */,
+				A7A93A7A4EC34F229478690A /* dark-Icon-60x60@2x.png */,
+				C8A6E389D09D4839A3C0CC09 /* dark-Icon-60x60@3x.png */,
+				ABDE61E119244F43988B25FE /* vivid-Icon-60x60@2x.png */,
+				9561A6914CBD4D1F9145A054 /* vivid-Icon-60x60@3x.png */,
 			);
 			name = DynamicAppIcons;
 			sourceTree = "<group>";
@@ -237,12 +237,12 @@
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				0DDDC18F3742448E86AE8125 /* GoogleService-Info.plist in Resources */,
 				F95F5FBBE478767C8B22AB69 /* PrivacyInfo.xcprivacy in Resources */,
-				EBFB274EA87E41729FB7BF66 /* default-Icon-60x60@2x.png in Resources */,
-				0DEE03679B324AB2A1122FF7 /* default-Icon-60x60@3x.png in Resources */,
-				7B1316B6B76A4701A71E525B /* dark-Icon-60x60@2x.png in Resources */,
-				5DB422BCCCDE4495878CB57E /* dark-Icon-60x60@3x.png in Resources */,
-				58BF889B06A14F97A5CA7143 /* vivid-Icon-60x60@2x.png in Resources */,
-				F196257F416A46BD98B585BC /* vivid-Icon-60x60@3x.png in Resources */,
+				7E7F2F38772444E79EFD9795 /* default-Icon-60x60@2x.png in Resources */,
+				572B96C0F25F4D89ADABA8BD /* default-Icon-60x60@3x.png in Resources */,
+				8AAEC2D9C7464A40B0014E7A /* dark-Icon-60x60@2x.png in Resources */,
+				D51231419C974C8987AD4AF8 /* dark-Icon-60x60@3x.png in Resources */,
+				AF7D22F4F544408AB3997326 /* vivid-Icon-60x60@2x.png in Resources */,
+				95B462DC92EB4B5ABD4675B6 /* vivid-Icon-60x60@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

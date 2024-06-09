@@ -2,7 +2,7 @@
   "expo": {
     "name": "QUPLY",
     "slug": "QUPLY",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "QUPLY",
@@ -14,13 +14,32 @@
     },
     "jsEngine": "hermes",
     "assetBundlePatterns": [
-      "**/*"
+      "**/*",
+      "./assets/fonts/**", 
+      "./assets/images/**",
+      "./assets/videos/**",
+      "./stellar/**",
+      "./notifications/**"
+    ],
+    "assetBundlePatternsAndroid": [
+      "./assets/fonts/**", 
+      "./assets/images/**",
+      "./assets/videos/**",
+      "./stellar/**",
+      "./notifications/**"
+    ],
+    "assetBundlePatternsIOS": [
+      "./assets/fonts/**", 
+      "./assets/images/**", 
+      "./assets/videos/**",
+      "./stellar/**",
+      "./notifications/**"
     ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aleprophet.quply",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "4",
+      "buildNumber": "6",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID.",
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
