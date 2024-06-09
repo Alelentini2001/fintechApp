@@ -37,6 +37,7 @@
         <data android:scheme="exp+quply"/>
         <data android:scheme="com.aleprophet.quply"/>
         <data android:scheme="QUPLY"/>
+        <data android:scheme="quply"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>

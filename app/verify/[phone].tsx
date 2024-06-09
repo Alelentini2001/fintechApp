@@ -102,7 +102,7 @@ const PhoneVerify = () => {
     const verifyCode = async () => {
         console.log(email, phone, referral);
         const [publicKey, encryptedPrivateKey] = await createWallet();
-        if (phone !== "" && phone !== "[phone]") {
+        if (phone !== "" && phone !== "[phone]" && publicKey) {
             try {
                 await signUp!.attemptPhoneNumberVerification({ code });
                 await setActive!({ session: signUp!.createdSessionId });
@@ -123,7 +123,7 @@ const PhoneVerify = () => {
                     Alert.alert("Error", err.errors[0].message);
                 }
             }
-        } else if (email) {
+        } else if (email && publicKey) {
             try {
                 console.log("START");
                 if (!edit) {

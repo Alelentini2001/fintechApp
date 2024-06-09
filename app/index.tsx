@@ -7,19 +7,16 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Page = () => {
-    const [assets] = useAssets([require("@/assets/videos/intro.mp4")]);
     return (
         <View style={styles.container}>
-            {assets && (
-                <Video
-                    resizeMode={ResizeMode.COVER}
-                    isMuted
-                    isLooping
-                    shouldPlay
-                    source={{ uri: assets[0].uri }}
-                    style={styles.video}
-                />
-            )}
+            <Video
+                resizeMode={ResizeMode.COVER}
+                isMuted
+                isLooping
+                shouldPlay
+                source={require("@/assets/videos/intro.mp4")}
+                style={styles.video}
+            />
             <View style={{ marginTop: "15%", padding: 20 }}>
                 <Text style={styles.header}>
                     Rediscover Payments with QUPLY!
