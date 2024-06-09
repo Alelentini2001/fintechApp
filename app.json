@@ -14,26 +14,7 @@
     },
     "jsEngine": "hermes",
     "assetBundlePatterns": [
-      "**/*",
-      "./assets/fonts/**", 
-      "./assets/images/**",
-      "./assets/videos/**",
-      "./stellar/**",
-      "./notifications/**"
-    ],
-    "assetBundlePatternsAndroid": [
-      "./assets/fonts/**", 
-      "./assets/images/**",
-      "./assets/videos/**",
-      "./stellar/**",
-      "./notifications/**"
-    ],
-    "assetBundlePatternsIOS": [
-      "./assets/fonts/**", 
-      "./assets/images/**", 
-      "./assets/videos/**",
-      "./stellar/**",
-      "./notifications/**"
+      "**/*"
     ],
     "ios": {
       "supportsTablet": true,
