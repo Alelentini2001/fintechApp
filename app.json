@@ -86,6 +86,9 @@
         }
       ],
       "expo-localization",
+      ["expo-assets", {
+        "assets": ["assets/videos/*", "assets/images/*"]
+      }],
       "@react-native-firebase/app",
       [
         "expo-build-properties",
