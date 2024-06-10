@@ -16,10 +16,10 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useBalanceStore } from "@/store/balanceStore";
-import { createTransactionXDR, getAccount } from "@/app/stellar/stellar";
 import CryptoJS from "crypto-js";
 import LottieView from "lottie-react-native";
 import axios from "axios";
+const { createTransactionXDR, getAccount } = require("@/app/stellar/stellar");
 
 const PaymentConfirmationScreen = () => {
     let colorScheme = useTheme().theme;
@@ -163,6 +163,7 @@ const PaymentConfirmationScreen = () => {
                 setError(
                     "Failed to process transaction. Check console for details."
                 );
+                throw new Error("Payment unsuccesful");
             }
             //await swapXLMtoUSDC(userr?.pubKey, 100, sourceSeed);
             const data = await getAccount(userr?.pubKey);

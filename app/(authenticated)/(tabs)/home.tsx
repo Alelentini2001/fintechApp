@@ -31,16 +31,10 @@ import { useTheme } from "@/app/ThemeContext";
 import firestore, { firebase } from "@react-native-firebase/firestore";
 import { useUser } from "@clerk/clerk-expo";
 import messaging from "@react-native-firebase/messaging";
-import * as walletSdk from "@stellar/typescript-wallet-sdk";
 import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
-import {
-    authorizeTrustline,
-    createTransactionXDR,
-    getAccount,
-    swapXLMtoUSDC,
-} from "@/app/stellar/stellar";
+const { authorizeTrustline, getAccount } = require("@/app/stellar/stellar");
 import { Server } from "@stellar/stellar-sdk/lib/horizon";
 import React from "react";
 import LottieView from "lottie-react-native";

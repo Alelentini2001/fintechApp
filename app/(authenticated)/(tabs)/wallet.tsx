@@ -21,21 +21,14 @@ import Colors from "@/constants/Colors";
 import { useBalanceStore } from "@/store/balanceStore";
 import i18n from "./translate";
 import { WebView } from "react-native-webview";
-import {
-    createAccount,
+const {
     runDeposit,
     runDepositWatcher,
     runWithdrawal,
     runWithdrawWatcher,
     getAccount,
-    getInitialFunds,
-    swapXLMtoUSDC,
-} from "@/app/stellar/stellar";
-import {
-    Keypair,
-    SigningKeypair,
-    walletSdk,
-} from "@stellar/typescript-wallet-sdk";
+} = require("@/app/stellar/stellar");
+const { SigningKeypair } = require("@stellar/typescript-wallet-sdk");
 import CryptoJS from "crypto-js";
 
 const Wallet = () => {

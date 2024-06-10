@@ -8,7 +8,14 @@ import {
 } from "@clerk/clerk-expo";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { Fragment, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Alert,
+    ActivityIndicator,
+} from "react-native";
 import {
     CodeField,
     Cursor,
@@ -21,12 +28,13 @@ import translations from "@/app/(authenticated)/(tabs)/translations.json";
 import { useTheme } from "../ThemeContext";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import * as walletSdk from "@stellar/typescript-wallet-sdk";
+
 import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
 import { authorizeTrustline, getInitialFunds } from "../stellar/stellar";
 import React from "react";
+const walletSdk = require("@stellar/typescript-wallet-sdk");
 
 const i18n = new I18n(translations);
 i18n.locale = Localization.getLocales()[0].languageCode || "en";
@@ -98,9 +106,10 @@ const PhoneVerify = () => {
         }
     }, [code]);
     const { user } = useUser();
-
+    const [loading, setLoading] = useState(false);
     const verifyCode = async () => {
         console.log(email, phone, referral);
+        setLoading(true);
         const [publicKey, encryptedPrivateKey] = await createWallet();
         if (phone !== "" && phone !== "[phone]" && publicKey) {
             try {
@@ -117,11 +126,13 @@ const PhoneVerify = () => {
                         pubKey: publicKey || "",
                         privKey: encryptedPrivateKey || "",
                     });
+                setLoading(false);
             } catch (err) {
                 console.log("error", JSON.stringify(err, null, 2));
                 if (isClerkAPIResponseError(err)) {
                     Alert.alert("Error", err.errors[0].message);
                 }
+                setLoading(false);
             }
         } else if (email && publicKey) {
             try {
@@ -156,6 +167,7 @@ const PhoneVerify = () => {
                             pubKey: publicKey || "",
                             privKey: encryptedPrivateKey || "",
                         });
+                    setLoading(false);
                 } else {
                     // Normalize the email search to be case-insensitive and trim whitespace
                     const normalizedEmail = email.trim().toLowerCase();
@@ -237,6 +249,7 @@ const PhoneVerify = () => {
                         .catch((error) => {
                             console.error("Error retrieving user:", error);
                         });
+                    setLoading(false);
                     router.back();
                 }
             } catch (err) {
@@ -244,11 +257,13 @@ const PhoneVerify = () => {
                 if (isClerkAPIResponseError(err)) {
                     Alert.alert("Error", err.errors[0].message);
                 }
+                setLoading(false);
             }
         }
     };
 
     const verifySignIn = async () => {
+        setLoading(true);
         if (phone !== "" && phone !== "[phone]") {
             try {
                 await signIn!.attemptFirstFactor({
@@ -267,11 +282,13 @@ const PhoneVerify = () => {
                     .catch((error) => {
                         console.error("Firebase registration failed:", error);
                     });
+                setLoading(false);
             } catch (err) {
                 console.log("error", JSON.stringify(err, null, 2));
                 if (isClerkAPIResponseError(err)) {
                     Alert.alert("Error", err.errors[0].message);
                 }
+                setLoading(false);
             }
         } else if (email) {
             try {
@@ -300,11 +317,13 @@ const PhoneVerify = () => {
                 //     username: signUp?.username?.toLocaleLowerCase(),
                 //     referrall: referral || "",
                 //   });
+                setLoading(false);
             } catch (err) {
                 console.log("error", JSON.stringify(err, null, 2));
                 if (isClerkAPIResponseError(err)) {
                     Alert.alert("Error", err.errors[0].message);
                 }
+                setLoading(false);
             }
         }
     };
@@ -418,6 +437,30 @@ const PhoneVerify = () => {
                             </Text>
                         </TouchableOpacity>
                     </Link>
+                </View>
+            )}
+            {loading && (
+                <View
+                    style={{
+                        flexDirection: "row",
+                        marginTop: 30,
+                        justifyContent: "center",
+                        alignContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <ActivityIndicator color={"black"} size={"large"} />
+                    <Text
+                        style={{
+                            color:
+                                colorScheme === "light"
+                                    ? Colors.dark
+                                    : Colors.background,
+                            fontSize: 12,
+                        }}
+                    >
+                        Loading...
+                    </Text>
                 </View>
             )}
         </View>
