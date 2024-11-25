@@ -34,13 +34,13 @@ import messaging from "@react-native-firebase/messaging";
 import * as Random from "expo-crypto";
 import { Buffer } from "buffer"; // Import Buffer from the buffer package
 import CryptoJS from "crypto-js";
-const { authorizeTrustline, getAccount } = require("@/app/stellar/stellar");
+import { authorizeTrustline, getAccount } from "@/app/stellar/stellar";
 import { Server } from "@stellar/stellar-sdk/lib/horizon";
 import React from "react";
 import LottieView from "lottie-react-native";
-import * as Notifications from "expo-notifications";
+const Notifications = require("expo-notifications");
 import * as Permissions from "expo-permissions";
-import { usePushNotifications } from "@/app/notifications";
+const { usePushNotifications } = require("@/app/notifications");
 
 const StellarSdk = require("stellar-sdk");
 
@@ -338,15 +338,15 @@ const Home = ({ t }) => {
     //     });
     // }
     const [userr, setUserr] = useState({});
-
-    const { expoPushToken, notification } = usePushNotifications();
-
     // useEffect(() => {
     //     schedulePushNotification();
     // }, [notification]);
     // const data = JSON.stringify(notification, undefined, 2);
     // console.log(expoPushToken);
     useEffect(() => {
+        // Get the user expo push token
+        const { expoPushToken, notification } = usePushNotifications();
+
         const saveTokenToUser = async () => {
             // If expoPushToken exists, save it to the user's account in Firestore
             console.log(user?.id);
@@ -379,7 +379,7 @@ const Home = ({ t }) => {
                         console.log("User document not found in Firestore");
                     }
                 } catch (error) {
-                    console.error(
+                    console.log(
                         "Error saving expo push token to user document:",
                         error
                     );
@@ -388,7 +388,7 @@ const Home = ({ t }) => {
         };
 
         saveTokenToUser();
-    }, [expoPushToken, user?.id, userr]);
+    }, [user?.id, userr]);
 
     useEffect(() => {
         const updateUserDocument = async () => {
@@ -415,7 +415,7 @@ const Home = ({ t }) => {
                         console.log("User document not found in Firestore");
                     }
                 } catch (error) {
-                    console.error(
+                    console.log(
                         "Error updating user document with new userId:",
                         error
                     );
@@ -460,10 +460,10 @@ const Home = ({ t }) => {
                             },
                         });
                     } else {
-                        console.error("No data parameter found in the URL");
+                        console.log("No data parameter found in the URL");
                     }
                 } catch (error) {
-                    console.error("Error handling deep link:", error);
+                    console.log("Error handling deep link:", error);
                 }
             }
         };
@@ -477,7 +477,7 @@ const Home = ({ t }) => {
                     handleDeepLink({ url });
                 }
             })
-            .catch((err) => console.error("An error occurred", err));
+            .catch((err) => console.log("An error occurred", err));
 
         // Cleanup the event listener
         return () => {
@@ -578,19 +578,19 @@ const Home = ({ t }) => {
         const unsubscribePayee = transactionRef
             .where("payeeId", "==", user.id)
             .onSnapshot(handleTransactionUpdate, (error) => {
-                console.error("Error fetching payee transactions:", error);
+                console.log("Error fetching payee transactions:", error);
             });
 
         // Subscribe to changes where the user is the merchant
         const unsubscribeMerchant = transactionRef
             .where("merchantId", "==", user.id)
             .onSnapshot(handleTransactionUpdate, (error) => {
-                console.error("Error fetching merchant transactions:", error);
+                console.log("Error fetching merchant transactions:", error);
             });
         const unsubscribeReferral = transactionRef
             .where("referral", "==", user?.username ? user.username : user?.id)
             .onSnapshot(handleTransactionUpdateReferral, (error) => {
-                console.error("Error fetching merchant transactions:", error);
+                console.log("Error fetching merchant transactions:", error);
             });
 
         // Cleanup function to unsubscribe from listeners
@@ -744,7 +744,7 @@ const Home = ({ t }) => {
                     }
                 }
             } catch (error) {
-                console.error("Error fetching wallet details:", error);
+                console.log("Error fetching wallet details:", error);
                 // Handle the error here, such as displaying a message to the user or logging it
             } finally {
                 setLoading(false);
@@ -799,7 +799,7 @@ const Home = ({ t }) => {
             // console.log(result);
             // setTransactionResult(result.memo);
         } catch (err) {
-            console.error("Failed to create transaction:", err);
+            console.log("Failed to create transaction:", err);
             setError(
                 "Failed to process transaction. Check console for details."
             );

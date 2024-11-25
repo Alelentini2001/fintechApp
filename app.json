@@ -2,7 +2,7 @@
   "expo": {
     "name": "QUPLY",
     "slug": "QUPLY",
-    "version": "1.0.7",
+    "version": "1.0.9",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "quply",
@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.aleprophet.quply",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "8",
+      "buildNumber": "2",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID.",
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
